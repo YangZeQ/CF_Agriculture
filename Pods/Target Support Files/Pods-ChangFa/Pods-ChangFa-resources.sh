@@ -85,13 +85,9 @@ EOM
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_ROOT}/AMap2DMap/MAMapKit.framework/AMap.bundle"
-  install_resource "$PODS_CONFIGURATION_BUILD_DIR/CTAssetsPickerController/CTAssetsPickerController.bundle"
-  install_resource "${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "${PODS_ROOT}/AMap2DMap/MAMapKit.framework/AMap.bundle"
-  install_resource "$PODS_CONFIGURATION_BUILD_DIR/CTAssetsPickerController/CTAssetsPickerController.bundle"
-  install_resource "${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle"
 fi
 
 mkdir -p "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

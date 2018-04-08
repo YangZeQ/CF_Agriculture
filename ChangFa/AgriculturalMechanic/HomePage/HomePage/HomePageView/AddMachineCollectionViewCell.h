@@ -12,4 +12,6 @@
 @property (nonatomic, strong)UIImageView *addImageView;
 @property (nonatomic, strong)UILabel *addLable;
 @property (nonatomic, strong)NSString *imageName;
+
+@property (nonatomic, assign)NSInteger style;
 @end

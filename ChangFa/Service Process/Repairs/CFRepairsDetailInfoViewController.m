@@ -55,11 +55,11 @@
     _repairsScrollView.backgroundColor = BackgroundColor;
     [self.view addSubview:_repairsScrollView];
     
-    CFRegisterTextFieldView *nameTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 98 * screenHeight) LabelName:@"姓名" PlaceHolder:@""];
+    CFRegisterTextFieldView *nameTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 98 * screenHeight) LabelWidth:100 * screenWidth LabelName:@"姓名" PlaceHolder:@""];
     nameTextField.textField.text = self.recordModel.contactName;
     nameTextField.textField.enabled = NO;
     [_repairsScrollView addSubview:nameTextField];
-    CFRegisterTextFieldView *phoneTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, nameTextField.frame.size.height, self.view.frame.size.width, nameTextField.frame.size.height) LabelName:@"电话" PlaceHolder:@"请输入电话"];
+    CFRegisterTextFieldView *phoneTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, nameTextField.frame.size.height, self.view.frame.size.width, nameTextField.frame.size.height) LabelWidth:100 * screenWidth LabelName:@"电话" PlaceHolder:@"请输入电话"];
     phoneTextField.textField.text = self.recordModel.contactMobile;
     phoneTextField.textField.enabled = NO;
     phoneTextField.textField.keyboardType = UIKeyboardTypePhonePad;
@@ -76,7 +76,7 @@
     [_repairsScrollView addSubview:_machineNumberView];
     [self layoutWorkerMachineNumberView];
     
-    CFRegisterTextFieldView *repairsStation = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _machineNumberView.frame.size.height + _machineNumberView.frame.origin.y + 20 * screenWidth, self.view.frame.size.width, nameTextField.frame.size.height) OriginX:30 * screenWidth LabelName:@"维修站" ButtonImage:@"xiugai"];
+    CFRegisterTextFieldView *repairsStation = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _machineNumberView.frame.size.height + _machineNumberView.frame.origin.y + 20 * screenWidth, self.view.frame.size.width, nameTextField.frame.size.height) OriginX:30 * screenWidth LabelWidth:130 * screenWidth LabelName:@"维修站" ButtonImage:@"xiugai"];
     [repairsStation.selecteButton setTitle:_recordModel.serviceCompany forState:UIControlStateNormal];
     repairsStation.selecteButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     repairsStation.selecteButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 75 * screenWidth);
@@ -113,7 +113,7 @@
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
     _repairsPhotoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, _photoView.frame.size.height) collectionViewLayout:layout];
     _repairsPhotoCollection.backgroundColor = [UIColor whiteColor];
-    layout.sectionInset = UIEdgeInsetsMake(0 * Height, 0 * Width, 0 * Height, 0 * Width);
+    layout.sectionInset = UIEdgeInsetsMake(0 * Height, 20 * Width, 0 * Height, 20 * Width);
     layout.itemSize = CGSizeMake(334 * Width, 414 * Height);
     layout.minimumLineSpacing = 0 * Width;
     layout.minimumInteritemSpacing = 0;
@@ -124,14 +124,14 @@
     [_repairsPhotoCollection registerClass:[CFRepairsPhotoCell class] forCellWithReuseIdentifier:@"repairsPhotoCellId"];
     [_photoView addSubview:_repairsPhotoCollection];
     
-    UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    submitButton.frame = CGRectMake(30 * screenWidth, _photoView.frame.size.height + _photoView.frame.origin.y + 100 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-    submitButton.layer.cornerRadius = 20 * Width;
-    [submitButton setTitle:@"确定" forState:UIControlStateNormal];
-    [submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [submitButton setBackgroundColor:ChangfaColor];
-    [submitButton addTarget:self action:@selector(submitButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [_repairsScrollView addSubview:submitButton];
+//    UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    submitButton.frame = CGRectMake(30 * screenWidth, _photoView.frame.size.height + _photoView.frame.origin.y + 100 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
+//    submitButton.layer.cornerRadius = 20 * Width;
+//    [submitButton setTitle:@"确定" forState:UIControlStateNormal];
+//    [submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [submitButton setBackgroundColor:ChangfaColor];
+//    [submitButton addTarget:self action:@selector(submitButtonClick) forControlEvents:UIControlEventTouchUpInside];
+//    [_repairsScrollView addSubview:submitButton];
 }
 // 布局农机信息
 - (void)layoutWorkerMachineNumberView{
@@ -175,11 +175,12 @@
 }
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return 1;
+    return _recordModel.filePath.count;
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     _repairsPhotoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
+    [_repairsPhotoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", self.recordModel.filePath[indexPath.row]]] placeholderImage:[UIImage imageNamed:@"CF_RepairImage"]];
     return _repairsPhotoCell;
 }
 - (void)selecteButtonClick{
@@ -196,7 +197,7 @@
     [self.navigationController pushViewController:repairsStation animated:YES];
 }
 - (void)submitButtonClick{
-    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 - (void)leftButtonClick{
     [self.navigationController popViewControllerAnimated:YES];

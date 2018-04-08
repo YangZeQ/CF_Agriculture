@@ -7,9 +7,9 @@
 //
 
 #import "ChangImageViewController.h"
-#import <UIImageView+WebCache.h>
+#import "UIImageView+WebCache.h"
 #import "CFAFNetWorkingMethod.h"
-#import <AFHTTPSessionManager.h>
+#import "AFHTTPSessionManager.h"
 
 @interface ChangImageViewController ()<UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong)UIImageView *userImage;

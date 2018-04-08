@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <MBProgressHUD.h>
+#import "MBProgressHUD.h"
 @interface CFMBProgressHUD : NSObject
 + (MBProgressHUD *)createMBProgressHUD;
 @end

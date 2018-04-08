@@ -9,7 +9,7 @@
 #import "MapViewController.h"
 #import <MAMapKit/MAMapKit.h>
 #import <AMapFoundationKit/AMapFoundationKit.h>
-#import <AMapLocationManager.h>
+#import <AMapLocationKit/AMapLocationKit.h>
 #import <AMapSearchKit/AMapCommonObj.h>
 #import "MapPinView.h"
 #import "PointAnnotation.h"
@@ -21,6 +21,7 @@
 @interface MapViewController ()<AMapLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, MAMapViewDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, strong)UILabel *lineLabel;
 @property (nonatomic, strong)AMapLocationManager *locationManager;
+@property (nonatomic, strong)MAMapView *mapView;
 @property (nonatomic, strong)UITableView *myMachineTableview;
 @property (nonatomic, strong)NSMutableArray *positionArray;
 @property (nonatomic, strong)NSMutableArray *machineArray;
@@ -28,7 +29,6 @@
 @property (nonatomic, assign)NSString *selected;
 @property (nonatomic, strong)UIView *positionView;
 @property (nonatomic, strong)UIView *otherPositionView;
-@property (nonatomic, strong)MAMapView *mapView;
 
 @property (nonatomic, strong)UILabel *machineName;
 @property (nonatomic, strong)UILabel *machineRemark;

@@ -16,4 +16,9 @@
 @property (nonatomic, strong)UILabel *courseLabel;
 @property (nonatomic, strong)CFAttributeTouchView *courseview;
 @property (nonatomic, strong)UILabel *timeLabel;
+@property (nonatomic, strong)UILabel *dayLabel;
+@property (nonatomic, strong)UILabel *dayTimeLabel;
+
+@property (nonatomic, assign)NSInteger status;
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier Time:(BOOL)time;
 @end

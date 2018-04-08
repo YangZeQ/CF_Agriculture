@@ -139,6 +139,7 @@
             }];
         }
     } Failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSLog(@"%@", error);
         [self.repairsRecordTableView.mj_header endRefreshing];
         [self.repairsRecordTableView.mj_footer endRefreshing];
         if (error.code == -1009 || error.code == -1001) {

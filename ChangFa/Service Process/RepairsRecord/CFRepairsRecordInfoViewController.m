@@ -15,6 +15,7 @@
 @property (nonatomic, strong)UIView *courseView;
 @property (nonatomic, strong)UITableView *courseTableView;
 @property (nonatomic, strong)NSMutableArray *courseArray;
+@property (nonatomic, strong)NSMutableArray *timeArray;
 @property (nonatomic, strong)NSArray *titleArray;
 @property (nonatomic, strong)NSString *reportId;
 
@@ -34,32 +35,43 @@
     }
     return _courseArray;
 }
+- (NSMutableArray *)timeArray
+{
+    if (_timeArray == nil) {
+        _timeArray = [NSMutableArray array];
+    }
+    return _timeArray;
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.view.backgroundColor = BackgroundColor;
     self.titleArray = @[@"已提交", @"审核通过", @"已接单", @"维修结束", @"待评价", @"已完成"];
-    switch ([_recordModel.status integerValue]) {
-        case 1:
-            self.navigationItem.title = _titleArray[0];
-            break;
-        case 2:
-            self.navigationItem.title = _titleArray[1];
-            break;
-        case 3:
-            self.navigationItem.title = _titleArray[2];
-            break;
-        case 4:
-            self.navigationItem.title = _titleArray[3];
-            break;
-        case 5:
-           self.navigationItem.title = _titleArray[4];
-            break;
-        case 6:
-            self.navigationItem.title = _titleArray[5];
-            break;
-        default:
-            break;
+    if (self.setTitle) {
+        self.navigationItem.title = @"报修成功";
+    } else {
+        switch ([_recordModel.status integerValue]) {
+            case 1:
+                self.navigationItem.title = _titleArray[0];
+                break;
+            case 2:
+                self.navigationItem.title = _titleArray[1];
+                break;
+            case 3:
+                self.navigationItem.title = _titleArray[2];
+                break;
+            case 4:
+                self.navigationItem.title = _titleArray[3];
+                break;
+            case 5:
+                self.navigationItem.title = _titleArray[4];
+                break;
+            case 6:
+                self.navigationItem.title = _titleArray[5];
+                break;
+            default:
+                break;
+        }
     }
     [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, nil]];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"fanhuiwhite"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftButtonClick)];
@@ -206,16 +218,17 @@
                 [self goCommentView];
             };
         } else {
-            cell.courseLabel.text = self.titleArray[self.courseArray.count - indexPath.row - 1];
+            cell.courseLabel.text = self.titleArray[[self.courseArray[indexPath.row] integerValue] - 1];
         }
-        
+
     } else if (indexPath.row == self.courseArray.count - 1) {
         cell.lineBottomLabel.hidden = YES;
-        cell.courseLabel.text = self.titleArray[self.courseArray.count - indexPath.row - 1];
+        cell.courseLabel.text = self.titleArray[[self.courseArray[indexPath.row] integerValue] - 1];
     } else {
-        cell.courseLabel.text = self.titleArray[self.courseArray.count - indexPath.row - 1];
+        cell.courseLabel.text = self.titleArray[[self.courseArray[indexPath.row] integerValue] - 1];
     }
-    cell.timeLabel.text = self.courseArray[indexPath.row];
+    
+    cell.timeLabel.text = self.timeArray[indexPath.row];
 
     return cell;
 }
@@ -257,6 +270,7 @@
             [self reloadRepairsRecordInfoView];
         }
         self.courseArray = (NSMutableArray *)[[self.courseArray reverseObjectEnumerator] allObjects];
+        self.timeArray = (NSMutableArray *)[[self.timeArray reverseObjectEnumerator] allObjects];
         CGRect courseFrame = _courseView.frame;
         self.courseView.frame = CGRectMake(courseFrame.origin.x, courseFrame.origin.y, courseFrame.size.width, (34 + 160 * self.recordModel.statusArray.count) * screenHeight);
         if (self.courseArray.count > 5) {
@@ -273,7 +287,12 @@
 - (void)reloadRepairsRecordInfoView
 {
     self.recordModel.reportId = self.reportId;
-    self.courseArray = self.recordModel.statusArray;
+//    self.courseArray = self.recordModel.statusArray;
+    for (NSArray *arr in self.recordModel.statusArray) {
+        [self.courseArray addObject:[arr[0] objectForKey:@"status"]];
+        [self.timeArray addObject:[arr[1] objectForKey:@"time"]];
+    }
+    NSLog(@"%@", self.courseArray[0]);
     _phoneLabel.text = _recordModel.mobile;
     _commentInfoLabele.text = _recordModel.commentContent;
     _completeTimeLabel.text = [@"完成时间：" stringByAppendingString:_recordModel.finishTime];

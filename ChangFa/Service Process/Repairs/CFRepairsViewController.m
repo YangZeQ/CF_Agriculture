@@ -16,13 +16,16 @@
 #import "MachineModel.h"
 #import "CFRepairsStationModel.h"
 #import <Photos/Photos.h>
-#import <CTAssetsPickerController/CTAssetsPickerController.h>
-#import <AFHTTPSessionManager.h>
+#import "CTAssetsPickerController/CTAssetsPickerController.h"
+#import "AFHTTPSessionManager.h"
 #import "CFRepairsStationViewController.h"
+#import "CFRepairsRecordInfoViewController.h"
+#import "CFRepairsRecordModel.h"
 
-#import <MAMapKit/MAMapKit.h>
-#import <AMapFoundationKit/AMapFoundationKit.h>
-#import <AMapLocationManager.h>
+#import "MAMapKit/MAMapKit.h"
+#import "AMapFoundationKit/AMapFoundationKit.h"
+#import <AMapLocationKit/AMapLocationKit.h>
+//#import "AMapLocationManager.h"
 @interface CFRepairsViewController ()<UIScrollViewDelegate, scanViewControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, CTAssetsPickerControllerDelegate, AMapLocationManagerDelegate, MAMapViewDelegate>
 @property (nonatomic, strong)CFRegisterTextFieldView *nameTextField;
 @property (nonatomic, strong)CFRegisterTextFieldView *phoneTextField;
@@ -91,17 +94,27 @@
 - (void)createRepairsView
 {
     _repairsScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    _repairsScrollView.contentSize = CGSizeMake(0, 2030 * screenHeight);
+    _repairsScrollView.contentSize = CGSizeMake(0, 1800 * screenHeight);
     _repairsScrollView.backgroundColor = BackgroundColor;
     _repairsScrollView.delegate = self;
+    _repairsScrollView.showsVerticalScrollIndicator = NO;
     [self.view addSubview:_repairsScrollView];
     
-    _nameTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 98 * screenHeight) LabelName:@"姓名" PlaceHolder:@"请输入姓名"];
+    UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    submitButton.frame = CGRectMake(0, self.view.frame.size.height - 100 * screenHeight, CF_WIDTH, 100 * screenHeight);
+    //    submitButton.layer.cornerRadius = 20 * Width;
+    [submitButton setTitle:@"提交" forState:UIControlStateNormal];
+    [submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [submitButton setBackgroundColor:ChangfaColor];
+    [submitButton addTarget:self action:@selector(submitButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:submitButton];
+    
+    _nameTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 98 * screenHeight) LabelWidth:100 * screenWidth LabelName:@"姓名" PlaceHolder:@"请输入姓名"];
     [_repairsScrollView addSubview:_nameTextField];
-    _phoneTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _nameTextField.frame.size.height, self.view.frame.size.width, _nameTextField.frame.size.height) LabelName:@"电话" PlaceHolder:@"请输入电话"];
+    _phoneTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _nameTextField.frame.size.height, self.view.frame.size.width, _nameTextField.frame.size.height) LabelWidth:100 * screenWidth LabelName:@"电话" PlaceHolder:@"请输入电话"];
     _phoneTextField.textField.keyboardType = UIKeyboardTypePhonePad;
     [_repairsScrollView addSubview:_phoneTextField];
-    _placeTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _phoneTextField.frame.size.height + _phoneTextField.frame.origin.y, self.view.frame.size.width, _nameTextField.frame.size.height) OriginX:30 * screenWidth LabelName:@"地址" ButtonImage:@"xiugai"];
+    _placeTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _phoneTextField.frame.size.height + _phoneTextField.frame.origin.y, self.view.frame.size.width, _nameTextField.frame.size.height) OriginX:30 * screenWidth LabelWidth:130 * screenWidth LabelName:@"地址" ButtonImage:@"xiugai"];
     [_placeTextField.selecteButton setTitle:@"请选择地址" forState:UIControlStateNormal];
     [_placeTextField.selecteButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
     [_placeTextField.selecteButton addTarget:self action:@selector(choosePlaceInfo) forControlEvents:UIControlEventTouchUpInside];
@@ -126,7 +139,7 @@
     
     [self scanViewWithText:@"农机信息" Place:@"扫一扫" ScanText:@"" ScanImage:@"" ViewFrame:CGRectMake(0, repairsMachineLabel.frame.size.height + repairsMachineLabel.frame.origin.y + 10 * screenHeight, self.view.frame.size.width, 307 * screenHeight) ScanButtonFrame:CGRectMake(0, 0, self.view.frame.size.width, 225 * screenHeight) scanType:@""];
 
-    _repairsStation = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _machineNumberView.frame.size.height + _machineNumberView.frame.origin.y + 20 * screenWidth, self.view.frame.size.width, _nameTextField.frame.size.height) OriginX:30 * screenWidth LabelName:@"维修站" ButtonImage:@"xiugai"];
+    _repairsStation = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _machineNumberView.frame.size.height + _machineNumberView.frame.origin.y + 20 * screenWidth, self.view.frame.size.width, _nameTextField.frame.size.height) OriginX:30 * screenWidth LabelWidth:130 * screenWidth LabelName:@"维修站" ButtonImage:@"xiugai"];
     [_repairsStation.selecteButton setTitle:@"点击选择维修站点" forState:UIControlStateNormal];
     _repairsStation.selecteButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     _repairsStation.selecteButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 75 * screenWidth);
@@ -166,10 +179,10 @@
     [_repairsScrollView addSubview:_photoView];
 
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-    _repairsPhotoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 25 * screenHeight, self.view.frame.size.width, 250 * screenHeight) collectionViewLayout:layout];
+    _repairsPhotoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 25 * screenHeight, self.view.frame.size.width, 200 * screenHeight) collectionViewLayout:layout];
     _repairsPhotoCollection.backgroundColor = BackgroundColor;
-    layout.sectionInset = UIEdgeInsetsMake(0, 25 * Width, 0, 25 * Width);
-    layout.itemSize = CGSizeMake(250 * Width, 250 * Height);
+    layout.sectionInset = UIEdgeInsetsMake(0, 30 * Width, 0, 30 * Width);
+    layout.itemSize = CGSizeMake(200 * Width, 200 * Height);
     layout.minimumLineSpacing = 10 * Width;
     layout.minimumInteritemSpacing = 0 * screenWidth;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
@@ -179,15 +192,6 @@
     [_repairsPhotoCollection registerClass:[CFRepairsPhotoCell class] forCellWithReuseIdentifier:@"repairsPhotoCellId"];
     [_repairsPhotoCollection registerClass:[AddMachineCollectionViewCell class] forCellWithReuseIdentifier:@"addRepairsPhotoCellId"];
     [_photoView addSubview:_repairsPhotoCollection];
-    
-    UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    submitButton.frame = CGRectMake(30 * screenWidth, _photoView.frame.size.height + _photoView.frame.origin.y + 100 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-    submitButton.layer.cornerRadius = 20 * Width;
-    [submitButton setTitle:@"提交" forState:UIControlStateNormal];
-    [submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [submitButton setBackgroundColor:ChangfaColor];
-    [submitButton addTarget:self action:@selector(submitButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [_repairsScrollView addSubview:submitButton];
     
 }
 - (void)scanViewWithText:(NSString *)text
@@ -437,6 +441,7 @@
 {
     [self.photoArray removeObjectAtIndex:sender.tag - 1000];
     [self.repairsPhotoCollection reloadData];
+    [self uploadImagesArray];
 }
 #pragma mark - <CTAssetsPickerControllerDelegate>
 -(BOOL)assetsPickerController:(CTAssetsPickerController *)picker shouldSelectAsset:(PHAsset *)asset
@@ -472,6 +477,7 @@
         }];
     }
     [self.repairsPhotoCollection reloadData];
+    [self uploadImagesArray];
 }
 
 #pragma mark - 选择维修站点
@@ -584,11 +590,7 @@
         [MBManager showBriefAlert:@"请输入故障描述" time:1.5];
         return;
     }
-    if (_fileIds.length < 1) {
-        [MBManager showBriefAlert:@"请上传故障照片" time:1.5];
-        return;
-    }
-    [self uploadImagesArray];
+    [self submitRepairsinfo];
 }
 #pragma mark-多图片上传
 - (void)uploadImagesArray
@@ -634,11 +636,12 @@
             ids++;
         }
         NSLog(@"%@", self.fileIds);
-        [self submitRepairsinfo];
+        [MBManager hideAlert];
     });
 }
 - (NSURLSessionUploadTask*)uploadTaskWithImage:(UIImage*)image completion:(void (^)(NSURLResponse *response, id responseObject, NSError *error))completionBlock
 {
+    [MBManager showWaitingWithTitle:@"上传图片中"];
     // 构造 NSURLRequest
     NSError* error = NULL;
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -661,6 +664,10 @@
 #pragma mark - 图片上传完毕,提交报修
 - (void)submitRepairsinfo
 {
+    if (_fileIds.length < 1) {
+        [MBManager showBriefAlert:@"请上传故障照片" time:1.5];
+        return;
+    }
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *params = @{
                              @"token":[userDefaults objectForKey:@"UserToken"],
@@ -681,14 +688,16 @@
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"reportRepair/saveReport" Loading:1 Params:params Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"submit%@, %@", responseObject, [[responseObject objectForKey:@"head"] objectForKey:@"message"]);
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"报修成功" message:@"" preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [self.navigationController popViewControllerAnimated:YES];
-            }];
-            [alert addAction:alertAction];
-            [self presentViewController:alert animated:YES completion:^{
-                
-            }];
+            CFRepairsRecordInfoViewController *repairRecord = [[CFRepairsRecordInfoViewController alloc]init];
+            repairRecord.setTitle = YES;
+            repairRecord.recordModel = [[CFRepairsRecordModel alloc]init];
+            repairRecord.recordModel.reportId = [[[responseObject objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"reportId"];
+            repairRecord.recordModel.machineType = _model.carType;
+            repairRecord.recordModel.machineName = _model.productName;
+            repairRecord.recordModel.machineModel = _model.productModel;
+            repairRecord.recordModel.machineRemarks = _model.note;
+            repairRecord.recordModel.machineName = _model.productName;
+            [self.navigationController pushViewController:repairRecord animated:YES];
         }
     } Failure:^(NSURLSessionDataTask *task, NSError *error) {
         

@@ -38,6 +38,7 @@
     self.repairsStationTableView.delegate = self;
     self.repairsStationTableView.dataSource = self;
     self.repairsStationTableView.bounces = NO;
+    self.repairsStationTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.repairsStationTableView];
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

@@ -41,23 +41,27 @@
     return self;
 }
 //无图
-- (instancetype)initWithFrame:(CGRect)frame LabelName:(NSString *)labelName PlaceHolder:(NSString *)placeHolder{
+- (instancetype)initWithFrame:(CGRect)frame
+                   LabelWidth:(float)width
+                    LabelName:(NSString *)labelName
+                  PlaceHolder:(NSString *)placeHolder{
     if (self = [super init]) {
         self.frame = frame;
         self.backgroundColor = [UIColor whiteColor];
-        [self createViewWithLabelName:labelName Placeholder:placeHolder];
+        [self createViewWithLabelWidth:width LabelName:labelName Placeholder:placeHolder];
     }
     return self;
 }
 //按钮
 - (instancetype)initWithFrame:(CGRect)frame
                       OriginX:(float)originY
+                   LabelWidth:(float)width
                     LabelName:(NSString *)labelName
                   ButtonImage:(NSString *)buttonImage{
     if (self = [super init]) {
         self.frame = frame;
         self.backgroundColor = [UIColor whiteColor];
-        [self createViewWithLabelName:labelName OriginX:originY ButtonImage:buttonImage];
+        [self createViewWithLabelName:labelName OriginX:originY LabelWidth:(float)width ButtonImage:buttonImage];
     }
     return self;
 }
@@ -101,9 +105,10 @@
     }
     NSLog(@"%f", scaleWidth);
 }
-- (void)createViewWithLabelName:(NSString *)labelName
-                    Placeholder:(NSString *)placeHolder{
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, 100 * screenWidth, self.frame.size.height)];
+- (void)createViewWithLabelWidth:(NSInteger)width
+                       LabelName:(NSString *)labelName
+                     Placeholder:(NSString *)placeHolder{
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, width, self.frame.size.height)];
     label.text = labelName;
     label.font = CFFONT15;
     [self addSubview:label];
@@ -120,6 +125,7 @@
 }
 - (void)createViewWithLabelName:(NSString *)labelName
                         OriginX:(float)originY
+                     LabelWidth:(float)width
                     ButtonImage:(NSString *)buttonImage{
     UILabel *placeLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, self.frame.size.width, self.frame.size.height)];
     placeLabel.text = labelName;
@@ -132,7 +138,7 @@
     _selecteButton.titleLabel.font = CFFONT15;
     _selecteButton.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
     _selecteButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    _selecteButton.contentEdgeInsets = UIEdgeInsetsMake(0, 130 * screenWidth, 0, 0);
+    _selecteButton.contentEdgeInsets = UIEdgeInsetsMake(0, width, 0, 0);
     [self addSubview:_selecteButton];
 }
 

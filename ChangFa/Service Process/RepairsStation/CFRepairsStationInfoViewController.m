@@ -10,7 +10,7 @@
 #import "CFCommentInfoViewController.h"
 #import <MAMapKit/MAMapKit.h>
 #import <AMapFoundationKit/AMapFoundationKit.h>
-#import <AMapLocationManager.h>
+#import <AMapLocationKit/AMapLocationKit.h>
 #import "MapPinView.h"
 #import "PointAnnotation.h"
 @interface CFRepairsStationInfoViewController ()<AMapLocationManagerDelegate, MAMapViewDelegate, UIGestureRecognizerDelegate>
@@ -137,6 +137,7 @@
     _commentInfoLabel.font = CFFONT14;
     _commentInfoLabel.textColor = [UIColor grayColor];
     _commentInfoLabel.userInteractionEnabled = YES;
+    _commentInfoLabel.textAlignment = NSTextAlignmentRight;
     [commentView addSubview:_commentInfoLabel];
     UITapGestureRecognizer *tapMoreComment = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(getMoreCommentInfo)];
     [_commentInfoLabel addGestureRecognizer:tapMoreComment];
@@ -240,10 +241,8 @@
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
     //判断如果是百度地图的view 既可以实现手势拖动 scrollview 的滚动关闭
     if ([gestureRecognizer.view isKindOfClass:[MAMapView class]] ){
-//        self.mainScrollView.scrollEnabled = NO;
         return YES;
     }else{
-//        self.mainScrollView.scrollEnabled = YES;
         return NO;
     }
     
@@ -421,6 +420,10 @@
 }
 - (void)getMoreCommentInfo
 {
+    if ([self.stationModel.commentNum integerValue] < 1) {
+        [MBManager showBriefAlert:@"暂无评论" time:1];
+        return;
+    }
     CFCommentInfoViewController *commentInfo = [[CFCommentInfoViewController alloc]init];
     commentInfo.serviceId = self.stationModel.serviceId;
     commentInfo.commentLevel = _stationModel.commentLevel;

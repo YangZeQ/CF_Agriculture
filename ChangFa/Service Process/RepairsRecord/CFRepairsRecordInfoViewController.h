@@ -10,4 +10,5 @@
 #import "CFRepairsRecordModel.h"
 @interface CFRepairsRecordInfoViewController : UIViewController
 @property (nonatomic, strong)CFRepairsRecordModel *recordModel;
+@property (nonatomic, assign)BOOL setTitle;
 @end

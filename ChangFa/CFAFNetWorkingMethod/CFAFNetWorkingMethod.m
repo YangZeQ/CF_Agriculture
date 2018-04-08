@@ -26,7 +26,6 @@
     }
     return self;
 }
-
 #pragma mark - 拼接完整的url
 - (NSString *)getcCompleteUrl
 {

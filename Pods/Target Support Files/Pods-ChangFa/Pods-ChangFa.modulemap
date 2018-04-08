@@ -1,0 +1,6 @@
+framework module Pods_ChangFa {
+  umbrella header "Pods-ChangFa-umbrella.h"
+
+  export *
+  module * { export * }
+}

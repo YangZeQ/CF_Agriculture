@@ -432,7 +432,6 @@
                            };
         dict = [NSMutableDictionary dictionaryWithDictionary:dic];
     }
-    NSLog(@"%@", dict);
     [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/bindUserCar" Params:dict Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"%@", responseObject);
         NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
@@ -441,6 +440,8 @@
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 [self.delegate bindMachineSuccess];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"bindMachine" object:nil userInfo:nil];
+                NSInteger bindNumber = [[[NSUserDefaults standardUserDefaults] objectForKey:@"UserBindNum"] integerValue];
+                [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", bindNumber + 1] forKey:@"UserBindNum"];
                 [self.navigationController popViewControllerAnimated:YES];
             }];
             [alert addAction:alertAction];

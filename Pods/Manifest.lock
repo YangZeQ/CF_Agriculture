@@ -21,6 +21,10 @@ PODS:
     - AMapFoundation (~> 1.4)
   - AMapSearch (5.7.0):
     - AMapFoundation (~> 1.4)
+  - Bugly (2.5.0)
+  - Charts (3.0.5):
+    - Charts/Core (= 3.0.5)
+  - Charts/Core (3.0.5)
   - CTAssetsPickerController (3.3.2-alpha):
     - PureLayout (~> 3.0.0)
   - HCSStarRatingView (1.5)
@@ -38,6 +42,8 @@ DEPENDENCIES:
   - AMap2DMap (~> 5.6.0)
   - AMapLocation (~> 2.6.0)
   - AMapSearch (~> 5.7.0)
+  - Bugly (~> 2.5.0)
+  - Charts (~> 3.0.5)
   - CTAssetsPickerController (~> 3.3.2-alpha)
   - HCSStarRatingView (~> 1.5)
   - MBProgressHUD (~> 0.9.1)
@@ -51,6 +57,8 @@ SPEC CHECKSUMS:
   AMapFoundation: 973682cfe60b92efd73a8ef8f1144fa0fa8e1296
   AMapLocation: 55116a2c8956eab7550cbb56e989aa5cdcc424e3
   AMapSearch: 314f75e9ce282b53dbf66455efa416c39f12b5b1
+  Bugly: 3ca9f255c01025582df26f9222893b383c7e4b4e
+  Charts: 45cdc985b764c838b35ee47eb1365d15735f6d1a
   CTAssetsPickerController: ef06977de8e0b6d6ff11a324d357a12335a61243
   HCSStarRatingView: 1d18f79654735514cd6f00e6d90e38cb6320dc31
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
@@ -59,6 +67,6 @@ SPEC CHECKSUMS:
   SDCycleScrollView: 884b88f0266dd4708a0e1934975c69cb971707b1
   SDWebImage: 791bb72962b3492327ddcac4b1880bd1b5458431
 
-PODFILE CHECKSUM: 245051e60e4b3e62fb408d3bd5aae6a939958e7d
+PODFILE CHECKSUM: 2289e173a50cf1ad1f365e99d510ab14d3e2fc33
 
 COCOAPODS: 1.3.1

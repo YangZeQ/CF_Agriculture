@@ -12,7 +12,7 @@
 #import "PickView.h"
 #import "CFAFNetWorkingMethod.h"
 #import "ChangImageViewController.h"
-#import <UIImageView+WebCache.h>
+#import "UIImageView+WebCache.h"
 #import "CFPickView.h"
 @interface PersonViewController ()<AddressPickerViewDelegate, SexPickerViewDelegate, IdentifyPickerViewDelegate>
 //@property (nonatomic, strong)UITableView *sexTableView;

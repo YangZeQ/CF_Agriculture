@@ -99,7 +99,7 @@
 //    self.retreatScrollView.pagingEnabled = YES;
     self.retreatScrollView.bounces = NO;
 //    self.retreatScrollView.scrollEnabled = NO;
-    self.retreatScrollView.contentSize = CGSizeMake(self.view.frame.size.width, 1701 * screenHeight);
+    self.retreatScrollView.contentSize = CGSizeMake(self.view.frame.size.width, 1600 * screenHeight);
     [self.view addSubview:self.retreatScrollView];
     
     
@@ -165,7 +165,7 @@
     }
     
     
-    UIView *retreatInfoView = [[UIView alloc]initWithFrame:CGRectMake(30 * screenWidth, statiusView.frame.size.height + 20 * screenHeight, self.view.frame.size.width - 30 * 2 * screenWidth, 1170 * screenHeight)];
+    UIView *retreatInfoView = [[UIView alloc]initWithFrame:CGRectMake(30 * screenWidth, statiusView.frame.size.height + 20 * screenHeight, self.view.frame.size.width - 30 * 2 * screenWidth, 1050 * screenHeight)];
     retreatInfoView.backgroundColor = [UIColor whiteColor];
     retreatInfoView.layer.cornerRadius = 20 * screenWidth;
     [self.retreatScrollView addSubview:retreatInfoView];
@@ -175,32 +175,32 @@
     UILabel *machineType = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, machineName.frame.origin.y + machineName.frame.size.height + 10 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];
     UILabel *machineNumber = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, machineType.frame.origin.y + machineType.frame.size.height + 10 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];
     machineNumber.textColor = [UIColor redColor];
-    UILabel *userName = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, machineNumber.frame.origin.y + machineNumber.frame.size.height + 20 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];
-    UILabel *userPhone = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, userName.frame.origin.y + userName.frame.size.height + 10 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];
-    UILabel *sellTime = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, userPhone.frame.origin.y + userPhone.frame.size.height + 10 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];
+//    UILabel *userName = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, machineNumber.frame.origin.y + machineNumber.frame.size.height + 20 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];
+//    UILabel *userPhone = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, userName.frame.origin.y + userName.frame.size.height + 10 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];
+    UILabel *sellTime = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, machineNumber.frame.origin.y + machineNumber.frame.size.height + 10 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];
 //    UILabel *machineInfo = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, sellTime.frame.origin.y + sellTime.frame.size.height + 10 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];
     
     machineName.font = CFFONT14;
     machineType.font = CFFONT14;
     machineNumber.font = CFFONT14;
-    userName.font = CFFONT14;
-    userPhone.font = CFFONT14;
+//    userName.font = CFFONT14;
+//    userPhone.font = CFFONT14;
     sellTime.font = CFFONT14;
     
     machineInfo.text = @"农机信息";
     machineName.text = [@"名称：" stringByAppendingString:[NSString stringWithFormat:@"%@", self.model.productName]];;
     machineType.text = [@"型号：" stringByAppendingString:[NSString stringWithFormat:@"%@", self.model.productModel]];
     machineNumber.text = [@"车架号：" stringByAppendingString:[NSString stringWithFormat:@"%@", self.model.productBarCode]];
-    userName.text = [@"用户姓名：" stringByAppendingString:[NSString stringWithFormat:@"%@", self.model.name]];
-    userPhone.text = [@"用户电话：" stringByAppendingString:[NSString stringWithFormat:@"%@", self.model.tel]];
+//    userName.text = [@"用户姓名：" stringByAppendingString:[NSString stringWithFormat:@"%@", self.model.name]];
+//    userPhone.text = [@"用户电话：" stringByAppendingString:[NSString stringWithFormat:@"%@", self.model.tel]];
     sellTime.text = [@"售出时间：" stringByAppendingString:[NSString stringWithFormat:@"%@", [[self.model.saleDate substringToIndex:19] stringByReplacingOccurrencesOfString:@"T" withString:@" "]]];
     
     [retreatInfoView addSubview:machineInfo];
     [retreatInfoView addSubview:machineName];
     [retreatInfoView addSubview:machineType];
     [retreatInfoView addSubview:machineNumber];
-    [retreatInfoView addSubview:userName];
-    [retreatInfoView addSubview:userPhone];
+//    [retreatInfoView addSubview:userName];
+//    [retreatInfoView addSubview:userPhone];
     [retreatInfoView addSubview:sellTime];
     
     UILabel *retreatReason = [[UILabel alloc]initWithFrame:CGRectMake(machineName.frame.origin.x, sellTime.frame.size.height + sellTime.frame.origin.y + 50 * screenHeight, machineName.frame.size.width, machineName.frame.size.height)];

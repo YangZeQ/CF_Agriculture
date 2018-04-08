@@ -7,6 +7,7 @@
 //
 
 #import "MAShape.h"
+
 ///点标注数据
 @interface MAPointAnnotation : MAShape
 
@@ -18,6 +19,5 @@
 
 ///固定屏幕点的坐标
 @property (nonatomic, assign) CGPoint lockedScreenPoint;
-
 
 @end

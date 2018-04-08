@@ -39,12 +39,12 @@
     //类型
     _stationType = [[UILabel alloc]initWithFrame:CGRectMake(_stationTitle.frame.origin.x, _stationTitle.frame.size.height + _stationTitle.frame.origin.y + 13 * screenHeight, _stationTitle.frame.size.width, _stationTitle.frame.size.height)];
     _stationType.text = @"维修站类型：";
-    _stationType.font = CFFONT16;
+    _stationType.font = CFFONT15;
     [self.contentView addSubview:_stationType];
     //星级
     _stationStarLabel = [[UILabel alloc]initWithFrame:CGRectMake(_stationTitle.frame.origin.x, _stationType.frame.size.height + _stationType.frame.origin.y + 13 * screenHeight, _stationTitle.frame.size.width, _stationTitle.frame.size.height)];
     _stationStarLabel.text = @"服务星级：";
-    _stationStarLabel.font = CFFONT16;
+    _stationStarLabel.font = CFFONT15;
     [self.contentView addSubview:_stationStarLabel];
     _stationStar = [[UIImageView alloc]initWithFrame:CGRectMake(_stationTitle.frame.origin.x, _stationType.frame.size.height + _stationType.frame.origin.y + 10 * screenHeight, _stationTitle.frame.size.width, _stationTitle.frame.size.height)];
     _stationStar.image = [UIImage imageNamed:@""];
@@ -54,16 +54,16 @@
     _stationRecommend.textAlignment = NSTextAlignmentRight;
     _stationRecommend.textColor = [UIColor redColor];
     _stationRecommend.text = @"";
-    _stationRecommend.font = CFFONT16;
+    _stationRecommend.font = CFFONT14;
     [self.contentView addSubview:_stationRecommend];
     //地址
-    _stationAddress = [[UILabel alloc]initWithFrame:CGRectMake(_stationImageView.frame.origin.x, _stationImageView.frame.origin.y + _stationImageView.frame.size.height + 10 * screenHeight, [UIScreen mainScreen].bounds.size.width - 60 * screenWidth, 50 * screenHeight)];
+    _stationAddress = [[UILabel alloc]initWithFrame:CGRectMake(_stationImageView.frame.origin.x, _stationImageView.frame.origin.y + _stationImageView.frame.size.height + 15 * screenHeight, [UIScreen mainScreen].bounds.size.width - 60 * screenWidth, 50 * screenHeight)];
     _stationAddress.text = @"地址：";
     _stationAddress.font = CFFONT14;
     _stationAddress.textColor = [UIColor grayColor];
     [self.contentView addSubview:_stationAddress];
     //距离
-    _stationDistance = [[UILabel alloc]initWithFrame:CGRectMake(_stationImageView.frame.origin.x, _stationAddress.frame.origin.y + _stationAddress.frame.size.height + 10 * screenHeight, _stationAddress.frame.size.width, _stationAddress.frame.size.height)];
+    _stationDistance = [[UILabel alloc]initWithFrame:CGRectMake(_stationImageView.frame.origin.x, _stationAddress.frame.origin.y + _stationAddress.frame.size.height, _stationAddress.frame.size.width, _stationAddress.frame.size.height)];
     _stationDistance.text = @"距离：";
     _stationDistance.font = CFFONT14;
     _stationDistance.userInteractionEnabled = YES;
@@ -72,7 +72,7 @@
     //详情
     _stationInfoButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _stationInfoButton.frame = CGRectMake(_stationRecommend.frame.origin.x, _stationDistance.frame.origin.y - 10 * screenHeight, _stationRecommend.frame.size.width, _stationDistance.frame.size.height);
-    UILabel *infoLabel = [[UILabel alloc]initWithFrame:CGRectMake(_stationInfoButton.frame.origin.x, _stationInfoButton.frame.origin.y, 150 * screenWidth, _stationInfoButton.frame.size.height)];
+    UILabel *infoLabel = [[UILabel alloc]initWithFrame:CGRectMake(_stationInfoButton.frame.origin.x + _stationInfoButton.frame.size.width - 160 * screenWidth, _stationInfoButton.frame.origin.y, 130 * screenWidth, _stationInfoButton.frame.size.height)];
     infoLabel.text = @"查看详情";
     infoLabel.font = CFFONT15;
     infoLabel.textColor = [UIColor grayColor];
@@ -89,8 +89,10 @@
     _model = model;
     if ([model.companyType integerValue] == 1) {
         _stationImageView.image = [UIImage imageNamed:@"CF_Station_Maintenance"];
+        _stationType.text = [@"维修站类型：" stringByAppendingString:@"维修站"];
     } else {
         _stationImageView.image = [UIImage imageNamed:@"CF_Station_Agency"];
+        _stationType.text = [@"维修站类型：" stringByAppendingString:@"经销商"];
     }
     if ([model.type integerValue] == 0) {
         _stationRecommend.text = @"上次使用";

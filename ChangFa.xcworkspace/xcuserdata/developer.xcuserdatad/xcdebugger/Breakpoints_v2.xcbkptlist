@@ -19,13 +19,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ChangFa/Service Process/RepairsStation/CFRepairsStationInfoViewController.m"
-            timestampString = "542882823.4430341"
+            filePath = "ChangFa/Service Process/Repairs/CFRepairsViewController.m"
+            timestampString = "544524804.108429"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "458"
-            endingLineNumber = "458"
-            landmarkName = "-touchesCanceled:withEvent:"
+            startingLineNumber = "644"
+            endingLineNumber = "644"
+            landmarkName = "-uploadTaskWithImage:completion:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

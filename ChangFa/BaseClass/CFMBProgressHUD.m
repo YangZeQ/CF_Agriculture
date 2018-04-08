@@ -7,7 +7,7 @@
 //
 
 #import "CFMBProgressHUD.h"
-#import <MBProgressHUD.h>
+#import "MBProgressHUD.h"
 
 @interface CFMBProgressHUD()
 @property (nonatomic, strong)MBProgressHUD *progress;

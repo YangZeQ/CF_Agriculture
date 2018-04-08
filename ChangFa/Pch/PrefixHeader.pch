@@ -17,8 +17,9 @@
 #import "CFAFNetWorkingMethod.h"
 #import "CFClassMethod.h"
 #import "MBManager.h"
-#import <MJRefresh.h>
-#import <UIImageView+WebCache.h>
+#import "MJRefresh.h"
+#import "UIImageView+WebCache.h"
+
 #define Height self.view.frame.size.height / 1334
 #define Width self.view.frame.size.width / 750
 #define screenHeight [UIScreen mainScreen].bounds.size.height / 1334
@@ -48,6 +49,7 @@
 #define CFFONT15 [UIFont systemFontOfSize:[self autoScaleW:15]]
 #define CFFONT14 [UIFont systemFontOfSize:[self autoScaleW:14]]
 #define CFFONT13 [UIFont systemFontOfSize:[self autoScaleW:13]]
+#define CFFONT12 [UIFont systemFontOfSize:[self autoScaleW:12]]
 
 #define UserHeadUrl [userDefault objectForKey:@"UserHeadUrl"]
 // 测试接口
@@ -56,8 +58,8 @@
 // 线上接口
 #define onlineUrl @"http://47.96.20.14:8085/api/v1/"
 #define onlineJavaUrl @"http://192.168.31.68:8080/changfa_system/"
-#define gaode @"9a565181533f74f5cc5c4902391b8f7b"
-
+#define CF_Amap @"9a565181533f74f5cc5c4902391b8f7b"
+#define CF_Bugly @"1abc035ec9"
 // Include any system framework and library headers here that should be included in all compilation units.
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
 // 2208 1242

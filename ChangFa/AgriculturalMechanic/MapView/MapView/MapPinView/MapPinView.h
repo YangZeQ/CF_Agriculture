@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <MAPinAnnotationView.h>
+#import <MAMapKit/MAMapKit.h>
+//#import <MAPinAnnotationView.h>
 #import "MachineModel.h"
 @interface MapPinView :MAAnnotationView
 @property (nonatomic, strong)MachineModel *model;

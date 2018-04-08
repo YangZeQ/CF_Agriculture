@@ -7,9 +7,9 @@
 //
 
 #import "RegisterViewController.h"
-#import <AFHTTPSessionManager.h>
+#import "AFHTTPSessionManager.h"
 #import <CommonCrypto/CommonDigest.h>
-#import <MBProgressHUD.h>
+#import "MBProgressHUD.h"
 #import "CFAFNetWorkingMethod.h"
 @interface RegisterViewController ()<UITextFieldDelegate>
 @property (nonatomic, strong)UIButton *agreeBtn;

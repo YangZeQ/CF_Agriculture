@@ -28,11 +28,13 @@
                        ScaleHeight:(float)scaleHeight;
 //无图
 - (instancetype)initWithFrame:(CGRect)frame
+                   LabelWidth:(float)width
                     LabelName:(NSString *)labelName
                   PlaceHolder:(NSString *)placeHolder;
 //按钮
 - (instancetype)initWithFrame:(CGRect)frame
                       OriginX:(float)originY
+                   LabelWidth:(float)width
                     LabelName:(NSString *)labelName
                   ButtonImage:(NSString *)buttonImage;
 

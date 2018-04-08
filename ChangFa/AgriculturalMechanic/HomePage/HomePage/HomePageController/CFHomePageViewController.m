@@ -14,17 +14,23 @@
 #import "BandMachineViewController.h"
 #import "CFAFNetWorkingMethod.h"
 #import "MachineInfoViewController.h"
-#import <UIImageView+WebCache.h>
+#import "UIImageView+WebCache.h"
 #import "MachineModel.h"
 #import "AgencyModel.h"
 #import "CFAgencyMachineStatusViewController.h"
 #import "CFAgencySellViewController.h"
 #import "CFSalesPersonMyAgencyViewController.h"
 #import "CFAgencyManagerViewController.h"
-#import <SDCycleScrollView.h>
+#import "SDCycleScrollView.h"
 
 #import "CFCommenViewController.h"
-@interface CFHomePageViewController ()<SDCycleScrollViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate, BandMachineViewControllerDelegate>
+
+#import "CFWorkOrderInfoViewController.h"
+#import "CFWorkOrderListViewController.h"
+#import "CFWorkOrderTableViewCell.h"
+#import "CFWorkOrderModel.h"
+#import "CFMapNavigationViewController.h"
+@interface CFHomePageViewController ()<SDCycleScrollViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate, BandMachineViewControllerDelegate, UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong)UIButton *rightButton;
 //@property (nonatomic, strong)UIScrollView *imageScrollView;
 @property (nonatomic, strong)SDCycleScrollView *imageScrollView;
@@ -35,41 +41,56 @@
 @property (nonatomic, strong)UICollectionViewCell *cell;
 @property (nonatomic, strong)NSMutableArray *myMachineArray;
 @property (nonatomic, strong)NSMutableArray *carouselFigureArray;
+
+@property (nonatomic, strong)UITableView *orderTableView;
+@property (nonatomic, strong)NSMutableArray *orderArray;
 @end
 
 @implementation CFHomePageViewController
 
-- (NSMutableArray *)myMachineArray{
+- (NSMutableArray *)myMachineArray
+{
     if (!_myMachineArray) {
         _myMachineArray = [NSMutableArray array];
     }
     return _myMachineArray;
 }
-- (NSMutableArray *)carouselFigureArray{
+- (NSMutableArray *)carouselFigureArray
+{
     if (!_carouselFigureArray) {
         _carouselFigureArray = [NSMutableArray array];
     }
     return _carouselFigureArray;
 }
-- (void)viewWillAppear:(BOOL)animated{
+- (NSMutableArray *)orderArray
+{
+    if (_orderArray == nil) {
+        _orderArray = [NSMutableArray array];
+    }
+    return _orderArray;
+}
+- (void)viewWillAppear:(BOOL)animated
+{
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
     if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 1) {
         [self getMyMachineInformation];
     }
+    if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 6) {
+        [self getWaittingForReceiveOrderList];
+    }
 }
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-//    CFCommenViewController *comment = [[CFCommenViewController alloc]init];
-//    [self.navigationController pushViewController:comment animated:YES];
-//    return;
     self.view.backgroundColor = [UIColor whiteColor];
     [self creatHomePageView];
     // Do any additional setup after loading the view.
 }
 #pragma mark -铺设界面
-- (void)creatHomePageView{
+- (void)creatHomePageView
+{
     // 模拟导航栏铺设
-    UIView *navigationView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.navigationViewHeight)];
+    UIView *navigationView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, navHeight)];
     
     navigationView.backgroundColor = ChangfaColor;
     [self.view addSubview:navigationView];
@@ -87,24 +108,11 @@
     [_rightButton setImage:[UIImage imageNamed:@"xinxi"] forState:UIControlStateNormal];
     [_rightButton addTarget:self action:@selector(rightButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [navigationLable addSubview:_rightButton];
-    
-    // 轮播图
-//    _imageScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, navigationView.frame.size.height, self.view.frame.size.width, 402 * Height)];
-//    _imageScrollView.pagingEnabled = YES;
-//    _imageScrollView.showsHorizontalScrollIndicator = NO;
-//    _imageScrollView.delegate = self;
-//    [self.view addSubview:_imageScrollView];
-//    _pageView = [[CFBasePageControl alloc]initWithFrame:CGRectMake(0, 350 * Height + _imageScrollView.frame.origin.y, self.view.frame.size.width, 50 * Height)];
-//    _pageView.currentPage = 0;
-//    [_pageView setValue:[UIImage imageNamed:@"yuandian"] forKey:@"currentPageImage"];
-//    [_pageView setValue:[UIImage imageNamed:@"yuanhuan"] forKey:@"pageImage"];
-//    [self.view addSubview:_pageView];
-    [self getCarouselFigureinfo];
-    _imageScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, navigationView.frame.size.height, self.view.frame.size.width, 402 * Height) delegate:self placeholderImage:[UIImage imageNamed:@"placeholder"]];
+//轮播图
+    [self getCarouselImage];
+    _imageScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, navigationView.frame.size.height, self.view.frame.size.width, 402 * Height) delegate:self placeholderImage:[UIImage imageNamed:@"SDCycleScrollView"]];
     _imageScrollView.currentPageDotImage = [UIImage imageNamed:@"yuandian"];
     _imageScrollView.pageDotImage = [UIImage imageNamed:@"yuanhuan"];
-
-    
     [self.view addSubview:_imageScrollView];
     
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
@@ -116,20 +124,20 @@
         [self createSalesPersonView];
     } else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 4) {
         [self createCompanyView];
+    } else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 6) {
+        [self createWarrantyOfficerView];
     }
 }
 
 // 营销公司/仓管
-- (void)createCompanyView{
+- (void)createCompanyView
+{
     self.view.backgroundColor = BackgroundColor;
     self.tabBarController.tabBar.hidden = YES;
     UIView *scanMachineView = [[UIView alloc]initWithFrame:CGRectMake(0, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 30 * screenHeight, self.view.frame.size.width, 380 * screenHeight)];
     scanMachineView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:scanMachineView];
     
-//    UIImageView *scanImage = [[UIImageView alloc]initWithFrame:CGRectMake(self.view.frame.size.width / 2 - 100 * screenWidth, 40 * screenHeight, 200 * screenWidth, 200 * screenHeight)];
-//    scanImage.image = [UIImage imageNamed:@"scan"];
-//    [scanMachineView addSubview:scanImage];
     UIButton *scanButton = [UIButton buttonWithType:UIButtonTypeCustom];
     scanButton.frame = CGRectMake(self.view.frame.size.width / 2 - 100 * screenWidth, 40 * screenHeight, 200 * screenWidth, 200 * screenHeight);
     [scanButton setImage:[UIImage imageNamed:@"scanCompany"] forState:UIControlStateNormal];
@@ -140,21 +148,19 @@
     scanLabel.text = @"农机扫码";
     scanLabel.textAlignment = NSTextAlignmentCenter;
     [scanMachineView addSubview:scanLabel];
-    
-//    UITapGestureRecognizer *tapScanView = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapScanView)];
-//    [scanMachineView addGestureRecognizer:tapScanView];
 }
-- (void)tapScanView{
+- (void)tapScanView
+{
     BandMachineViewController *band = [[BandMachineViewController alloc]init];
     band.userType = @"company";
     band.navigationItem.title = @"绑定农机";
     [self.navigationController pushViewController:band animated:YES];
 }
 // 经销商
-- (void)createAgencyView {
+- (void)createAgencyView
+{
     self.view.backgroundColor = BackgroundColor;
     self.tabBarController.tabBar.hidden = YES;
-//    [self.rightButton setImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
     UIView *agencyView = [[UIView alloc]initWithFrame:CGRectMake(0, self.imageScrollView.frame.size.height + self.imageScrollView.frame.origin.y + 30 * screenHeight, self.view.frame.size.width, 360 * screenHeight)];
     agencyView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:agencyView];
@@ -190,23 +196,27 @@
     sellLabel.textAlignment = NSTextAlignmentCenter;
     [agencyView addSubview:sellLabel];
 }
-- (void)agencyMachineStatusButtonClick{
+- (void)agencyMachineStatusButtonClick
+{
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
     CFAgencyMachineStatusViewController *machineStatus = [[CFAgencyMachineStatusViewController alloc]init];
     machineStatus.navigationItem.title = @"农机状态";
     machineStatus.distributorsID = [userDefault objectForKey:@"UserDistributorId"];
     [self.navigationController pushViewController:machineStatus animated:YES];
 }
-- (void)agencySellButtonClick{
+- (void)agencySellButtonClick
+{
     CFAgencySellViewController *sell = [[CFAgencySellViewController alloc]init];
     [self.navigationController pushViewController:sell animated:YES];
 }
-- (void)agencyManagerButtonClick{
+- (void)agencyManagerButtonClick
+{
     CFAgencyManagerViewController *manager = [[CFAgencyManagerViewController alloc]init];
     [self.navigationController pushViewController:manager animated:YES];
 }
 // 销售员
-- (void)createSalesPersonView{
+- (void)createSalesPersonView
+{
     self.view.backgroundColor = BackgroundColor;
     self.tabBarController.tabBar.hidden = YES;
     UIView *salesPersonBackView = [[UIView alloc]initWithFrame:CGRectMake(0, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 30 * screenHeight, self.view.frame.size.width, 280 * screenHeight)];
@@ -224,12 +234,14 @@
     agencyLabel.textAlignment = NSTextAlignmentCenter;
     [salesPersonBackView addSubview:agencyLabel];
 }
-- (void)agencyButtonClick{
+- (void)agencyButtonClick
+{
     CFSalesPersonMyAgencyViewController *sales = [[CFSalesPersonMyAgencyViewController alloc]init];
     [self.navigationController pushViewController:sales animated:YES];
 }
 // 农机手
-- (void)createMachineWorkerView{
+- (void)createMachineWorkerView
+{
     // 我的农机
     UILabel *myMachineLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * Width, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 40 * Height, selfWidith - 30 * Width, 50 * Height)];
     myMachineLabel.text = @"我的农机";
@@ -254,34 +266,31 @@
     [self getMyMachineInformation];
 }
 #pragma mark -SDCycleScrollView Delegate实现
-- (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index{
+- (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index
+{
     
 }
 #pragma mark -UICollectionView Delegate实现
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
     return 1;
 }
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
     return self.myMachineArray.count + 1;
 }
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
    _machineCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"machineCellId" forIndexPath:indexPath];
     if (indexPath.row == 0) {
         _addCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"addMachineCellId" forIndexPath:indexPath];
         return _addCell;
     }
     _machineCell.model = self.myMachineArray[indexPath.row - 1];
-    // 在后
-//    if (self.myMachineArray.count > indexPath.row) {
-//        _machineCell.model = self.myMachineArray[indexPath.row];
-//    }
-//    if (indexPath.row == self.myMachineArray.count) {
-//        _addCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"addMachineCellId" forIndexPath:indexPath];
-//        return _addCell;
-//    }
     return _machineCell;
 }
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
     if (indexPath.row == 0) {
         BandMachineViewController *band = [[BandMachineViewController alloc]init];
         band.userType = @"worker";
@@ -291,32 +300,94 @@
     } else {
         [self getDetailMachineInformation:self.myMachineArray[indexPath.row - 1]];
     }
-    // 在后
-//    if (indexPath.row == self.myMachineArray.count) {
-//        BandMachineViewController *band = [[BandMachineViewController alloc]init];
-//        band.userType = @"worker";
-//        band.delegate = self;
-//        band.navigationItem.title = @"添加农机";
-//        [self.navigationController pushViewController:band animated:YES];
-//    } else {
-//        [self getDetailMachineInformation:self.myMachineArray[indexPath.row]];
-//    }
 }
-- (void)bindMachineSuccess{
+- (void)bindMachineSuccess
+{
     [self getMyMachineInformation];
 }
-#pragma mark -导航栏左按钮点击时事件
-//- (void)leftButtonClick{
-//    [self.delegate settingMoreInformation];
-//}
+// 三包员
+- (void)createWarrantyOfficerView
+{
+    self.view.backgroundColor = BackgroundColor;
+    self.tabBarController.tabBar.hidden = YES;
+    UIView *salesPersonBackView = [[UIView alloc]initWithFrame:CGRectMake(0, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 30 * screenHeight, self.view.frame.size.width, 280 * screenHeight)];
+    salesPersonBackView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:salesPersonBackView];
+    
+    UIButton *orderButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    orderButton.frame = CGRectMake(332 * screenWidth, 60 * screenHeight, 86 * screenWidth, 86 * screenHeight);
+    [orderButton setImage:[UIImage imageNamed:@"CF_WorkOrder"] forState:UIControlStateNormal];
+    [orderButton addTarget:self action:@selector(orderButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [salesPersonBackView addSubview:orderButton];
+    
+    UILabel *orderLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, orderButton.frame.size.height + orderButton.frame.origin.y + 50 * screenHeight, self.view.frame.size.width, 50 * screenHeight)];
+    orderLabel.text =@"派工单";
+    orderLabel.textAlignment = NSTextAlignmentCenter;
+    [salesPersonBackView addSubview:orderLabel];
+    
+    self.orderTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, salesPersonBackView.frame.size.height + salesPersonBackView.frame.origin.y + 20 * screenHeight, CF_WIDTH, 370 * screenHeight) style:UITableViewStyleGrouped];
+    self.orderTableView.delegate = self;
+    self.orderTableView.dataSource = self;
+    self.orderTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.orderTableView.backgroundColor = BackgroundColor;
+    [self.view addSubview:self.orderTableView];
+    
+    [self getWaittingForReceiveOrderList];
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.orderArray.count;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 1;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *cellID = @"cellID";
+    CFWorkOrderTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    if (cell == nil) {
+        cell = [[CFWorkOrderTableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];
+    }
+    cell.model = self.orderArray[indexPath.section];
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+//    CFWorkOrderTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+//    cell.model = self.orderArray[indexPath.section];
+    return 180 * screenHeight;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 10 * screenHeight;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 0.001f;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CFWorkOrderModel *model = self.orderArray[indexPath.section];
+    CFWorkOrderInfoViewController *orderInfo = [[CFWorkOrderInfoViewController alloc]init];
+    orderInfo.dispatchId = model.dispatchId;
+    [self.navigationController pushViewController:orderInfo animated:YES];
+}
+- (void)orderButtonClick
+{
+    CFWorkOrderListViewController *orderList = [[CFWorkOrderListViewController alloc]init];
+    [self.navigationController pushViewController:orderList animated:YES];
+}
 #pragma mark -导航栏右按钮点击时事件
-- (void)rightButtonClick{
+- (void)rightButtonClick
+{
     SystemNewsViewController *system = [[SystemNewsViewController alloc]init];
     system.navigationViewHeight = self.navigationViewHeight;
     [self.navigationController pushViewController:system animated:YES];
 }
 #pragma mark -获取所有绑定农机
-- (void)getMyMachineInformation{
+- (void)getMyMachineInformation
+{
     NSDictionary *dict = @{
                            @"userName":@"",
                            @"userpwd":@"",
@@ -355,7 +426,8 @@
 
 }
 #pragma mark -获取农机详情
-- (void)getDetailMachineInformation:(MachineModel *)dictModel{
+- (void)getDetailMachineInformation:(MachineModel *)dictModel
+{
     NSDictionary *dictPost = @{
                            @"imei":dictModel.imei,
                            @"carBar":dictModel.productBarCode,
@@ -384,7 +456,8 @@
     }];
 }
 #pragma mark -获取轮播图信息
-- (void)getCarouselFigureinfo{
+- (void)getCarouselImage
+{
     [CFAFNetWorkingMethod requestDataWithUrl:@"notice/getNoticeImgList" Params:nil Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
      NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
      if ([[dict objectForKey:@"code"] integerValue] == 200) {
@@ -395,7 +468,12 @@
          }
          _imageScrollView.imageURLStringsGroup = self.carouselFigureArray;
      } else {
-         
+         if (self.carouselFigureArray.count < 1) {
+             UIImageView *placeHolderImage = [[UIImageView alloc]initWithFrame:_imageScrollView.frame];
+             placeHolderImage.backgroundColor = ChangfaColor;
+             placeHolderImage.image = [UIImage imageNamed:@"CF_CarouselImage"];
+             [self.view addSubview:placeHolderImage];
+         }
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
@@ -409,8 +487,42 @@
         
     }];
 }
-
-- (void)didReceiveMemoryWarning {
+#pragma mark - 获取未接单信息
+- (void)getWaittingForReceiveOrderList
+{
+    NSDictionary *param = @{
+                            @"repairUserId":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserUid"],
+                            @"status":@7,
+                            };
+    [CFAFNetWorkingMethod requestDataWithJavaUrl:@"dispatch/selectDispatchsByStatus" Loading:0 Params:param Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"dispatch%@", responseObject);
+        NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
+        [self.orderArray removeAllObjects];
+        if ([[dict objectForKey:@"code"] integerValue] == 200) {
+            for (NSDictionary *dict in [[responseObject objectForKey:@"body"] objectForKey:@"resultList"]) {
+                CFWorkOrderModel *model = [CFWorkOrderModel orderModelWithDictionary:dict];
+                [self.orderArray addObject:model];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.orderTableView reloadData];
+            });
+            
+        } else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                
+            }];
+            [alert addAction:alertAction];
+            [self presentViewController:alert animated:YES completion:^{
+                
+            }];
+        }
+    } Failure:^(NSURLSessionDataTask *task, NSError *error) {
+        
+    }];
+}
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }

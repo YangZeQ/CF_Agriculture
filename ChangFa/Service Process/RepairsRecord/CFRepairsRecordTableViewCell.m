@@ -41,7 +41,7 @@
     _machineType.font = CFFONT15;
     [self.contentView addSubview:_machineType];
     //状态
-    _recordStatus = [[UILabel alloc]initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width - 130 * screenWidth, _machineType.frame.origin.y, 100 * screenWidth, _machineName.frame.size.height)];
+    _recordStatus = [[UILabel alloc]initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width - 180 * screenWidth, _machineType.frame.origin.y, 150 * screenWidth, _machineName.frame.size.height)];
     _recordStatus.textAlignment = NSTextAlignmentRight;
     _recordStatus.text = @"";
     _recordStatus.font = CFFONT14;
@@ -52,25 +52,6 @@
     _machineNote.font = CFFONT15;
     [self.contentView addSubview:_machineNote];
 }
-//- (void)setMachineModel:(MachineModel *)machineModel
-//{
-//    switch ([machineModel.carType integerValue]) {
-//        case 1:
-//            _machineImageView.image = [UIImage imageNamed:@"CFTuoLaJi"];
-//            break;
-//        case 2:
-//            _machineImageView.image = [UIImage imageNamed:@"CFShouGeJi"];
-//            break;
-//        case 3:
-//            _machineImageView.image = [UIImage imageNamed:@"CFChaYangji"];
-//            break;
-//        case 4:
-//            _machineImageView.image = [UIImage imageNamed:@"CFHongGanJi"];
-//            break;
-//        default:
-//            break;
-//    }
-//}
 - (void)setRecordModel:(CFRepairsRecordModel *)recordModel
 {
     _recordModel = recordModel;
