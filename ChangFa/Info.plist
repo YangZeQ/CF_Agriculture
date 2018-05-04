@@ -43,6 +43,8 @@ agriculturaliOS
 	<string>YES</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>YES</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>是否允许使用相册</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

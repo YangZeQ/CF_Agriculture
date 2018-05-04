@@ -31,6 +31,7 @@
 @property (nonatomic, strong)UIView *stationBackgroundView;
 //维修站信息
 @property (nonatomic, strong)UIImageView *stationImageView;
+@property (nonatomic, strong)UILabel *stationType;
 @property (nonatomic, strong)UILabel *stationAddress;
 @property (nonatomic, strong)UILabel *stationDistance;
 @property (nonatomic, strong)UILabel *businessTimeLabel;
@@ -61,11 +62,6 @@
     [self.view addSubview:_stationBackgroundView];
     //图片
     _stationImageView = [[UIImageView alloc]initWithFrame:CGRectMake(30 * screenWidth, 30 * screenHeight, 130 * screenWidth, 130 * screenHeight)];
-    if ([_stationModel.type integerValue] == 1) {
-        _stationImageView.image = [UIImage imageNamed:@"CF_Station_Maintenance"];
-    } else {
-        _stationImageView.image = [UIImage imageNamed:@"CF_Station_Agency"];
-    }
     [_stationBackgroundView addSubview:_stationImageView];
     //名称
     UILabel *stationTitle = [[UILabel alloc]initWithFrame:CGRectMake(_stationImageView.frame.size.width + _stationImageView.frame.origin.x + 20 * screenWidth, _stationImageView.frame.origin.y, [UIScreen mainScreen].bounds.size.width - 190 * screenWidth, 40 * screenHeight)];
@@ -73,18 +69,24 @@
     stationTitle.text = self.stationModel.serviceCompany;
     [_stationBackgroundView addSubview:stationTitle];
     //类型
-    UILabel *stationType = [[UILabel alloc]initWithFrame:CGRectMake(stationTitle.frame.origin.x, stationTitle.frame.size.height + stationTitle.frame.origin.y + 5 * screenHeight, stationTitle.frame.size.width, stationTitle.frame.size.height)];
-    stationType.text = @"维修站类型：";
-    stationType.font = CFFONT14;
-    stationType.textColor = [UIColor darkGrayColor];
-    [_stationBackgroundView addSubview:stationType];
+    _stationType = [[UILabel alloc]initWithFrame:CGRectMake(stationTitle.frame.origin.x, stationTitle.frame.size.height + stationTitle.frame.origin.y + 5 * screenHeight, stationTitle.frame.size.width, stationTitle.frame.size.height)];
+    if ([_stationModel.companyType integerValue] == 1) {
+        _stationImageView.image = [UIImage imageNamed:@"CF_Station_Maintenance"];
+        _stationType.text = [@"维修站类型：" stringByAppendingString:@"维修站"];
+    } else {
+        _stationImageView.image = [UIImage imageNamed:@"CF_Station_Agency"];
+        _stationType.text = [@"维修站类型：" stringByAppendingString:@"经销商"];
+    }
+    _stationType.font = CFFONT14;
+    _stationType.textColor = [UIColor darkGrayColor];
+    [_stationBackgroundView addSubview:_stationType];
     //星级
-    UILabel *stationStarLabel = [[UILabel alloc]initWithFrame:CGRectMake(stationType.frame.origin.x, stationType.frame.size.height + stationType.frame.origin.y + 5 * screenHeight, stationTitle.frame.size.width, stationTitle.frame.size.height)];
+    UILabel *stationStarLabel = [[UILabel alloc]initWithFrame:CGRectMake(_stationType.frame.origin.x, _stationType.frame.size.height + _stationType.frame.origin.y + 5 * screenHeight, stationTitle.frame.size.width, stationTitle.frame.size.height)];
     stationStarLabel.text = @"服务星级：";
     stationStarLabel.font = CFFONT14;
     stationStarLabel.textColor = [UIColor darkGrayColor];
     [_stationBackgroundView addSubview:stationStarLabel];
-    UIImageView *stationStar = [[UIImageView alloc]initWithFrame:CGRectMake(stationTitle.frame.origin.x, stationType.frame.size.height + stationType.frame.origin.y + 10 * screenHeight, stationTitle.frame.size.width, stationTitle.frame.size.height)];
+    UIImageView *stationStar = [[UIImageView alloc]initWithFrame:CGRectMake(stationTitle.frame.origin.x, _stationType.frame.size.height + _stationType.frame.origin.y + 10 * screenHeight, stationTitle.frame.size.width, stationTitle.frame.size.height)];
     stationStar.image = [UIImage imageNamed:@""];
     [_stationBackgroundView addSubview:stationStar];
     //地址
@@ -123,6 +125,12 @@
     _contactPhoneLabel.font = CFFONT14;
     _contactPhoneLabel.textColor = [UIColor darkGrayColor];
     [_stationBackgroundView addSubview:_contactPhoneLabel];
+    
+    UIButton *phoneButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    phoneButton.frame = CGRectMake(CF_WIDTH - 100 * screenWidth, lineLabel.frame.origin.y + lineLabel.frame.size.height + 80 * screenHeight, 50 * screenWidth, 50 * screenHeight);
+    [phoneButton setBackgroundImage:[UIImage imageNamed:@"dianhua"] forState:UIControlStateNormal];
+    [phoneButton addTarget:self action:@selector(callContactPhone) forControlEvents:UIControlEventTouchUpInside];
+    [_stationBackgroundView addSubview:phoneButton];
     
     UIView *commentView = [[UIView alloc]initWithFrame:CGRectMake(0, _contactPhoneLabel.frame.size.height + _contactPhoneLabel.frame.origin.y + 20 * screenHeight, self.view.frame.size.width, 100 * screenHeight)];
     commentView.backgroundColor = BackgroundColor;
@@ -178,16 +186,16 @@
     
     ///初始化地图
     _mapView = [[MAMapView alloc] initWithFrame:CGRectMake(0, navHeight, CF_WIDTH, 466 * screenHeight)];
-    UIButton *repairStationButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    repairStationButton.frame = CGRectMake(CF_WIDTH - 118 * screenWidth, 40 * screenHeight, 58 * screenWidth, 58 * screenHeight);
-    [repairStationButton setImage:[UIImage imageNamed:@"CF_Map_RepairStation_Button"] forState:UIControlStateNormal];
-    [repairStationButton addTarget:self action:@selector(repairStationButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [_mapView addSubview:repairStationButton];
     UIButton *userButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    userButton.frame = CGRectMake(repairStationButton.frame.origin.x, repairStationButton.frame.size.height + repairStationButton.frame.origin.y + 80 * screenHeight, repairStationButton.frame.size.width, repairStationButton.frame.size.height);
+    userButton.frame = CGRectMake(CF_WIDTH - 118 * screenWidth, 40 * screenHeight, 58 * screenWidth, 58 * screenHeight);
     [userButton addTarget:self action:@selector(userButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [userButton setImage:[UIImage imageNamed:@"CF_Map_User_Button"] forState:UIControlStateNormal];
     [_mapView addSubview:userButton];
+    UIButton *repairStationButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    repairStationButton.frame = CGRectMake(userButton.frame.origin.x, userButton.frame.size.height + userButton.frame.origin.y + 80 * screenHeight, userButton.frame.size.width, userButton.frame.size.height);
+    [repairStationButton setImage:[UIImage imageNamed:@"CF_Map_RepairStation_Button"] forState:UIControlStateNormal];
+    [repairStationButton addTarget:self action:@selector(repairStationButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [_mapView addSubview:repairStationButton];
     
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panGestureRecognizer:)];
     pan.delegate = self;
@@ -205,6 +213,8 @@
     _mapView.delegate = self;
     _mapView.showsCompass = NO;
     self.mapButton.hidden = YES;
+    NSArray *strArray = [self.stationLocation componentsSeparatedByString:@","];
+    _mapView.centerCoordinate = CLLocationCoordinate2DMake([strArray[1] doubleValue], [strArray[0] doubleValue]);
     //    [_mapView addAnnotation:pointAnnotation];
     [self configLocationManager];
 }
@@ -392,8 +402,10 @@
     _stationAddress.text = [[[_stationAddress.text stringByAppendingString:_stationModel.province] stringByAppendingString:_stationModel.city] stringByAppendingString:_stationModel.county];
     if ([_stationModel.companyType integerValue] == 1) {
         _stationImageView.image = [UIImage imageNamed:@"CF_Station_Maintenance"];
+        _stationType.text = [@"维修站类型：" stringByAppendingString:@"维修站"];
     } else {
         _stationImageView.image = [UIImage imageNamed:@"CF_Station_Agency"];
+        _stationType.text = [@"维修站类型：" stringByAppendingString:@"经销商"];
     }
     _commentInfoLabel.text = [NSString stringWithFormat:@"共%@条评论", [NSString stringWithFormat:@"%@", _stationModel.commentNum]];
     _contactLabel.text = [_contactLabel.text stringByAppendingString:_stationModel.contactName];
@@ -433,32 +445,11 @@
 - (void)leftButtonClick{
     [self.navigationController popViewControllerAnimated:YES];
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    NSLog(@"touchbeg");
-}
-- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-//    if (_selected) {
-//        [UIView animateWithDuration:0.5 animations:^{
-//            _stationBackgroundView.frame = CGRectMake(0, self.view.frame.size.height, CF_WIDTH, CF_HEIGHT - navHeight - _mapView.frame.size.height);
-//        }];
-//        _mapView.frame = self.view.bounds;
-//    } else {
-//        [UIView animateWithDuration:0.5 animations:^{
-//            _mapView.frame = CGRectMake(0, navHeight, self.view.frame.size.width, 466 * screenHeight);
-//            _stationBackgroundView.frame = CGRectMake(0, navHeight + _mapView.frame.size.height, CF_WIDTH, CF_HEIGHT - navHeight - _mapView.frame.size.height);
-//        }];
-//    }
-//    _selected = !_selected;
-}
-- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    NSLog(@"touchend");
-}
-- (void)touchesCanceled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-
+- (void)callContactPhone{
+    NSMutableString *str=[[NSMutableString alloc] initWithFormat:@"tel:%@", _stationModel.contactMobile];
+    UIWebView *callWebview = [[UIWebView alloc] init];
+    [callWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:str]]];
+    [self.view addSubview:callWebview];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

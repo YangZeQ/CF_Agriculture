@@ -12,6 +12,7 @@
 #import "CFMisteViewButton.h"
 #import "PersonViewController.h"
 #import "SystemNewsViewController.h"
+#import "CFPersonalCenterViewController.h"
 @interface RootTabbarViewController ()<UIGestureRecognizerDelegate>
 @property (nonatomic, strong)UIButton *leftBtn;
 @property (nonatomic, strong)UIButton *rightBtn;
@@ -53,9 +54,18 @@
     homePageViewC.tabBarItem.title = @"首页";
     [homePageViewC.tabBarItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor grayColor], NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
     [homePageViewC.tabBarItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:ChangfaColor, NSForegroundColorAttributeName, nil] forState:UIControlStateSelected];
-    [homePageViewC.tabBarItem setImage:[UIImage imageNamed:@"shouye"]];
-    [homePageViewC.tabBarItem setSelectedImage:[[UIImage imageNamed:@"shouyeselected"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+    [homePageViewC.tabBarItem setImage:[UIImage imageNamed:@"Homepage_Unselected"]];
+    [homePageViewC.tabBarItem setSelectedImage:[[UIImage imageNamed:@"Homepage_Selected"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     [self addChildViewController:homePageViewC];
+    
+    CFPersonalCenterViewController *centerViewC = [[CFPersonalCenterViewController alloc]init];
+//    centerViewC.navigationViewHeight = self.navigationBarHeight;
+    centerViewC.tabBarItem.title = @"个人";
+    [centerViewC.tabBarItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor grayColor], NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
+    [centerViewC.tabBarItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:ChangfaColor, NSForegroundColorAttributeName, nil] forState:UIControlStateSelected];
+    [centerViewC.tabBarItem setImage:[UIImage imageNamed:@"PersonalCenter_Unselected"]];
+    [centerViewC.tabBarItem setSelectedImage:[[UIImage imageNamed:@"PersonalCenter_Selected"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+    [self addChildViewController:centerViewC];
     
     MapViewController *mapViewC = [[MapViewController alloc]init];
     mapViewC.navigationViewHeight = self.navigationBarHeight;

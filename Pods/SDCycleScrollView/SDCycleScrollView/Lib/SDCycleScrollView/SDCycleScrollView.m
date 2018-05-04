@@ -56,6 +56,14 @@ NSString * const ID = @"SDCycleScrollViewCell";
 
 @implementation SDCycleScrollView
 
+- (NSMutableArray *)machineModelArray
+{
+    if (_machineModelArray == nil) {
+        _machineModelArray = [NSMutableArray array];
+    }
+    return _machineModelArray;
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
@@ -582,6 +590,10 @@ NSString * const ID = @"SDCycleScrollViewCell";
         return cell;
     }
     
+    if (_isAddMachineView) {
+        [cell.imageView addSubview:self.machineModelArray[itemIndex]];
+    }
+    
     NSString *imagePath = self.imagePathsGroup[itemIndex];
     
     if (!self.onlyDisplayText && [imagePath isKindOfClass:[NSString class]]) {
@@ -689,5 +701,9 @@ NSString * const ID = @"SDCycleScrollViewCell";
         [self setupTimer];
     }
 }
-
+- (void)setIsAddMachineView:(BOOL)isAddMachineView
+{
+    _isAddMachineView = isAddMachineView;
+    [self.mainView reloadData];
+}
 @end

@@ -37,7 +37,6 @@
     _commentInfoTableView.delegate = self;
     _commentInfoTableView.dataSource = self;
     _commentInfoTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-//
     [self.view addSubview:_commentInfoTableView];
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{

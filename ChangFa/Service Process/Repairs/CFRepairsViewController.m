@@ -11,6 +11,7 @@
 #import "CFPickView.h"
 #import "CFReasonTextView.h"
 #import "ScanViewController.h"
+#import "CFPreviewPhotoViewController.h"
 #import "AddMachineCollectionViewCell.h"
 #import "CFRepairsPhotoCell.h"
 #import "MachineModel.h"
@@ -26,13 +27,16 @@
 #import "AMapFoundationKit/AMapFoundationKit.h"
 #import <AMapLocationKit/AMapLocationKit.h>
 //#import "AMapLocationManager.h"
-@interface CFRepairsViewController ()<UIScrollViewDelegate, scanViewControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, CTAssetsPickerControllerDelegate, AMapLocationManagerDelegate, MAMapViewDelegate>
+#define MAX_LIMIT_PHOTONUMBER 9
+#define MAX_LIMIT_NUMS 150
+@interface CFRepairsViewController ()<UIScrollViewDelegate, scanViewControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, CTAssetsPickerControllerDelegate, AMapLocationManagerDelegate, MAMapViewDelegate, UITextFieldDelegate, UITextViewDelegate>
 @property (nonatomic, strong)CFRegisterTextFieldView *nameTextField;
 @property (nonatomic, strong)CFRegisterTextFieldView *phoneTextField;
 @property (nonatomic, strong)CFRegisterTextFieldView *placeTextField;
 @property (nonatomic, strong)UIScrollView *repairsScrollView;
 @property (nonatomic, strong)CFPickView *areaPickView;
 @property (nonatomic, strong)CFPickView *reapirsStaionPickView;
+@property (nonatomic, strong)UILabel *photoNumberLabel;
 @property (nonatomic, strong)UIView *vagueView; // 透明层
 
 @property (nonatomic, strong)UIView *machineNumberView;
@@ -45,6 +49,7 @@
 @property (nonatomic, strong)CFRegisterTextFieldView *repairsStation;
 @property (nonatomic, strong)CFRepairsStationModel *stationModel;
 @property (nonatomic, strong)CFReasonTextView *reasonTextView;
+@property (nonatomic, strong)UILabel *textNumberLabel;
 @property (nonatomic, strong)UIView *photoView;
 @property (nonatomic, strong)UICollectionView *repairsPhotoCollection;
 @property (nonatomic, strong)CFRepairsPhotoCell *repairsPhotoCell;
@@ -94,7 +99,7 @@
 - (void)createRepairsView
 {
     _repairsScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    _repairsScrollView.contentSize = CGSizeMake(0, 1800 * screenHeight);
+    _repairsScrollView.contentSize = CGSizeMake(0, 1900 * screenHeight);
     _repairsScrollView.backgroundColor = BackgroundColor;
     _repairsScrollView.delegate = self;
     _repairsScrollView.showsVerticalScrollIndicator = NO;
@@ -110,12 +115,16 @@
     [self.view addSubview:submitButton];
     
     _nameTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 98 * screenHeight) LabelWidth:100 * screenWidth LabelName:@"姓名" PlaceHolder:@"请输入姓名"];
+    _nameTextField.textField.tag = 1001;
+    [_nameTextField.textField addTarget:self action:@selector(textFieldDidChangeValue:) forControlEvents:UIControlEventEditingChanged];
     [_repairsScrollView addSubview:_nameTextField];
     _phoneTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _nameTextField.frame.size.height, self.view.frame.size.width, _nameTextField.frame.size.height) LabelWidth:100 * screenWidth LabelName:@"电话" PlaceHolder:@"请输入电话"];
+    _phoneTextField.textField.tag = 1002;
+    [_phoneTextField.textField addTarget:self action:@selector(textFieldDidChangeValue:) forControlEvents:UIControlEventEditingChanged];
     _phoneTextField.textField.keyboardType = UIKeyboardTypePhonePad;
     [_repairsScrollView addSubview:_phoneTextField];
     _placeTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _phoneTextField.frame.size.height + _phoneTextField.frame.origin.y, self.view.frame.size.width, _nameTextField.frame.size.height) OriginX:30 * screenWidth LabelWidth:130 * screenWidth LabelName:@"地址" ButtonImage:@"xiugai"];
-    [_placeTextField.selecteButton setTitle:@"请选择地址" forState:UIControlStateNormal];
+    [_placeTextField.selecteButton setTitle:@"请选择省/市" forState:UIControlStateNormal];
     [_placeTextField.selecteButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
     [_placeTextField.selecteButton addTarget:self action:@selector(choosePlaceInfo) forControlEvents:UIControlEventTouchUpInside];
     [_repairsScrollView addSubview:_placeTextField];
@@ -137,7 +146,7 @@
     repairsMachineLabel.textColor = [UIColor darkGrayColor];
     [_repairsScrollView addSubview:repairsMachineLabel];
     
-    [self scanViewWithText:@"农机信息" Place:@"扫一扫" ScanText:@"" ScanImage:@"" ViewFrame:CGRectMake(0, repairsMachineLabel.frame.size.height + repairsMachineLabel.frame.origin.y + 10 * screenHeight, self.view.frame.size.width, 307 * screenHeight) ScanButtonFrame:CGRectMake(0, 0, self.view.frame.size.width, 225 * screenHeight) scanType:@""];
+    [self scanViewWithText:@"农机信息" Place:@"扫一扫" ScanText:@"" ScanImage:@"" ViewFrame:CGRectMake(0, repairsMachineLabel.frame.size.height + repairsMachineLabel.frame.origin.y + 10 * screenHeight, self.view.frame.size.width, 407 * screenHeight) ScanButtonFrame:CGRectMake(0, 0, self.view.frame.size.width, 325 * screenHeight) scanType:@""];
 
     _repairsStation = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _machineNumberView.frame.size.height + _machineNumberView.frame.origin.y + 20 * screenWidth, self.view.frame.size.width, _nameTextField.frame.size.height) OriginX:30 * screenWidth LabelWidth:130 * screenWidth LabelName:@"维修站" ButtonImage:@"xiugai"];
     [_repairsStation.selecteButton setTitle:@"点击选择维修站点" forState:UIControlStateNormal];
@@ -157,7 +166,7 @@
     reasonBackgroundView.backgroundColor = [UIColor whiteColor];
     [_repairsScrollView addSubview:reasonBackgroundView];
     _reasonTextView = [[CFReasonTextView alloc]initWithFrame:CGRectMake(28 * screenWidth, 0, self.view.frame.size.width - 56 * screenWidth, 380 * screenHeight)];
-    //    _reasonTextView.delegate = self;
+    _reasonTextView.delegate = self;
     _reasonTextView.placeholder = @"故障描述：（必填，150字以内）";
     _reasonTextView.maxNumberOfLines = 10;
     _reasonTextView.font = CFFONT15;
@@ -167,13 +176,24 @@
         frame.size.height = textHeight;
         _reasonTextView.frame = frame;
     }];
+    _textNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(_reasonTextView.frame.size.width - 100 * screenWidth, _reasonTextView.frame.size.height - 30 * screenHeight, 100 * screenWidth, 20 * screenHeight)];
+    _textNumberLabel.textAlignment = NSTextAlignmentRight;
+    _textNumberLabel.textColor = [UIColor grayColor];
+    _textNumberLabel.font = CFFONT12;
+    _textNumberLabel.text = [NSString stringWithFormat:@"0/%d", MAX_LIMIT_NUMS];
+    [_reasonTextView addSubview:_textNumberLabel];
     
     UILabel *photoLabel = [[UILabel alloc]initWithFrame:CGRectMake(repairsMachineLabel.frame.origin.x, reasonBackgroundView.frame.size.height + reasonBackgroundView.frame.origin.y + 36 * screenHeight, repairsMachineLabel.frame.size.width, repairsMachineLabel.frame.size.height)];
     photoLabel.text = @"上传故障照片";
     photoLabel.font = CFFONT15;
     photoLabel.textColor = [UIColor darkGrayColor];
     [_repairsScrollView addSubview:photoLabel];
-    
+    _photoNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(CF_WIDTH / 2, photoLabel.frame.origin.y, (CF_WIDTH - 60 * screenWidth) / 2, photoLabel.frame.size.height)];
+    _photoNumberLabel.text = [NSString stringWithFormat:@"0/%d", MAX_LIMIT_PHOTONUMBER];
+    _photoNumberLabel.textColor = [UIColor grayColor];
+    _photoNumberLabel.textAlignment = NSTextAlignmentRight;
+    _photoNumberLabel.font = CFFONT13;
+    [_repairsScrollView addSubview:_photoNumberLabel];
     _photoView = [[UIView alloc]initWithFrame:CGRectMake(0, photoLabel.frame.size.height + photoLabel.frame.origin.y + 10 * screenWidth, self.view.frame.size.width, 300 * screenHeight)];
 //    _photoView.backgroundColor = [UIColor whiteColor];
     [_repairsScrollView addSubview:_photoView];
@@ -181,9 +201,9 @@
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
     _repairsPhotoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 25 * screenHeight, self.view.frame.size.width, 200 * screenHeight) collectionViewLayout:layout];
     _repairsPhotoCollection.backgroundColor = BackgroundColor;
-    layout.sectionInset = UIEdgeInsetsMake(0, 30 * Width, 0, 30 * Width);
-    layout.itemSize = CGSizeMake(200 * Width, 200 * Height);
-    layout.minimumLineSpacing = 10 * Width;
+    layout.sectionInset = UIEdgeInsetsMake(0, 30 * screenWidth, 0, 30 * screenWidth);
+    layout.itemSize = CGSizeMake(200 * screenWidth, 200 * screenHeight);
+    layout.minimumLineSpacing = 10 * screenWidth;
     layout.minimumInteritemSpacing = 0 * screenWidth;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     _repairsPhotoCollection.showsHorizontalScrollIndicator = NO;
@@ -208,7 +228,7 @@
     [_repairsScrollView addSubview:_machineNumberView];
     
     _machineNumber = [[UILabel alloc]init];
-    _machineNumber.frame = CGRectMake(50 * screenWidth, 20 * screenHeight, 400 * screenWidth, 40 * screenHeight);
+    _machineNumber.frame = CGRectMake(30 * screenWidth, 20 * screenHeight, 400 * screenWidth, 40 * screenHeight);
     _machineNumber.text = text;
     _machineNumber.font = CFFONT15;
     _machineNumber.textAlignment = NSTextAlignmentLeft;
@@ -235,7 +255,7 @@
     _lineView.backgroundColor = BackgroundColor;
     [_machineNumberView addSubview:_lineView];
 //
-    _machineView = [[UIView alloc]initWithFrame:CGRectMake(0, _lineView.frame.size.height + _lineView.frame.origin.y, CF_WIDTH, 225 * screenHeight)];
+    _machineView = [[UIView alloc]initWithFrame:CGRectMake(0, _lineView.frame.size.height + _lineView.frame.origin.y, CF_WIDTH, 325 * screenHeight)];
     [_machineNumberView addSubview:_machineView];
     
     _selecteButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -277,6 +297,7 @@
 - (void)scanGetMachineInfo
 {
     ScanViewController *scan = [[ScanViewController alloc]init];
+    scan.getInfoType = @"repair";
     scan.delegate = self;
     [self presentViewController:scan animated:YES completion:^{
         
@@ -321,6 +342,35 @@
         
     }];
 }
+#pragma mark -获取农机位置
+- (void)getMachineLocation:(NSString *)string{
+    NSDictionary *param = @{ @"imei":string,
+                                  @"carBar":@"",
+                                  };
+    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/getUserCarLoaction?" Params:param Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"getlocation%@", responseObject);
+        NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
+        if ([[dict objectForKey:@"code"] integerValue] == 200) {
+            self.model = [MachineModel machineModelWithDictionary:[responseObject objectForKey:@"body"]];
+            [self reloadWorkerMachineNumberView:self.model];
+            CGRect pickViewFrame = self.reapirsStaionPickView.frame;
+            [UIView animateWithDuration:0.3 animations:^{
+                self.reapirsStaionPickView.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height, pickViewFrame.size.width, pickViewFrame.size.height);
+            }];
+        } else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                
+            }];
+            [alert addAction:alertAction];
+            [self presentViewController:alert animated:YES completion:^{
+                
+            }];
+        }
+    } Failure:^(NSURLSessionDataTask *task, NSError *error) {
+        
+    }];
+}
 - (void)machinePickViewCancelButtonClick
 {
     self.vagueView.hidden = YES;
@@ -333,17 +383,12 @@
 {
     self.model = _reapirsStaionPickView.machineModel;
     self.vagueView.hidden = YES;
-    [self reloadWorkerMachineNumberView:_reapirsStaionPickView.machineModel];
-    CGRect pickViewFrame = self.reapirsStaionPickView.frame;
-    [UIView animateWithDuration:0.3 animations:^{
-        self.reapirsStaionPickView.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height, pickViewFrame.size.width, pickViewFrame.size.height);
-    }];
+    [self getMachineLocation:self.model.imei];
 }
 #pragma mark -代理扫描实现方法
 - (void)scanGetInformation:(MachineModel *)model
 {
         self.model = model;
-//        [_machineNumberView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
         [self reloadWorkerMachineNumberView:model];
 }
 // 代理重新布局农机手农机信息
@@ -379,10 +424,23 @@
     typeLabel.font = CFFONT14;
     [_machineView addSubview:typeLabel];
     UILabel *numberLabel = [[UILabel alloc]initWithFrame:CGRectMake(nameLabel.frame.origin.x, typeLabel.frame.size.height + typeLabel.frame.origin.y + 30 * screenHeight, nameLabel.frame.size.width, nameLabel.frame.size.height)];
-    numberLabel.text = [@"车架号："stringByAppendingString:[NSString stringWithFormat:@"%@",model.productBarCode]];
+    numberLabel.text = [@"备注："stringByAppendingString:[NSString stringWithFormat:@"%@",model.note]];
     numberLabel.font = CFFONT14;
-    numberLabel.textColor = [UIColor redColor];
+    numberLabel.textColor = ChangfaColor;
     [_machineView addSubview:numberLabel];
+    UILabel *buyTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineImage.frame.origin.x, machineImage.frame.size.height + machineImage.frame.origin.y + 20 * screenHeight, CF_WIDTH - 60 * screenWidth, nameLabel.frame.size.height)];
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[model.salesDate doubleValue]];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    NSString *dateString = [formatter stringFromDate: date];
+    buyTimeLabel.text = [@"购买时间："stringByAppendingString:[NSString stringWithFormat:@"%@",dateString]];
+    buyTimeLabel.font = CFFONT13;
+    [_machineView addSubview:buyTimeLabel];
+    UILabel *expireTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(buyTimeLabel.frame.origin.x, buyTimeLabel.frame.size.height + buyTimeLabel.frame.origin.y + 10 * screenHeight, buyTimeLabel.frame.size.width, nameLabel.frame.size.height)];
+    NSString *expireString = [dateString stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:[NSString stringWithFormat:@"%ld", [[dateString substringWithRange:NSMakeRange(0, 4)] integerValue] + 2]];
+    expireTimeLabel.text = [@"三  包  期："stringByAppendingString:[NSString stringWithFormat:@"%@",expireString]];
+    expireTimeLabel.font = CFFONT13;
+    [_machineView addSubview:expireTimeLabel];
 }
 #pragma mark -collectionViewDelegate/DataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -412,7 +470,7 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row == 0) {
-        if (self.photoArray.count == 9) {
+        if (self.photoArray.count == MAX_LIMIT_PHOTONUMBER) {
             [MBManager showBriefAlert:@"最多上传9张图片" time:1.5];
             return;
         }
@@ -433,7 +491,13 @@
             });
         }];
     } else {
-        
+        CFPreviewPhotoViewController *preview = [[CFPreviewPhotoViewController alloc]init];
+        preview.photoArray = self.photoArray;
+        preview.selectedIndex = indexPath.row - 1;
+        preview.headerHeight = navHeight;
+        [self presentViewController:preview animated:YES completion:^{
+                
+        }];
     }
 }
 // 删除图片
@@ -446,8 +510,7 @@
 #pragma mark - <CTAssetsPickerControllerDelegate>
 -(BOOL)assetsPickerController:(CTAssetsPickerController *)picker shouldSelectAsset:(PHAsset *)asset
 {
-    NSInteger max = 9;
-    if (picker.selectedAssets.count + self.photoArray.count >= max) {
+    if (picker.selectedAssets.count + self.photoArray.count >= MAX_LIMIT_PHOTONUMBER) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:[NSString stringWithFormat:@"最多选择%zd张图片", picker.selectedAssets.count] preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:nil]];
         [picker presentViewController:alert animated:YES completion:nil];
@@ -485,69 +548,32 @@
 {
     [self.view endEditing:YES];
     if (self.city.length < 1) {
-        [MBManager showBriefAlert:@"请选择所在地区" time:1.5];
+        [MBManager showBriefAlert:@"请选择省/市" time:1.5];
         return;
     }
     if (_model.imei.length < 1) {
         [MBManager showBriefAlert:@"请选择维修农机" time:1.5];
         return;
     }
-    [self getMachinePosition];
-}
-#pragma mark -获取农机位置
-- (void)getMachinePosition{
-    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/getVehicleLocation" Loading:0 Params:nil Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSLog(@"%@", responseObject);
-        NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
-        if ([[dict objectForKey:@"code"] integerValue] == 200) {
-            NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-            _machineLat = @"";
-            _machineLng = @"";
-            for (NSDictionary *dict in [[responseObject objectForKey:@"body"] objectForKey:@"resultList"]) {
-                 NSLog(@"%@", self.model.imei);
-                if ([[dict objectForKey:@"imei"] isEqualToString:self.model.imei]) {
-                    _machineLat = [dict objectForKey:@"lat"];
-                    _machineLng = [dict objectForKey:@"lng"];
-                }
-            }
-            NSDictionary *params = @{
-                                     @"city":self.city,
-                                     @"userLat":[NSNumber numberWithDouble:self.latitude],
-                                     @"userLng":[NSNumber numberWithDouble:self.longitude],
-                                     @"machineLat":_machineLat,
-                                     @"machineLng":_machineLng,
-                                     @"userId":[userDefault objectForKey:@"UserUid"],
-                                     };
-            [self.view endEditing:YES];
-            [self getRepairsStationInfoWithParams:params];
-
-        } else if ([[dict objectForKey:@"code"] integerValue] == 300) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                
-            }];
-            [alert addAction:alertAction];
-            [self presentViewController:alert animated:YES completion:^{
-                
-            }];
-        } else {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                
-            }];
-            [alert addAction:alertAction];
-            [self presentViewController:alert animated:YES completion:^{
-                
-            }];
-        }
-    } Failure:^(NSURLSessionDataTask *task, NSError *error) {
-        
-    }];
+    [self getRepairsStationInfo];
 }
 #pragma mark - 获取维修站点
-- (void)getRepairsStationInfoWithParams:(NSDictionary *)params
+- (void)getRepairsStationInfo
 {
-    
+    NSLog(@"%ld", [self.model.lat integerValue]);
+    if ([[NSString stringWithFormat:@"%@", self.model.lat] length] < 1 || [[NSString stringWithFormat:@"%@", self.model.lng] length] < 1) {
+        [MBManager showBriefAlert:@"请重新扫描获取农机信息" time:1.5];
+        return;
+    }
+    NSDictionary *params = @{
+                             @"city":self.city,
+                             @"userLat":[NSNumber numberWithDouble:self.latitude],
+                             @"userLng":[NSNumber numberWithDouble:self.longitude],
+                             @"machineLat":self.model.lat,
+                             @"machineLng":self.model.lng,
+                             @"userId":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserUid"],
+                             };
+    [self.view endEditing:YES];
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"serviceInfo/getNearestService" Loading:1 Params:params Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"%@,  %@", responseObject, [[responseObject objectForKey:@"head"] objectForKey:@"message"]);
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
@@ -570,6 +596,7 @@
 #pragma mark - 提交报修
 - (void)submitButtonClick
 {
+    [MBManager hideAlert];
     if (_nameTextField.textField.text.length < 1) {
         [MBManager showBriefAlert:@"请填写姓名" time:1.5];
         return;
@@ -629,12 +656,13 @@
         for (id response in result) {
             NSLog(@"tupian%@", response);
             if (ids == 0) {
-                self.fileIds = [[response objectForKey:@"body"] objectForKey:@"fileIds"];
+                self.fileIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
             } else {
-                self.fileIds = [[self.fileIds stringByAppendingString:@","] stringByAppendingString:[[response objectForKey:@"body"] objectForKey:@"fileIds"]];
+                self.fileIds = [[self.fileIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
             }
             ids++;
         }
+        _photoNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.photoArray.count, MAX_LIMIT_PHOTONUMBER];
         NSLog(@"%@", self.fileIds);
         [MBManager hideAlert];
     });
@@ -647,6 +675,9 @@
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *params = @{@"file":@"",
                              @"userId":[userDefaults objectForKey:@"UserUid"],
+                             @"dispatchId":@"",
+                             @"token":@"",
+                             @"type":@"0",
                              };
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:@"http://192.168.31.68:8080/changfa_system/file/manyFileUpload.do?" parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
@@ -664,6 +695,7 @@
 #pragma mark - 图片上传完毕,提交报修
 - (void)submitRepairsinfo
 {
+    [MBManager hideAlert];
     if (_fileIds.length < 1) {
         [MBManager showBriefAlert:@"请上传故障照片" time:1.5];
         return;
@@ -673,8 +705,8 @@
                              @"token":[userDefaults objectForKey:@"UserToken"],
                              @"userLat":[NSNumber numberWithDouble:self.latitude],
                              @"userLng":[NSNumber numberWithDouble:self.longitude],
-                             @"machineLat":_machineLat,
-                             @"machineLng":_machineLng,
+                             @"machineLat":self.model.lat,
+                             @"machineLng":self.model.lng,
                              @"description":_reasonTextView.text,
                              @"barCode":_model.productBarCode,
                              @"imei":_model.imei,
@@ -763,6 +795,121 @@
 - (void)viewDidDisappear:(BOOL)animated
 {
     [self stopSerialLocation];
+}
+- (void)textFieldDidChangeValue:(UITextField *)textField
+{
+    if (textField.tag  == 1001) {
+        if (textField.text.length > 30) {
+            textField.text = [textField.text substringToIndex:30];
+        }
+    } else {
+        if (textField.text.length > 11) {
+            textField.text = [textField.text substringToIndex:11];
+        }
+    }
+}
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range
+ replacementText:(NSString *)text
+{
+    UITextRange *selectedRange = [textView markedTextRange];
+    //获取高亮部分
+    UITextPosition *pos = [textView positionFromPosition:selectedRange.start offset:0];
+    //获取高亮部分内容
+    //NSString * selectedtext = [textView textInRange:selectedRange];
+    
+    //如果有高亮且当前字数开始位置小于最大限制时允许输入
+    if (selectedRange && pos) {
+        NSInteger startOffset = [textView offsetFromPosition:textView.beginningOfDocument toPosition:selectedRange.start];
+        NSInteger endOffset = [textView offsetFromPosition:textView.beginningOfDocument toPosition:selectedRange.end];
+        NSRange offsetRange = NSMakeRange(startOffset, endOffset - startOffset);
+        
+        if (offsetRange.location < MAX_LIMIT_NUMS) {
+            return YES;
+        }
+        else
+        {
+            return NO;
+        }
+    }
+    
+    
+    NSString *comcatstr = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    
+    NSInteger caninputlen = MAX_LIMIT_NUMS - comcatstr.length;
+    
+    if (caninputlen >= 0)
+    {
+        return YES;
+    }
+    else
+    {
+        NSInteger len = text.length + caninputlen;
+        //防止当text.length + caninputlen < 0时，使得rg.length为一个非法最大正数出错
+        NSRange rg = {0,MAX(len,0)};
+        
+        if (rg.length > 0)
+        {
+            NSString *s = @"";
+            //判断是否只普通的字符或asc码(对于中文和表情返回NO)
+            BOOL asc = [text canBeConvertedToEncoding:NSASCIIStringEncoding];
+            if (asc) {
+                s = [text substringWithRange:rg];//因为是ascii码直接取就可以了不会错
+            }
+            else
+            {
+                __block NSInteger idx = 0;
+                __block NSString  *trimString = @"";//截取出的字串
+                //使用字符串遍历，这个方法能准确知道每个emoji是占一个unicode还是两个
+                [text enumerateSubstringsInRange:NSMakeRange(0, [text length])
+                                         options:NSStringEnumerationByComposedCharacterSequences
+                                      usingBlock: ^(NSString* substring, NSRange substringRange, NSRange enclosingRange, BOOL* stop) {
+                                          
+                                          if (idx >= rg.length) {
+                                              *stop = YES; //取出所需要就break，提高效率
+                                              return ;
+                                          }
+                                          
+                                          trimString = [trimString stringByAppendingString:substring];
+                                          
+                                          idx++;
+                                      }];
+                
+                s = trimString;
+            }
+            //rang是指从当前光标处进行替换处理(注意如果执行此句后面返回的是YES会触发didchange事件)
+            [textView setText:[textView.text stringByReplacingCharactersInRange:range withString:s]];
+            //既然是超出部分截取了，哪一定是最大限制了。
+            self.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%ld", (long)MAX_LIMIT_NUMS, (long)MAX_LIMIT_NUMS];
+        }
+        return NO;
+    }
+    
+}
+
+- (void)textViewDidChange:(UITextView *)textView
+{
+    UITextRange *selectedRange = [textView markedTextRange];
+    //获取高亮部分
+    UITextPosition *pos = [textView positionFromPosition:selectedRange.start offset:0];
+    
+    //如果在变化中是高亮部分在变，就不要计算字符了
+    if (selectedRange && pos) {
+        return;
+    }
+    
+    NSString  *nsTextContent = textView.text;
+    NSInteger existTextNum = nsTextContent.length;
+    
+    if (existTextNum > MAX_LIMIT_NUMS)
+    {
+        //截取到最大位置的字符
+        NSString *s = [nsTextContent substringToIndex:MAX_LIMIT_NUMS];
+        
+        [textView setText:s];
+    }
+    
+    //不让显示负数 口口日
+    self.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d",MAX(0, existTextNum),MAX_LIMIT_NUMS];
 }
 - (void)dealloc
 {

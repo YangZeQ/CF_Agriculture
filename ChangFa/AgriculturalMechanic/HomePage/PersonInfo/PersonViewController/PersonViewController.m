@@ -75,6 +75,7 @@
     [super viewDidLoad];
     self.view.backgroundColor = BackgroundColor;
     self.navigationItem.title = @"个人资料";
+    self.navigationController.navigationBar.barTintColor = ChangfaColor;
     [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, nil]];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"fanhuiwhite"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftButtonClick)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(rightButtonClick)];
@@ -85,7 +86,6 @@
 }
 - (void)createPersonView{
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-    UITapGestureRecognizer *tapLabel = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapLabelToChangeInfo:)];
     UIView *sculpture = [[UIView alloc]initWithFrame:CGRectMake(0, 64 + 20 * screenHeight, self.view.frame.size.width, 272 * screenHeight)];
     sculpture.backgroundColor = [UIColor whiteColor];
     UILabel *sculptureLabel = [[UILabel alloc]initWithFrame:CGRectMake(60 * screenWidth, 111 * screenHeight, 150 * screenWidth, 50 * screenHeight)];
@@ -160,6 +160,8 @@
         [_identifyInfo setTitle:@"销售员" forState:UIControlStateNormal];
     } else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 4) {
         [_identifyInfo setTitle:@"仓管" forState:UIControlStateNormal];
+    } else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 6) {
+        [_identifyInfo setTitle:@"三包员" forState:UIControlStateNormal];
     }
     _identifyInfo.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     _identifyInfo.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
@@ -203,8 +205,11 @@
     [place addSubview:placeButton];
     _placeInfo = [UIButton buttonWithType:UIButtonTypeCustom];
     _placeInfo.tag = 1010;
-    _phoneInfo.titleLabel.font = CFFONT16;
+    _placeInfo.titleLabel.font = CFFONT16;
     _placeInfo.frame = CGRectMake(_sexInfo.frame.origin.x, _sexInfo.frame.origin.y, _sexInfo.frame.size.width, _sexInfo.frame.size.height);
+    if ([[userDefault objectForKey:@"UserLocation"] length] > 0) {
+        [_placeInfo setTitle:[userDefault objectForKey:@"UserLocation"] forState:UIControlStateNormal];
+    }
     [_placeInfo setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     _placeInfo.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     _placeInfo.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
@@ -216,10 +221,9 @@
     [quit setBackgroundColor:ChangfaColor];
     [quit setTitle:@"退出登录" forState:UIControlStateNormal];
     [quit setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    quit.layer.cornerRadius = 20 * Width;
+    quit.layer.cornerRadius = 20 * screenWidth;
     [quit addTarget:self action:@selector(quitPersonAccount) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:sculpture];
-//    [self.view addSubview:sex];
     [self.view addSubview:identify];
     [self.view addSubview:phone];
     [self.view addSubview:place];
@@ -227,9 +231,6 @@
     
     [self.view addSubview:self.backView];
     [self.view addSubview:self.pickerView];
-    [self.view addSubview:self.pickViewSex];
-    [self.view addSubview:self.pickViewID];
-    [self.backView addGestureRecognizer:tapLabel];
 
     _areaPickView = [[CFPickView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height, [UIScreen mainScreen].bounds.size.width, 528 * screenHeight)];
     self.vagueView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
@@ -244,7 +245,35 @@
 }
 - (void)rightButtonClick
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    NSDictionary *dict = @{
+                           @"uid":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserUid"],
+                           @"uname":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserName"],
+                           @"phone":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserPhone"],
+                           @"headUrl":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserHeadUrl"],
+                           @"location":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserLocation"],
+                           @"roleType":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserRoleType"],
+                           @"distributorId":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserDistributorId"],
+                           @"bindNum":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserBindNum"],
+                           };
+    
+    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/editUserInfo" Params:dict Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"%@", responseObject);
+        NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
+        if ([[dict objectForKey:@"code"] integerValue] == 200) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }  else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"退出失败" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                
+            }];
+            [alert addAction:alertAction];
+            [self presentViewController:alert animated:YES completion:^{
+                
+            }];
+        }
+    } Failure:^(NSURLSessionDataTask *task, NSError *error) {
+      
+    }];
 }
 - (void)changeinformation:(UIButton *)sender
 {
@@ -263,8 +292,6 @@
     } else if (sender.tag == 1005 || sender.tag == 1010) {
         _areaPickView.numberOfComponents = 3;
         _areaPickView.frame = CGRectMake(0, self.view.frame.size.height - 528 * screenHeight, [UIScreen mainScreen].bounds.size.width, 528 * screenHeight);
-//        _backView.hidden = NO;
-//        [self.pickerView show];
     }
 }
 
@@ -279,6 +306,7 @@
 - (void)pickViewsuerButtonClick{
     self.vagueView.hidden = YES;
     [_placeInfo setTitle:_areaPickView.selectedInfo forState:UIControlStateNormal];
+    [[NSUserDefaults standardUserDefaults] setObject:_areaPickView.selectedInfo forKey:@"UserLocation"];
     [_placeInfo setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     CGRect pickViewFrame = self.areaPickView.frame;
     [UIView animateWithDuration:0.3 animations:^{
@@ -291,39 +319,6 @@
     [UIView animateWithDuration:0.3 animations:^{
         self.areaPickView.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height, pickViewFrame.size.width, pickViewFrame.size.height);
     }];
-}
-//废弃
-- (void)cancelBtnClick
-{
-    [self.pickerView hide];
-    [self.pickViewID hide];
-    [self.pickViewSex hide];
-    _backView.hidden = YES;
-}
-- (void)sureBtnClickReturnProvince:(NSString *)province City:(NSString *)city Area:(NSString *)area
-{
-    [_placeInfo setTitle:[[province stringByAppendingString:city] stringByAppendingString:area] forState:UIControlStateNormal];
-    [self.pickerView hide];
-    _backView.hidden = YES;
-}
-- (void)sureBtnClickReturnSex:(NSString *)sex
-{
-    [_sexInfo setTitle:sex forState:UIControlStateNormal];
-    [self.pickViewSex hide];
-    _backView.hidden = YES;
-}
-- (void)sureBtnClickReturnIdentify:(NSString *)identify
-{
-    [_identifyInfo setTitle:identify forState:UIControlStateNormal];
-    [self.pickViewID hide];
-    _backView.hidden = YES;
-}
-- (void)tapLabelToChangeInfo:(UIButton *)sender
-{
-    self.backView.hidden = YES;
-    [self.pickerView hide];
-    [self.pickViewID hide];
-    [self.pickViewSex hide];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -14,6 +14,9 @@
 @property (nonatomic, strong)NSMutableArray *filePath;
 @property (nonatomic, strong)NSString *level;
 @property (nonatomic, strong)NSString *mobile;
+@property (nonatomic, strong)NSString *createTime;
+@property (nonatomic, strong)NSString *fileIds;
+@property (nonatomic, strong)NSString *userId;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)commentModelWithDictionary:(NSDictionary *)dict;

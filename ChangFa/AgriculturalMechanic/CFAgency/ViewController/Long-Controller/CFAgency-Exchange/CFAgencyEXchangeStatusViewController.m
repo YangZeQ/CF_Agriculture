@@ -59,7 +59,7 @@
     
     UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
     backButton.frame = CGRectMake(30 * screenWidth, self.view.frame.size.height - 130 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-    backButton.layer.cornerRadius = 20 * Width;
+    backButton.layer.cornerRadius = 20 * screenWidth;
     [backButton setTitle:@"返回首页" forState:UIControlStateNormal];
     [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [backButton setBackgroundColor:ChangfaColor];

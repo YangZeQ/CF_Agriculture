@@ -32,6 +32,7 @@
 
 #import <UIKit/UIKit.h>
 
+typedef void(^addMachineViewBlock)(UIView *view);
 @interface SDCollectionViewCell : UICollectionViewCell
 
 @property (weak, nonatomic) UIImageView *imageView;
@@ -48,4 +49,5 @@
 /** 只展示文字轮播 */
 @property (nonatomic, assign) BOOL onlyDisplayText;
 
+@property (nonatomic, copy) addMachineViewBlock addMachineViewBlock;
 @end

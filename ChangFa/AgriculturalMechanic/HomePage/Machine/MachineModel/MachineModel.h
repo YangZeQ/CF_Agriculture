@@ -13,6 +13,7 @@
 @property (nonatomic, strong)NSString *outDate;
 @property (nonatomic, strong)NSString *inputDate;
 @property (nonatomic, strong)NSString *saleDate;
+@property (nonatomic, strong)NSString *salesDate;
 @property (nonatomic, strong)NSString *carType;
 @property (nonatomic, strong)NSString *cardNumber;
 @property (nonatomic, strong)NSString *imei;

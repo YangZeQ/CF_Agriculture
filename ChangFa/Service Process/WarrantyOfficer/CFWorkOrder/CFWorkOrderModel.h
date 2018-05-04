@@ -14,6 +14,8 @@
 @property (nonatomic, strong)NSString *machineName;
 @property (nonatomic, strong)NSString *machineType;
 @property (nonatomic, strong)NSString *status;
+@property (nonatomic, strong)NSString *buyTime;
+@property (nonatomic, strong)NSString *updateTime;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)orderModelWithDictionary:(NSDictionary *)dict;

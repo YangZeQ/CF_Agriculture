@@ -37,6 +37,7 @@
     if (!_placeholderView ) {
         UITextView *placeholderView = [[UITextView alloc] initWithFrame:self.bounds];
         _placeholderView = placeholderView;
+        _placeholderView.returnKeyType = UIReturnKeyDone;
         //防止textView输入时跳动问题
         _placeholderView.scrollEnabled = NO;
         _placeholderView.showsHorizontalScrollIndicator = NO;

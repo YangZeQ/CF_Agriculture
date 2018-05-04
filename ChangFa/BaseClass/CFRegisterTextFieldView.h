@@ -14,10 +14,12 @@
 //@property (nonatomic, assign)BOOL getCode;
 //@property (nonatomic, assign)BOOL secretCode;
 //@property (nonatomic, assign)CGRect reframe;
+@property (nonatomic, strong)UILabel *label;
 @property (nonatomic, strong)UITextField *textField;
 @property (nonatomic, strong)UIButton *getCodeBtn;
 @property (nonatomic, strong)UIButton *secretBtn;
 @property (nonatomic, strong)UIButton *selecteButton;
+@property (nonatomic, strong)UILabel *lineLabel;
 //有图
 - (instancetype)initWithImageName:(NSString *)imageName
                        Placeholder:(NSString *)placeHolder
@@ -37,5 +39,10 @@
                    LabelWidth:(float)width
                     LabelName:(NSString *)labelName
                   ButtonImage:(NSString *)buttonImage;
-
+//选择男女
+- (instancetype)initWithFrame:(CGRect)frame
+                    LabelText:(NSString *)labelText
+                   LabelWidth:(float)width
+                     OriginX1:(float)originX1
+                     OriginX2:(float)originX2;
 @end

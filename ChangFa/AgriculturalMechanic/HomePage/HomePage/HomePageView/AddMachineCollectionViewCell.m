@@ -27,16 +27,6 @@
     self.addImageView.image = [UIImage imageNamed:@"addMachine"];
     [backImage addSubview:self.addImageView];
 }
-- (void)setStyle:(NSInteger)style
-{
-    switch (style) {
-        case 1:
-            self.addImageView.frame = CGRectMake(50 * screenWidth, 50 * screenHeight, self.contentView.frame.size.width - 100 * screenWidth, self.contentView.frame.size.height - 100 * screenHeight);
-            break;
-        default:
-            break;
-    }
-}
 - (void)setImageName:(NSString *)imageName
 {
     _imageName = imageName;

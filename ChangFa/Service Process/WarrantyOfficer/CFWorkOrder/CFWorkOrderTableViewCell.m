@@ -47,19 +47,19 @@
     [_backView addSubview:_machineType];
 
     
-    _orderStatus = [[UILabel alloc]initWithFrame:CGRectMake(_backView.frame.size.width - 130 * screenWidth, _machineName.frame.origin.y, 100 * screenWidth, _machineName.frame.size.height)];
+    _orderStatus = [[YYLabel alloc]initWithFrame:CGRectMake(_backView.frame.size.width - 180 * screenWidth, _machineName.frame.origin.y, 150 * screenWidth, _machineName.frame.size.height)];
     _orderStatus.textColor = [UIColor redColor];
     _orderStatus.textAlignment = NSTextAlignmentRight;
-    _orderStatus.font = CFFONT14;
+    _orderStatus.font = CFFONT12;
     _orderStatus.text = @"未接单";
     [_backView addSubview:_orderStatus];
     
-//    _residueTime = [[UILabel alloc]initWithFrame:CGRectMake(_orderStatus.frame.origin.x, _machineType.frame.origin.y, _orderStatus.frame.size.width, _orderStatus.frame.size.height)];
-//    _residueTime.font = CFFONT14;
-//    _residueTime.textAlignment = NSTextAlignmentRight;
-//    _residueTime.textColor = [UIColor grayColor];
-//    _residueTime.text = @"09:01";
-//    [_backView addSubview:_residueTime];
+    _residueTime = [[UILabel alloc]initWithFrame:CGRectMake(_backView.frame.size.width - 230 * screenWidth, _machineType.frame.origin.y, 200 * screenWidth, _orderStatus.frame.size.height)];
+    _residueTime.font = CFFONT12;
+    _residueTime.textAlignment = NSTextAlignmentRight;
+    _residueTime.textColor = [UIColor grayColor];
+    _residueTime.text = @"09:01";
+    [_backView addSubview:_residueTime];
 
 }
 - (void)setModel:(CFWorkOrderModel *)model
@@ -127,22 +127,59 @@
     }
     _machineName.text = model.machineName;
     _machineType.text = model.machineModel;
+    NSDate *nowDate = [NSDate date]; // 当前时间
+    
+    NSDateFormatter *dayFormatter = [[NSDateFormatter alloc] init];
+    dayFormatter.dateFormat = @"yyyy-MM-dd";
+    NSDate *dayCreat = [dayFormatter dateFromString:[model.updateTime substringWithRange:NSMakeRange(0, 10)]]; // 传入的时间
+    
+    NSCalendar *dayCalendar = [NSCalendar currentCalendar];
+    NSCalendarUnit dayUnit = NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear;
+    NSDateComponents *dayCompas = [dayCalendar components:dayUnit fromDate:dayCreat toDate:nowDate options:0];
+    NSLog(@"year=%zd  month=%zd  day=%zd",dayCompas.year,dayCompas.month,dayCompas.day);
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    NSDate *creat = [formatter dateFromString:model.updateTime]; // 传入的时间
+    
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSCalendarUnit unit = NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
+    NSDateComponents *compas = [calendar components:unit fromDate:creat toDate:nowDate options:0];
+    NSLog(@"year=%zd  month=%zd  day=%zd hour=%zd  minute=%zd",compas.year,compas.month,compas.day,compas.hour,compas.minute);
+    
+    if ([[NSString stringWithFormat:@"%zd", dayCompas.day] integerValue] > 2) {
+        _residueTime.text = [model.updateTime substringWithRange:NSMakeRange(5, 5)];
+        _residueTime.text = [model.updateTime substringWithRange:NSMakeRange(11, 5)];
+    } else {
+        if ([[NSString stringWithFormat:@"%zd", dayCompas.day] integerValue] > 0) {
+            if ([[NSString stringWithFormat:@"%zd", dayCompas.day] integerValue] > 0 && [[NSString stringWithFormat:@"%zd", dayCompas.day] integerValue] < 2) {
+                _residueTime.text = [@"昨天" stringByAppendingString:[model.updateTime substringWithRange:NSMakeRange(11, 5)]];
+            } else if ([[NSString stringWithFormat:@"%zd", dayCompas.day] integerValue] > 1 && [[NSString stringWithFormat:@"%zd", dayCompas.day] integerValue] < 3) {
+                _residueTime.text = [@"前天" stringByAppendingString:[model.updateTime substringWithRange:NSMakeRange(11, 5)]];
+            } else {
+                _residueTime.text = [NSString stringWithFormat:@"%zd天前", dayCompas.day];
+            }
+        } else if ([[NSString stringWithFormat:@"%zd", compas.hour] integerValue] > 0) {
+            _residueTime.text = [model.updateTime substringWithRange:NSMakeRange(11, 5)];
+        } else if ([[NSString stringWithFormat:@"%zd", compas.minute] integerValue] > 0) {
+            _residueTime.text = [NSString stringWithFormat:@"%zd分钟前", compas.minute];
+        } else {
+            _residueTime.text = @"刚刚";
+        }
+    }
 }
 - (void)setCellStyle:(NSInteger)cellStyle
 {
     _cellStyle = cellStyle;
     switch (self.cellStyle) {
         case 1:
-            _orderStatus.frame = CGRectMake(_backView.frame.size.width - 180 * screenWidth, _machineName.frame.origin.y, 150 * screenWidth, _machineName.frame.size.height * 2 + 20 * screenHeight);
-            _orderStatus.textAlignment = NSTextAlignmentCenter;
-            _orderStatus.numberOfLines = 2;
-            _orderStatus.text = @"审核不通过";
-            _orderStatus.font = CFFONT14;
-            _residueTime.hidden = YES;
+            _orderStatus.frame = CGRectMake(_backView.frame.size.width - 180 * screenWidth, _machineName.frame.origin.y, 150 * screenWidth, _machineName.frame.size.height);
+//            _orderStatus.numberOfLines = 2;
+            _orderStatus.font = CFFONT12;
             break;
         case 2:
             _orderStatus.hidden = YES;
-            _residueTime.hidden = YES;
         default:
             break;
     }

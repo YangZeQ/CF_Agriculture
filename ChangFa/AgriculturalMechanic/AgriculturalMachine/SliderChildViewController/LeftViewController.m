@@ -59,7 +59,7 @@
         UILabel *name = [[UILabel alloc]initWithFrame:CGRectMake(_headerImage.frame.size.width + _headerImage.frame.origin.x + 20 * screenWidth, _headerImage.frame.origin.y + 25 * screenHeight, 300 * screenWidth, 40 * screenHeight)];
         name.textColor = [UIColor whiteColor];
         name.font = [UIFont systemFontOfSize:[self autoScaleW:16]];
-        name.text = [userDefault objectForKey:@"UserPhone"];
+        name.text = [userDefault objectForKey:@"UserName"];
         UILabel *phoneNumber = [[UILabel alloc]initWithFrame:CGRectMake(name.frame.origin.x, name.frame.origin.y + name.frame.size.height + 30 * screenHeight, name.frame.size.width, name.frame.size.height)];
         phoneNumber.textColor = [UIColor whiteColor];
         phoneNumber.font = [UIFont systemFontOfSize:[self autoScaleW:16]];

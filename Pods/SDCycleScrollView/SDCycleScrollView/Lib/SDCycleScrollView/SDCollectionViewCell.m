@@ -71,6 +71,10 @@
 {
     UIImageView *imageView = [[UIImageView alloc] init];
     _imageView = imageView;
+    __block SDCollectionViewCell *blockSelf = self;
+    self.addMachineViewBlock = ^(UIView *view) {
+        [blockSelf.imageView addSubview:view];
+    };
     [self.contentView addSubview:imageView];
 }
 

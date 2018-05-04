@@ -14,9 +14,10 @@
 #import <AMapLocationKit/AMapLocationKit.h>
 #import <AMapSearchKit/AMapCommonObj.h>
 #import <AMapSearchKit/AMapSearchKit.h>
-#import <MapKit/MKMapItem.h>
-#import <MapKit//MKTypes.h>
+#import <MapKit/MKTypes.h>
 #import "MANaviRoute.h"
+#import <MapKit/MKMapItem.h>
+#import "PointAnnotation.h"
 static const NSString *RoutePlanningViewControllerStartTitle       = @"起点";
 static const NSString *RoutePlanningViewControllerDestinationTitle = @"终点";
 static const NSInteger RoutePlanningPaddingEdge = 20;
@@ -97,12 +98,15 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
     [navigationButton addTarget:self action:@selector(navigationButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [addressView addSubview:navigationButton];
     
-    self.mapTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, CF_HEIGHT - (102 * (self.mapArray.count - 1) + 360) * screenHeight, CF_WIDTH, (102 * (self.mapArray.count - 1) + 360) * screenHeight) style:UITableViewStyleGrouped];
+    self.mapTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, CF_HEIGHT - (102 * (self.mapArray.count - 1) + 360) * screenHeight, CF_WIDTH, (102 * (self.mapArray.count - 1) + 360) * screenHeight) style:UITableViewStylePlain];
+    self.mapTableView.backgroundColor = BackgroundColor;
+    self.mapTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.mapTableView.delegate = self;
     self.mapTableView.dataSource = self;
-    self.mapTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.mapTableView.backgroundColor = BackgroundColor;
+    self.mapTableView.scrollEnabled = NO;
     [self.vagueView addSubview:self.mapTableView];
+    
+    
 }
 - (void)createNavigationView
 {
@@ -127,7 +131,7 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
         cell = [[CFMapTableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];
     }
     if (indexPath.section == 0) {
-            cell.infoLabel.text = @"导航";
+            cell.infoLabel.text = @"显示路线";
     } else if (indexPath.section == 1) {
         cell.infoLabel.text = [_mapArray[indexPath.row] objectForKey:@"title"];
     } else {
@@ -140,16 +144,24 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
 {
     return 102 * screenHeight;
 }
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 0.01f;
+}
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     if (section == 2) {
-        return 0.001f;
+        return 0.01f;
     }
     return 28 * screenHeight;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+//{
+//    return nil;
+//}
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    return 0.001f;
+    return nil;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -203,7 +215,7 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
     MANaviAnnotationType type = MANaviAnnotationTypeDrive;
     self.naviRoute = [MANaviRoute naviRouteForPath:self.route.paths[0] withNaviType:type showTraffic:YES startPoint:[AMapGeoPoint locationWithLatitude:self.latitude longitude:self.longitude] endPoint:[AMapGeoPoint locationWithLatitude:self.stationLatitude longitude:self.stationLongitude]];
     [self.naviRoute addToMapView:self.mapView];
-    
+
     /* 缩放地图使其适应polylines的展示. */
     [self.mapView showOverlays:self.naviRoute.routePolylines edgePadding:UIEdgeInsetsMake(RoutePlanningPaddingEdge, RoutePlanningPaddingEdge, RoutePlanningPaddingEdge, RoutePlanningPaddingEdge) animated:YES];
 }
@@ -222,16 +234,16 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
         polylineRenderer.lineWidth   = 8;
         polylineRenderer.lineDashPattern = @[@10, @15];
         polylineRenderer.strokeColor = [UIColor redColor];
-        
+
         return polylineRenderer;
     }
     if ([overlay isKindOfClass:[MANaviPolyline class]])
     {
         MANaviPolyline *naviPolyline = (MANaviPolyline *)overlay;
         MAPolylineRenderer *polylineRenderer = [[MAPolylineRenderer alloc] initWithPolyline:naviPolyline.polyline];
-        
+
         polylineRenderer.lineWidth = 8;
-        
+
         if (naviPolyline.type == MANaviAnnotationTypeWalking)
         {
             polylineRenderer.strokeColor = self.naviRoute.walkingColor;
@@ -244,43 +256,43 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
         {
             polylineRenderer.strokeColor = self.naviRoute.routeColor;
         }
-        
+
         return polylineRenderer;
     }
     if ([overlay isKindOfClass:[MAMultiPolyline class]])
     {
         MAMultiColoredPolylineRenderer * polylineRenderer = [[MAMultiColoredPolylineRenderer alloc] initWithMultiPolyline:overlay];
-        
+
         polylineRenderer.lineWidth = 8;
         polylineRenderer.strokeColors = [self.naviRoute.multiPolylineColors copy];
         polylineRenderer.gradient = YES;
-        
+
         return polylineRenderer;
     }
-    
+
     return nil;
 }
 
 #pragma mark  苹果自带
 - (void)skipSystemMap {
-    
+
     CLLocationCoordinate2D coords2 = CLLocationCoordinate2DMake(self.latitude, self.longitude);
-    
+
     //当前的位置
     MKMapItem *currentLocation = [MKMapItem mapItemForCurrentLocation];
     //目的地的位置
     MKMapItem *toLocation = [[MKMapItem alloc] initWithPlacemark:[[MKPlacemark alloc] initWithCoordinate:coords2 addressDictionary:nil]];
 //    toLocation.name = self.desAddress;
     NSArray *items = [NSArray arrayWithObjects:currentLocation, toLocation, nil];
-    
+
     NSDictionary *options = @{ MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeDriving, MKLaunchOptionsMapTypeKey: [NSNumber numberWithInteger:MKMapTypeStandard], MKLaunchOptionsShowsTrafficKey:@YES };
-    
+
     //打开苹果自身地图应用，并呈现特定的item
     [MKMapItem openMapsWithItems:items launchOptions:options];
 }
 - (void)locationButtonClick
 {
-    _mapView.centerCoordinate = CLLocationCoordinate2DMake(self.latitude, self.longitude);
+    _mapView.centerCoordinate = CLLocationCoordinate2DMake(self.stationLatitude, self.stationLongitude);
 }
 - (void)navigationButtonClick
 {
@@ -293,8 +305,8 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
     
     ///初始化地图
     _mapView = [[MAMapView alloc] initWithFrame:CGRectMake(0, 0, CF_WIDTH, CF_HEIGHT)];
-    
-    [_mapView setZoomLevel:15.0 animated:YES];
+    _mapView.delegate = self;
+    //    [_mapView setZoomLevel:15.0 animated:YES];
     
     ///把地图添加至view
     [self.view addSubview:_mapView];
@@ -302,10 +314,10 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
     ///如果您需要进入地图就显示定位小蓝点，则需要下面两行代码
     _mapView.showsUserLocation = YES;
     _mapView.userTrackingMode = MAUserTrackingModeFollow;
-    
-    _mapView.delegate = self;
+    _mapView.centerCoordinate = CLLocationCoordinate2DMake(_stationLatitude, _stationLongitude);
     _mapView.showsCompass = NO;
     [self configLocationManager];
+    [self initAnnotations];
 }
 #pragma mark -定位
 - (void)configLocationManager
@@ -314,7 +326,7 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
     
     [self.locationManager setDelegate:self];
     
-    [self.locationManager setPausesLocationUpdatesAutomatically:YES];
+    [self.locationManager setPausesLocationUpdatesAutomatically:NO];
     
     [self.locationManager setAllowsBackgroundLocationUpdates:YES];
     
@@ -345,6 +357,24 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
     self.latitude = location.coordinate.latitude;
     self.longitude = location.coordinate.longitude;
 }
+#pragma mark - 设置大头针坐标
+- (void)initAnnotations
+{
+    NSMutableArray *coordinates = [NSMutableArray array];
+    PointAnnotation *pointAnnotation = [[PointAnnotation alloc] init];
+    pointAnnotation.coordinate = CLLocationCoordinate2DMake(self.stationLatitude, self.stationLongitude);
+    pointAnnotation.title = @"";
+    pointAnnotation.model = [[MachineModel alloc]init];
+    pointAnnotation.model.lat = [NSString stringWithFormat:@"%f", self.stationLatitude];
+    pointAnnotation.model.lng = [NSString stringWithFormat:@"%f", self.stationLongitude];
+    [coordinates addObject:pointAnnotation];
+    [_mapView addAnnotations:coordinates];
+}
+
+- (void)mapView:(MAMapView *)mapView didSingleTappedAtCoordinate:(CLLocationCoordinate2D)coordinate
+{
+    
+}
 - (void)backButtonClick
 {
     [self dismissViewControllerAnimated:YES completion:^{
@@ -353,7 +383,42 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
 }
 - (MAAnnotationView *)mapView:(MAMapView *)mapView viewForAnnotation:(id <MAAnnotation>)annotation
 {
+    NSLog(@"%@", annotation);
     // 自定义userLocation对应的annotationView
+    if ([annotation isKindOfClass:[MAPointAnnotation class]])
+    {
+        static NSString *pointReuseIndentifier = @"pointReuseIndentifier";
+        MAAnnotationView*annotationView = (MAAnnotationView*)[mapView dequeueReusableAnnotationViewWithIdentifier:pointReuseIndentifier];
+        if (annotationView == nil)
+        {
+            annotationView = [[MAAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:pointReuseIndentifier];
+        }
+        
+        CGRect annotationViewRect = annotationView.frame;
+        annotationView.frame = CGRectMake(annotationViewRect.origin.x, annotationViewRect.origin.y, 200, 200);
+        switch ([_machineType integerValue]) {
+            case 1:
+                annotationView.image = [UIImage imageNamed:@"CF_Map_Tractors_Default"];
+                break;
+            case 2:
+                annotationView.image = [UIImage imageNamed:@"CF_Map_Harvester_Defult"];
+                break;
+            case 3:
+                annotationView.image = [UIImage imageNamed:@"CF_Map_RiceTransplanter_Defult"];
+                break;
+            case 4:
+                annotationView.image = [UIImage imageNamed:@"CF_Map_Dryer_Defult"];
+                break;
+            default:
+                break;
+        }
+        
+        //        UITapGestureRecognizer *tapPosition = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(chooseMethodToshow)];
+        //        [annotationView addGestureRecognizer:tapPosition];
+        
+        return annotationView;
+    }
+    
     if ([annotation isKindOfClass:[MAUserLocation class]])
     {
         static NSString *userLocationStyleReuseIndetifier = @"userLocationStyleReuseIndetifier";
@@ -374,12 +439,12 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
 - (NSArray *)getInstalledMapAppWithEndLocation:(CLLocationCoordinate2D)endLocation
 {
     NSMutableArray *maps = [NSMutableArray array];
-    
+
     //苹果地图
     NSMutableDictionary *iosMapDic = [NSMutableDictionary dictionary];
     iosMapDic[@"title"] = @"苹果地图";
     [maps addObject:iosMapDic];
-    
+
     //百度地图
     if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"baidumap://"]]) {
         NSMutableDictionary *baiduMapDic = [NSMutableDictionary dictionary];
@@ -388,7 +453,7 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
         baiduMapDic[@"url"] = urlString;
         [maps addObject:baiduMapDic];
     }
-    
+
     //高德地图
     if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"iosamap://"]]) {
         NSMutableDictionary *gaodeMapDic = [NSMutableDictionary dictionary];
@@ -397,7 +462,7 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
         gaodeMapDic[@"url"] = urlString;
         [maps addObject:gaodeMapDic];
     }
-    
+
     //腾讯地图
     if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"qqmap://"]]) {
         NSMutableDictionary *qqMapDic = [NSMutableDictionary dictionary];
@@ -406,7 +471,7 @@ static const NSInteger RoutePlanningPaddingEdge = 20;
         qqMapDic[@"url"] = urlString;
         [maps addObject:qqMapDic];
     }
-    
+
     return maps;
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event

@@ -18,7 +18,7 @@
 
 - (void)createRepairsPhotoCell{
     _repairsPhoto = [[UIImageView alloc]initWithFrame:self.contentView.bounds];
-    _repairsPhoto.contentMode = UIViewContentModeScaleToFill;
+    _repairsPhoto.contentMode = UIViewContentModeScaleAspectFill;
     _repairsPhoto.userInteractionEnabled = YES;
 //    _repairsPhoto.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     _repairsPhoto.clipsToBounds = YES;

@@ -7,6 +7,9 @@
 //
 
 #import "CFCompleteOrderInfoViewController.h"
+#import "CFWorkOrderInfoViewController.h"
+#import "CFShowFillInfoViewController.h"
+#import "CFCompleteCommentViewController.h"
 #import "CFWordOrderInfoModel.h"
 #import "ChangFa-Bridging-Header.h"
 #import <Charts/Charts-Swift.h>
@@ -72,33 +75,51 @@
     _orderNumberLabel.font = CFFONT14;
     _orderNumberLabel.text = @"派工单号： ";
     [orderInfoView addSubview:_orderNumberLabel];
+    
     UILabel *numberLineLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, _orderNumberLabel.frame.size.height - 2 * screenHeight, CF_WIDTH, 2 * screenHeight)];
     numberLineLabel.backgroundColor = BackgroundColor;
     [orderInfoView addSubview:numberLineLabel];
+    
     _machineImage = [[UIImageView alloc]initWithFrame:CGRectMake(_orderNumberLabel.frame.origin.x, _orderNumberLabel.frame.size.height + 30 * screenHeight, 120 * screenWidth, 120 * screenHeight)];
     [orderInfoView addSubview:_machineImage];
     _machineNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(_machineImage.frame.size.width + _machineImage.frame.origin.x + 20 * screenWidth, _machineImage.frame.origin.y + 10 * screenHeight, CF_WIDTH - 200 * screenWidth, 40 * screenHeight)];
     _machineNameLabel.text = @"名称：";
     _machineNameLabel.font = CFFONT14;
     [orderInfoView addSubview:_machineNameLabel];
+    
     _machineTypeLabel = [[UILabel alloc]initWithFrame:CGRectMake(_machineNameLabel.frame.origin.x, _machineNameLabel.frame.size.height + _machineNameLabel.frame.origin.y + 20 * screenHeight, _machineNameLabel.frame.size.width, _machineNameLabel.frame.size.height)];
     _machineTypeLabel.text = @"型号：";
     _machineTypeLabel.font = CFFONT14;
     [orderInfoView addSubview:_machineTypeLabel];
+    
     UILabel *machineLineLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, _machineTypeLabel.frame.size.height + _machineTypeLabel.frame.origin.y +  + 28 * screenHeight, CF_WIDTH, 2 * screenHeight)];
     machineLineLabel.backgroundColor = BackgroundColor;
     [orderInfoView addSubview:machineLineLabel];
+    
     UILabel *orderInformationLabel = [[UILabel alloc]initWithFrame:CGRectMake(_orderNumberLabel.frame.origin.x, _machineTypeLabel.frame.size.height + _machineTypeLabel.frame.origin.y + 30 * screenHeight, _orderNumberLabel.frame.size.width, 120 * screenHeight)];
     orderInformationLabel.text = @"派工单详情";
     orderInformationLabel.font = CFFONT14;
     [orderInfoView addSubview:orderInformationLabel];
+    UIButton *orderInfoButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    orderInfoButton.frame = orderInformationLabel.frame;
+    orderInfoButton.tag = 1001;
+    [orderInfoButton addTarget:self action:@selector(infoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [orderInfoView addSubview:orderInfoButton];
+    
     UILabel *orderLineLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, machineLineLabel.frame.origin.y + 120 * screenHeight, CF_WIDTH, 2 * screenHeight)];
     orderLineLabel.backgroundColor = BackgroundColor;
     [orderInfoView addSubview:orderLineLabel];
+    
     UILabel *repairInformationLabel = [[UILabel alloc]initWithFrame:CGRectMake(_orderNumberLabel.frame.origin.x, orderInformationLabel.frame.size.height + orderInformationLabel.frame.origin.y, orderInformationLabel.frame.size.width, orderInformationLabel.frame.size.height)];
     repairInformationLabel.text = @"维修单详情";
     repairInformationLabel.font = CFFONT14;
     [orderInfoView addSubview:repairInformationLabel];
+    UIButton *repairInfoButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    repairInfoButton.frame = repairInformationLabel.frame;
+    repairInfoButton.tag = 1002;
+    [repairInfoButton addTarget:self action:@selector(infoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [orderInfoView addSubview:repairInfoButton];
+    
     UILabel *repairLineLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, orderLineLabel.frame.origin.y + 120 * screenHeight, CF_WIDTH, orderLineLabel.frame.size.height)];
     repairLineLabel.backgroundColor = BackgroundColor;
     [orderInfoView addSubview:repairLineLabel];
@@ -106,6 +127,11 @@
     commentLabel.text = @"用户评价";
     commentLabel.font = CFFONT14;
     [orderInfoView addSubview:commentLabel];
+    UIButton *commentInfoButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    commentInfoButton.frame = commentLabel.frame;
+    commentInfoButton.tag = 1003;
+    [commentInfoButton addTarget:self action:@selector(infoButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [orderInfoView addSubview:commentInfoButton];
 }
 
 - (void)createAccountInfoView
@@ -257,6 +283,7 @@
 {
     NSDictionary *param = @{
                             @"dispatchId":dispatchId,
+                            @"token":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserToken"],
                             };
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"dispatch/selectById" Loading:0 Params:param Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"dispatch%@", responseObject);
@@ -304,6 +331,33 @@
     _explainLabel.text = [_explainLabel.text stringByAppendingString:_orderInfoModel.descriptions];
     _completeTimeLabel.text = [_completeTimeLabel.text stringByAppendingString:_orderInfoModel.finishTime];
     _createTimeLabel.text = [_createTimeLabel.text stringByAppendingString:_orderInfoModel.createTime];
+}
+- (void)infoButtonClick:(UIButton *)sender
+{
+    if (sender.tag == 1001) {
+        CFWorkOrderInfoViewController *order = [[CFWorkOrderInfoViewController alloc]init];
+        order.pushType = 2;
+        order.dispatchId = self.dispatchId;
+        [self.navigationController pushViewController:order animated:YES];
+    } else if (sender.tag == 1002) {
+        CFShowFillInfoViewController *show = [[CFShowFillInfoViewController alloc]init];
+        show.repairId = self.orderInfoModel.repairId;
+        show.disId = self.orderInfoModel.disId;
+        show.disNum = self.orderInfoModel.disNum;
+        show.dispatchId = self.dispatchId;
+        [self.navigationController pushViewController:show animated:YES];
+    } else {
+        if (self.orderInfoModel.commentId.length < 1) {
+            [MBManager showBriefAlert:@"暂无评论" time:1.5];
+            return;
+        }
+        CFCompleteCommentViewController *comment = [[CFCompleteCommentViewController alloc]init];
+        comment.commentId = self.orderInfoModel.commentId;
+        comment.contactMobile = self.orderInfoModel.contactMobile;
+//        comment.pushType = 2;
+//        comment.serviceId = self.orderInfoModel.commentId;
+        [self.navigationController pushViewController:comment animated:YES];
+    }
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

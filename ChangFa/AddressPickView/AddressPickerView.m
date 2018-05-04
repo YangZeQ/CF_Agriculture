@@ -65,38 +65,11 @@ static CGFloat CONTENTHEIGHT = 215.0;// 标题栏+选择视图高度
     self = [super initWithFrame:frame];
     if (self) {
         //加载地址数据源
-//        switch (style) {
-//            case address:
-//                self.viewStyle = 0;
-//                [self loadAddressData];
-//                break;
-//            case sex:
-//                self.viewStyle = 1;
-//                self.infoArray = [NSMutableArray arrayWithObjects:@"男", @"女", nil];
-//                [self.addressPickerView reloadAllComponents];
-//                [self loadAddressData];
-//                break;
-//            case identify:
-//                self.viewStyle = 2;
-//                self.infoArray = [NSMutableArray arrayWithObjects:@"农机手", @"经销商", nil];
-//                [self.addressPickerView reloadAllComponents];
-//                break;
-//            case agency:
-//                self.viewStyle = 3;
                 [self loadProvinceAddress];
-//                break;
-//            default:
-//                break;
-//        }
     }
     return self;
 }
-//- (instancetype)initWithStyle:(pickViewStyle)style{
-//    if (self = [super init]) {
-//        return [self initWithFrame:CGRectZero PickViewStyle:style];
-//    }
-//    return self;
-//}
+
 - (instancetype)init
 {
     self = [super init];
@@ -117,27 +90,6 @@ static CGFloat CONTENTHEIGHT = 215.0;// 标题栏+选择视图高度
         self.maskingView.frame = CGRectMake(0, self.addressPickerView.frame.origin.y + self.addressPickerView.frame.size.height, AD_SCREEN.width, 34);
     }
 }
-
-//- (UIColor *)backMaskColor {
-//    if (!_backMaskColor) {
-//        _backMaskColor = [UIColor clearColor];
-//    }
-//    return _backMaskColor;
-//}
-
-//- (UIColor *)titleViewColor {
-//    if (!_titleViewColor) {
-//        _titleViewColor = [UIColor whiteColor];
-//    }
-//    return _titleViewColor;
-//}
-
-//- (UIColor *)titleColor {
-//    if (!_titleColor) {
-//        _titleColor = [UIColor grayColor];
-//    }
-//    return _titleColor;
-//}
 
 - (UIColor *)pickerViewColor {
     if (!_pickerViewColor) {
@@ -178,12 +130,6 @@ static CGFloat CONTENTHEIGHT = 215.0;// 标题栏+选择视图高度
     }
     return _districtArray;
 }
-//- (CGFloat)backMaskAlpha {
-//    if (!_backMaskAlpha) {
-//        _backMaskAlpha = 0.1;
-//    }
-//    return _backMaskAlpha;
-//}
 
 - (UIView *)maskingView {
     if (!_maskingView) {

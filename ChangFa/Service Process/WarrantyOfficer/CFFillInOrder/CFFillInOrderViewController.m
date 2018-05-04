@@ -7,6 +7,7 @@
 //
 
 #import "CFFillInOrderViewController.h"
+#import "CFPreviewPhotoViewController.h"
 #import "CFRegisterTextFieldView.h"
 #import "CFFillInOrderViewTableViewCell.h"
 #import "CFFillInOrderModel.h"
@@ -14,33 +15,36 @@
 #import "AFHTTPSessionManager.h"
 #import <Photos/Photos.h>
 #import "CTAssetsPickerController/CTAssetsPickerController.h"
-typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
+#import "CFFMDBManager.h"
+#define MAX_LIMIT_NUMS 150
+#define MAX_LIMIT_PHOTONUMBER 9
+typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger infoType);
 @interface CFFillInOrderViewController ()<UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CTAssetsPickerControllerDelegate, UITextFieldDelegate>
 @property (nonatomic, strong)CFFillInOrderModel *fillModel;
 @property (nonatomic, strong)UIScrollView *fillScrollView;
-@property (nonatomic, strong)CFRegisterTextFieldView *hourTextField;
-@property (nonatomic, strong)CFRegisterTextFieldView *mileageTextField;
-@property (nonatomic, strong)CFRegisterTextFieldView *typeTextField;
 @property (nonatomic, strong)UITableView *orderTableView;
 @property (nonatomic, strong)UIButton *submitButton;
 
 @property (nonatomic, strong)NSArray *infoArray;
+@property (nonatomic, strong)NSMutableArray *editSignArray;
 @property (nonatomic, assign)NSInteger selectedIndex; // 点击cell下标
 @property (nonatomic, strong)NSMutableArray *signArray; // 存储cell的选定标识
 @property (nonatomic, strong)NSArray *styleArray;
 
 @property (nonatomic, strong)UIView *vagueView;
-@property (nonatomic, assign)NSInteger vagueViewStyle;   // 1、选择维修类型。2、选择上传图片方式
-@property (nonatomic, assign)NSInteger repairStyle;
 @property (nonatomic, strong)UIButton *firstStyleButton; //
 @property (nonatomic, strong)UIButton *secondStyleButton;
 
+@property (nonatomic, strong)NSMutableArray *imageArray;
 @property (nonatomic, strong)NSMutableArray *photoArray;
+@property (nonatomic, strong)NSMutableArray *uploadImageArray;
 @property (nonatomic, strong)NSMutableArray *faultPhotoArray;
 @property (nonatomic, strong)NSMutableArray *personPhotoArray;
 @property (nonatomic, strong)NSMutableArray *faultPhotoPathArray;
 @property (nonatomic, strong)NSMutableArray *personPhotoPathArray;
 @property (nonatomic, strong)NSString *fileIds;
+@property (nonatomic, strong)NSString *useTime;
+@property (nonatomic, strong)NSString *driveDistance;
 @property (nonatomic, strong)NSString *faultFileIds;
 @property (nonatomic, strong)NSString *personFileIds;
 @property (nonatomic, strong)NSString *machineInstruction;
@@ -58,21 +62,21 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
 - (NSArray *)infoArray
 {
     if (_infoArray == nil) {
-        _infoArray = [NSArray arrayWithObjects:@"故障照片", @"人机合影", @"农机用途说明", @"农机故障说明", @"客户意见", @"处理意见", @"备注", nil];
+        _infoArray = [NSArray arrayWithObjects:@"故障照片", @"人机合影",@"农机信息", @"农机用途说明", @"农机故障说明", @"客户意见", @"处理意见", @"备注", nil];
     }
     return _infoArray;
 }
 - (NSMutableArray *)signArray
 {
     if (_signArray == nil) {
-        _signArray = [NSMutableArray arrayWithObjects:@0, @0, @0, @0, @0, @0, @0, nil];
+        _signArray = [NSMutableArray arrayWithObjects:@0, @0, @0, @0, @0, @0, @0, @0, nil];
     }
     return _signArray;
 }
 - (NSArray *)styleArray
 {
     if (_styleArray == nil) {
-        _styleArray = [NSArray arrayWithObjects:@1, @1, @2, @2, @2, @2, @2, nil];
+        _styleArray = [NSArray arrayWithObjects:@1, @1, @2, @2, @2, @2, @2, @2, nil];
     }
     return _styleArray;
 }
@@ -86,19 +90,35 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     }
     return _vagueView;
 }
-- (NSMutableArray *)photoArray{
+- (NSMutableArray *)imageArray
+{
+    if (_imageArray == nil) {
+        _imageArray = [NSMutableArray array];
+    }
+    return _imageArray;
+}
+- (NSMutableArray *)photoArray
+{
     if (_photoArray == nil) {
         _photoArray = [NSMutableArray array];
     }
     return _photoArray;
 }
-- (NSMutableArray *)faultPhotoArray{
+- (NSMutableArray *)uploadImageArray{
+    if (_uploadImageArray == nil) {
+        _uploadImageArray = [NSMutableArray array];
+    }
+    return _uploadImageArray;
+}
+- (NSMutableArray *)faultPhotoArray
+{
     if (_faultPhotoArray == nil) {
         _faultPhotoArray = [NSMutableArray array];
     }
     return _faultPhotoArray;
 }
-- (NSMutableArray *)personPhotoArray{
+- (NSMutableArray *)personPhotoArray
+{
     if (_personPhotoArray == nil) {
         _personPhotoArray = [NSMutableArray array];
     }
@@ -133,36 +153,47 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     _imagePicker.allowsEditing=YES;
     [self createFillInOrderView];
     [self getFillInOrderWithReapirId:self.repairId];
+    
+    //增加监听，当键盘出现或改变时收出消息
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+
+    //增加监听，当键退出时收出消息
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
     // Do any additional setup after loading the view.
 }
 - (void)createFillInOrderView
 {
     self.selectedIndex = 0;
+    self.useTime = @"";
+    self.driveDistance = @"";
     [self.signArray replaceObjectAtIndex:self.selectedIndex withObject:@1];
     
     _fillScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    _fillScrollView.contentSize = CGSizeMake(0, 1750 * screenHeight);
+    _fillScrollView.contentSize = CGSizeMake(0, 1700 * screenHeight);
     _fillScrollView.backgroundColor = BackgroundColor;
     _fillScrollView.delegate = self;
     [self.view addSubview:_fillScrollView];
     
-    _hourTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 98 * screenHeight) LabelWidth:278 * screenWidth LabelName:@"农机工作小时" PlaceHolder:@"请输入农机工作小时"];
-    _hourTextField.textField.delegate = self;
-    _hourTextField.textField.tag = 1001;
-     _hourTextField.textField.keyboardType = UIKeyboardTypePhonePad;
-    [_fillScrollView addSubview:_hourTextField];
-    _mileageTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _hourTextField.frame.size.height, self.view.frame.size.width, _hourTextField.frame.size.height) LabelWidth:278 * screenWidth LabelName:@"行驶里程" PlaceHolder:@"请输入行驶里程"];
-    _mileageTextField.textField.delegate = self;
-    _mileageTextField.textField.tag = 1002;
-    _mileageTextField.textField.keyboardType = UIKeyboardTypePhonePad;
-    [_fillScrollView addSubview:_mileageTextField];
-    _typeTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, _mileageTextField.frame.size.height + _mileageTextField.frame.origin.y, self.view.frame.size.width, _hourTextField.frame.size.height) OriginX:30 * screenWidth LabelWidth:308 * screenWidth LabelName:@"维修类型" ButtonImage:@"xiugai"];
-    [_typeTextField.selecteButton setTitle:@"请选择维修类型" forState:UIControlStateNormal];
-    [_typeTextField.selecteButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-    [_typeTextField.selecteButton addTarget:self action:@selector(chooseTypeInfo) forControlEvents:UIControlEventTouchUpInside];
-    [_fillScrollView addSubview:_typeTextField];
+    UILabel *repairStyleLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 20 * screenHeight, CF_WIDTH - 60 * screenWidth, 120 * screenHeight)];
+    repairStyleLabel.backgroundColor = [UIColor whiteColor];
+    repairStyleLabel.layer.cornerRadius = 20 * screenWidth;
+    repairStyleLabel.clipsToBounds = YES;
+    repairStyleLabel.text = @"外出服务";
+    repairStyleLabel.font = CFFONT14;
+    repairStyleLabel.textAlignment = NSTextAlignmentCenter;
+    [_fillScrollView addSubview:repairStyleLabel];
+    UILabel *repairTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(70 * screenWidth, 35 * screenHeight, 250 * screenWidth, 50 * screenHeight)];
+    repairTitleLabel.text = @"维修类型";
+    repairTitleLabel.font = CFFONT14;
+    [repairStyleLabel addSubview:repairTitleLabel];
     
-    _orderTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, _typeTextField.frame.size.height + _typeTextField.frame.origin.y, CF_WIDTH, (120 +  20) * 7 * screenHeight + 292 * screenHeight)];
+    _orderTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, repairStyleLabel.frame.size.height + repairStyleLabel.frame.origin.y, CF_WIDTH, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight)];
     _orderTableView.delegate = self;
     _orderTableView.dataSource = self;
     _orderTableView.showsVerticalScrollIndicator = NO;
@@ -172,8 +203,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     
     _submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _submitButton.frame = CGRectMake(0, CF_HEIGHT - 100 * screenHeight, CF_WIDTH, 100 * screenHeight);
-//    _submitButton.layer.cornerRadius = 20 * Width;
-    [_submitButton setTitle:@"提交" forState:UIControlStateNormal];
+    [_submitButton setTitle:@"下一步" forState:UIControlStateNormal];
     [_submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_submitButton setBackgroundColor:ChangfaColor];
     [_submitButton addTarget:self action:@selector(submitButtonClick) forControlEvents:UIControlEventTouchUpInside];
@@ -199,6 +229,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     [cancelStyleButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [cancelStyleButton addTarget:self action:@selector(cancelStyleButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [self.vagueView addSubview:cancelStyleButton];
+    
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -219,9 +250,13 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     if ([self.signArray[indexPath.section] integerValue] == 1) {
         cell.selected = YES;
         if (indexPath.section > 1) {
-            cell.styleStatus = 2;
             cell.cellIndex = indexPath.section;
-            cell.reasonPlaceholder = @"点击填写内容";
+            if (indexPath.section == 2) {
+                cell.styleStatus = 3;
+            } else {
+                cell.styleStatus = 2;
+                cell.reasonPlaceholder = @"点击填写内容";
+            }
             cell.textInfoBlock = ^(NSString *textInfo, NSInteger index) {
                 [self getTextInfoWithText:textInfo CellIndex:index];
             };
@@ -236,19 +271,23 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
             cell.deleteImageBlock = ^(NSInteger sender) {
                 [self deleteImage:sender];
             };
-            self.reloadCollectionItemBlock = ^(NSMutableArray *photoArray) {
+            self.reloadCollectionItemBlock = ^(NSMutableArray *photoArray, NSInteger infoType) {
+                cell.infoType = infoType;
                 cell.reloadPhotoArray = photoArray;
             };
-            self.uploadImageBlock = ^(BOOL changeStatus){
-                if (self.photoArray.count > 0 && changeStatus) {
-                    [cell.submitButton setBackgroundColor:ChangfaColor];
-                    [cell.submitButton setEnabled:YES];
+            cell.clickImageBlock = ^(NSInteger sender) {
+                CFPreviewPhotoViewController *preview = [[CFPreviewPhotoViewController alloc]init];
+                if (_selectedIndex == 0) {
+                    preview.photoArray = self.faultPhotoArray;
                 } else {
-                    [cell.submitButton setBackgroundColor:[UIColor grayColor]];
-                    [cell.submitButton setEnabled:NO];
+                    preview.photoArray = self.personPhotoArray;
                 }
+                preview.selectedIndex = sender;
+                preview.headerHeight = navHeight;
+                [self presentViewController:preview animated:YES completion:^{
+            
+                }];
             };
-            [cell.submitButton addTarget:self action:@selector(imageUploadButtonClick) forControlEvents:UIControlEventTouchUpInside];
         }
     } else {
         cell.styleStatus = 0;
@@ -256,94 +295,140 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     cell.nameLabel.text = _infoArray[indexPath.section];
     switch (indexPath.section) {
         case 0:
-            if (self.fillModel.faultFilePath.count > 0 || self.faultFileIds.length > 0) {
-                cell.nameLabel.textColor =ChangfaColor;
+            if (self.fillModel.faultFileInfo.count > 0 || self.faultFileIds.length > 0) {
+                cell.photoArray = self.faultPhotoArray;
+                cell.nameLabel.textColor = ChangfaColor;
                 cell.statusLabel.hidden = NO;
-                cell.submitButton.hidden = YES;
-                cell.cellType = 0;
+                if (self.faultPhotoArray.count >= MAX_LIMIT_PHOTONUMBER) {
+                    cell.cellType = 2;
+                } else {
+                    cell.cellType = 1;
+                }
             }
             break;
         case 1:
-            if (self.fillModel.personFilePath.count > 0 || self.personFileIds.length > 0) {
-                cell.nameLabel.textColor =ChangfaColor;
+            if (self.fillModel.personFileInfo.count > 0 || self.personFileIds.length > 0) {
+                cell.photoArray = self.personPhotoArray;
+                cell.nameLabel.textColor = ChangfaColor;
                 cell.statusLabel.hidden = NO;
-                cell.submitButton.hidden = YES;
-                cell.cellType = 0;
+                if (self.personPhotoArray.count >= MAX_LIMIT_PHOTONUMBER) {
+                    cell.cellType = 2;
+                } else {
+                    cell.cellType = 1;
+                }
             }
             break;
         case 2:
-            if (self.fillModel.machineInstruction.length > 0) {
-                cell.reasonView.text = self.fillModel.machineInstruction;
-                cell.reasonView.placeholder = @"";
-                cell.nameLabel.textColor =ChangfaColor;
-                cell.statusLabel.hidden = NO;
+            if (self.useTime.length > 0) {
+                cell.hourTextField.textField.text = self.useTime;
+                cell.hourTextField.textField.placeholder = @"";
             }
-            if (self.machineInstruction.length > 0) {
-                cell.reasonView.text = self.machineInstruction;
-                cell.reasonView.placeholder = @"";
-                cell.nameLabel.textColor =ChangfaColor;
+            if (self.driveDistance.length > 0) {
+                cell.mileageTextField.textField.text = self.driveDistance;
+                cell.mileageTextField.textField.placeholder = @"";
+            }
+            if (self.useTime.length > 0 && self.driveDistance.length > 0) {
+                cell.nameLabel.textColor = ChangfaColor;
                 cell.statusLabel.hidden = NO;
+            } else {
+                cell.nameLabel.textColor = [UIColor blackColor];
+                cell.statusLabel.hidden = YES;
             }
             break;
         case 3:
-            if (self.fillModel.faultInstruction.length > 0) {
-                cell.reasonView.text = self.fillModel.faultInstruction;
+            if (self.fillModel.machineInstruction.length > 0 || self.machineInstruction.length > 0) {
+//                if (self.fillModel.machineInstruction.length > 0) {
+//                    cell.reasonView.text = self.fillModel.machineInstruction;
+//                } else {
+                cell.reasonView.text = self.machineInstruction;
+                cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.machineInstruction.length, MAX_LIMIT_NUMS];
+//                }
                 cell.reasonView.placeholder = @"";
                 cell.nameLabel.textColor =ChangfaColor;
                 cell.statusLabel.hidden = NO;
-            }
-            if (self.faultInstruction.length > 0) {
-                cell.reasonView.text = self.faultInstruction;
-                cell.reasonView.placeholder = @"";
-                cell.nameLabel.textColor =ChangfaColor;
-                cell.statusLabel.hidden = NO;
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
             }
             break;
         case 4:
-            if (self.fillModel.customerOpinion.length > 0) {
-                cell.reasonView.text = self.fillModel.customerOpinion;
+            if (self.fillModel.faultInstruction.length > 0 || self.faultInstruction.length > 0) {
+//                if (self.fillModel.faultInstruction.length > 0) {
+//                    cell.reasonView.text = self.fillModel.faultInstruction;
+//                } else {
+//                    cell.reasonView.text = self.faultInstruction;
+//                }
+                cell.reasonView.text = self.faultInstruction;
+                cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.faultInstruction.length, MAX_LIMIT_NUMS];
                 cell.reasonView.placeholder = @"";
                 cell.nameLabel.textColor =ChangfaColor;
                 cell.statusLabel.hidden = NO;
-            }
-            if (self.customerOpinion.length > 0) {
-                cell.reasonView.text = self.customerOpinion;
-                cell.reasonView.placeholder = @"";
-                cell.nameLabel.textColor =ChangfaColor;
-                cell.statusLabel.hidden = NO;
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
             }
             break;
         case 5:
-            if (self.fillModel.handleOpinion.length > 0) {
-                cell.reasonView.text = self.fillModel.handleOpinion;
+            if (self.fillModel.customerOpinion.length > 0 || self.customerOpinion.length > 0) {
+//                if (self.fillModel.customerOpinion.length > 0) {
+//                    cell.reasonView.text = self.fillModel.customerOpinion;
+//                } else {
+//                    cell.reasonView.text = self.customerOpinion;
+//                }
+                cell.reasonView.text = self.customerOpinion;
+                cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.customerOpinion.length, MAX_LIMIT_NUMS];
                 cell.reasonView.placeholder = @"";
                 cell.nameLabel.textColor =ChangfaColor;
                 cell.statusLabel.hidden = NO;
-            }
-            if (self.handleOpinion.length > 0) {
-                cell.reasonView.text = self.handleOpinion;
-                cell.reasonView.placeholder = @"";
-                cell.nameLabel.textColor =ChangfaColor;
-                cell.statusLabel.hidden = NO;
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
             }
             break;
         case 6:
-            if (self.fillModel.remarks.length > 0) {
-                cell.reasonView.text = self.fillModel.remarks;
+            if (self.fillModel.handleOpinion.length > 0 || self.handleOpinion.length > 0) {
+//                if (self.fillModel.handleOpinion.length > 0) {
+//                    cell.reasonView.text = self.fillModel.handleOpinion;
+//                } else {
+//                    cell.reasonView.text = self.handleOpinion;
+//                }
+                cell.reasonView.text = self.handleOpinion;
+                cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.handleOpinion.length, MAX_LIMIT_NUMS];
                 cell.reasonView.placeholder = @"";
                 cell.nameLabel.textColor =ChangfaColor;
                 cell.statusLabel.hidden = NO;
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
             }
-            if (self.remarks.length > 0) {
+            break;
+        case 7:
+            if (self.fillModel.remarks.length > 0 || self.remarks.length > 0) {
+//                if (self.fillModel.remarks.length > 0) {
+//                    cell.reasonView.text = self.fillModel.remarks;
+//                } else {
+//                    cell.reasonView.text = self.remarks;
+//                }
                 cell.reasonView.text = self.remarks;
+                cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.remarks.length, MAX_LIMIT_NUMS];
                 cell.reasonView.placeholder = @"";
                 cell.nameLabel.textColor =ChangfaColor;
                 cell.statusLabel.hidden = NO;
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
             }
+            cell.starImage.hidden = YES;
             break;
         default:
             break;
     }
+    cell.backgroundColor = [UIColor cyanColor];
     return cell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -353,6 +438,9 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([self.signArray[indexPath.section] integerValue] == 1) {
+        if (indexPath.section == 2) {
+            return (120 + 196) * screenHeight;
+        }
         return (120 + 292) * screenHeight;
     }
     return 120 * screenHeight;
@@ -365,6 +453,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self.view endEditing:YES];
     for (int i = 0; i < self.signArray.count; i++) {
         [self.signArray replaceObjectAtIndex:i withObject:@0];
     }
@@ -373,11 +462,15 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     if (self.selectedIndex == indexPath.section) {// 点击同一个收回
         [self.signArray replaceObjectAtIndex:indexPath.section withObject:@0];
         self.selectedIndex = 1000;
-        _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * 7 * screenHeight);
+        _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight);
         [self.orderTableView reloadData];
         return;
     }
-    _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * 7 * screenHeight + 292 * screenHeight);
+    if (indexPath.section == 2) {
+        _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 196 * screenHeight);
+    } else {
+        _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+    }
     [_orderTableView reloadData];
     self.selectedIndex = indexPath.section;
 }
@@ -394,118 +487,125 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
 {
     if (self.selectedIndex == 0) {
         [self.faultPhotoArray removeObjectAtIndex:sender];
+        NSMutableArray *fileIdsArray = [NSMutableArray arrayWithArray:[self.faultFileIds componentsSeparatedByString:@","]];
+        NSLog(@"%@", self.faultFileIds);
+        [fileIdsArray removeObjectAtIndex:sender];
+        self.faultFileIds = @"";
+        for (NSString *str in fileIdsArray) {
+            if (self.faultFileIds.length < 1) {
+                self.faultFileIds = str;
+            } else {
+                self.faultFileIds = [[self.faultFileIds stringByAppendingString:@","] stringByAppendingString:str];
+            }
+        }
         self.photoArray = self.faultPhotoArray;
     } else {
         [self.personPhotoArray removeObjectAtIndex:sender];
+        NSMutableArray *fileIdsArray = [NSMutableArray arrayWithArray:[self.personFileIds componentsSeparatedByString:@","]];
+        [fileIdsArray removeObjectAtIndex:sender];
+        self.personFileIds = @"";
+        for (NSString *str in fileIdsArray) {
+            if (self.personFileIds.length < 1) {
+                self.personFileIds = str;
+            } else {
+                self.personFileIds = [[self.personFileIds stringByAppendingString:@","] stringByAppendingString:str];
+            }
+        }
         self.photoArray = self.personPhotoArray;
     }
-//    self.reloadCollectionItemBlock(self.photoArray);
-}
-- (void)chooseTypeInfo
-{
-    [self.view endEditing:YES];
-    self.vagueView.hidden = NO;
-    self.vagueViewStyle = 1;
-    [_firstStyleButton setTitle:@"普通维修" forState:UIControlStateNormal];
-    [_secondStyleButton setTitle:@"外出维修" forState:UIControlStateNormal];
-    [_firstStyleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [_secondStyleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self submitOrderInfoWithPhoto:YES];
 }
 - (void)firstStyleButtonClick
 {
-    if (_vagueViewStyle == 1) {
-        [_typeTextField.selecteButton setTitle:self.firstStyleButton.titleLabel.text forState:UIControlStateNormal];
-        [_typeTextField.selecteButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        self.vagueView.hidden = YES;
-        self.repairStyle = 0;
-    } else {
-        if (self.photoArray.count == 9) {
-            [MBManager showBriefAlert:@"最多上传9张图片" time:1.5];
-            return;
-        }
-        _imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
-        [self presentViewController:_imagePicker animated:YES completion:nil];
+    if (self.photoArray.count == 9) {
+        [MBManager showBriefAlert:@"最多上传9张图片" time:1.5];
+        return;
     }
+    _imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+    [self presentViewController:_imagePicker animated:YES completion:nil];
 }
 - (void)secondStyleButtonClick
 {
-    if (_vagueViewStyle == 1) {
-        [_typeTextField.selecteButton setTitle:self.secondStyleButton.titleLabel.text forState:UIControlStateNormal];
-        [_typeTextField.selecteButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        self.vagueView.hidden = YES;
-        self.repairStyle = 1;
-    } else {
-        if (self.photoArray.count == 9) {
-            [MBManager showBriefAlert:@"最多上传9张图片" time:1.5];
-            return;
-        }
-        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status){
-            if (status != PHAuthorizationStatusAuthorized) return;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                CTAssetsPickerController *picker = [[CTAssetsPickerController alloc] init];
-                picker.delegate = self;
-                // 显示选择的索引
-                picker.showsSelectionIndex = YES;
-                // 设置相册的类型：相机胶卷 + 自定义相册
-                picker.assetCollectionSubtypes = @[
-                                                   @(PHAssetCollectionSubtypeSmartAlbumUserLibrary),
-                                                   @(PHAssetCollectionSubtypeAlbumRegular)];
-                // 不需要显示空的相册
-                picker.showsEmptyAlbums = NO;
-                [self presentViewController:picker animated:YES completion:nil];
-            });
-        }];
+    if (self.photoArray.count == 9) {
+        [MBManager showBriefAlert:@"最多上传9张图片" time:1.5];
+        return;
     }
-    
+    [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status){
+        if (status != PHAuthorizationStatusAuthorized) return;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            CTAssetsPickerController *picker = [[CTAssetsPickerController alloc] init];
+            picker.delegate = self;
+            // 显示选择的索引
+            picker.showsSelectionIndex = YES;
+            // 设置相册的类型：相机胶卷 + 自定义相册
+            picker.assetCollectionSubtypes = @[
+                                                @(PHAssetCollectionSubtypeSmartAlbumUserLibrary),
+                                                @(PHAssetCollectionSubtypeAlbumRegular)];
+            // 不需要显示空的相册
+            picker.showsEmptyAlbums = NO;
+            [self presentViewController:picker animated:YES completion:nil];
+        });
+    }];
 }
 - (void)cancelStyleButtonClick
 {
     self.vagueView.hidden = YES;
 }
-- (void)imageUploadButtonClick
-{
-    [self uploadImagesArray];
-}
 - (void)submitButtonClick
 {
-    [self submitOrderInfo];
+    [self submitOrderInfoWithPhoto:NO];
 }
 - (void)leftButtonClick
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"确定退出编辑吗" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+       [self.navigationController popViewControllerAnimated:YES];
+    }];
+    [sureAction setValue:[UIColor redColor] forKey:@"titleTextColor"];
+    [alert addAction:cancelAction];
+    [alert addAction:sureAction];
+    [self presentViewController:alert animated:YES completion:^{
+    }];
 }
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(nullable NSDictionary<NSString *,id> *)editingInfo
 {
     if (self.selectedIndex == 0) {
         [self.faultPhotoArray addObject:image];
-        self.photoArray = self.faultPhotoArray;
-        self.uploadImageBlock(1);
+        self.reloadCollectionItemBlock(self.faultPhotoArray, 1);
     } else {
         [self.personPhotoArray addObject:image];
-        self.photoArray = self.personPhotoArray;
-        self.uploadImageBlock(1);
+        self.reloadCollectionItemBlock(self.personPhotoArray, 1);
     }
     [self dismissViewControllerAnimated:YES completion:nil];
-    self.reloadCollectionItemBlock(self.photoArray);
+    [self uploadImagesArray];
 }
 - (void)getTextInfoWithText:(NSString *)textInfo
                   CellIndex:(NSInteger)cellIndex
 {
     switch (cellIndex) {
-        case 2:
+        case 3:
             self.machineInstruction = textInfo;
             break;
-        case 3:
+        case 4:
             self.faultInstruction = textInfo;
             break;
-        case 4:
+        case 5:
             self.customerOpinion = textInfo;
             break;
-        case 5:
+        case 6:
             self.handleOpinion = textInfo;
             break;
-        case 6:
+        case 7:
             self.remarks = textInfo;
+            break;
+        case 1001:
+            self.useTime = textInfo;
+            break;
+        case 1002:
+            self.driveDistance = textInfo;
             break;
         default:
             break;
@@ -513,13 +613,15 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
 }
 - (void)changeScrollViewOriginYWithStatus:(NSInteger)status
 {
+    return;
     if (status == 0) {
         [UIView animateWithDuration:0.5 animations:^{
             _fillScrollView.frame =CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
         }];
     } else {
         [UIView animateWithDuration:0.5 animations:^{
-            _fillScrollView.frame =CGRectMake(0, -300 * screenHeight, self.view.frame.size.width, self.view.frame.size.height);
+//            _fillScrollView.frame =CGRectMake(0, , self.view.frame.size.width, self.view.frame.size.height);
+            _fillScrollView.contentOffset = CGPointMake(0, (140 * screenHeight * (_selectedIndex + 1) + 292 * screenHeight));
         }];
     }
 }
@@ -561,13 +663,12 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
         }];
     }
     if (self.selectedIndex == 0) {
-        self.photoArray = self.faultPhotoArray;
-        self.uploadImageBlock(1);
+        self.reloadCollectionItemBlock(self.faultPhotoArray, 1);
     } else {
-        self.photoArray = self.personPhotoArray;
-        self.uploadImageBlock(1);
+        self.reloadCollectionItemBlock(self.personPhotoArray, 1);
     }
-    self.reloadCollectionItemBlock(self.photoArray);
+    
+    [self uploadImagesArray];
 }
 #pragma mark-多图片上传
 - (NSURLSessionUploadTask*)uploadTaskWithImage:(UIImage*)image completion:(void (^)(NSURLResponse *response, id responseObject, NSError *error))completionBlock
@@ -577,6 +678,9 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *params = @{@"file":@"",
                              @"userId":[userDefaults objectForKey:@"UserUid"],
+                             @"dispatchId":self.dispatchId,
+                             @"token":[userDefaults objectForKey:@"UserToken"],
+                             @"type":[NSString stringWithFormat:@"%lu", (_selectedIndex + 1)],
                              };
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:@"http://192.168.31.68:8080/changfa_system/file/manyFileUpload.do?" parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
@@ -593,14 +697,20 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
 }
 - (void)uploadImagesArray
 {
+    if (_selectedIndex == 0) {
+        self.photoArray = self.faultPhotoArray;
+    } else if (_selectedIndex == 1) {
+        self.photoArray = self.personPhotoArray;
+    }
+    self.vagueView.hidden = YES;
+    [MBManager showWaitingWithTitle:@"上传图片中"];
     // 准备保存结果的数组，元素个数与上传的图片个数相同，先用 NSNull 占位
     NSMutableArray* result = [NSMutableArray array];
     for (UIImage* image in self.photoArray) {
         [result addObject:[NSNull null]];
     }
-    
     dispatch_group_t group = dispatch_group_create();
-    
+    [self.uploadImageArray removeAllObjects];
     for (NSInteger i = 0; i < self.photoArray.count; i++) {
         
         dispatch_group_enter(group);
@@ -610,7 +720,9 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
                 NSLog(@"第 %d 张图片上传失败: %@", (int)i + 1, error);
                 dispatch_group_leave(group);
             } else {
+                NSLog(@"uploadimages%@", response);
                 NSLog(@"第 %d 张图片上传成功: %@", (int)i + 1, responseObject);
+                [_uploadImageArray addObject:[NSString stringWithFormat:@"%ld", i]];
                 @synchronized (result) { // NSMutableArray 是线程不安全的，所以加个同步锁
                     result[i] = responseObject;
                 }
@@ -620,20 +732,26 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
         [uploadTask resume];
     }
     
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
-        self.uploadImageBlock(0);
         NSLog(@"上传完成!");
         self.fileIds = @"";
         NSInteger ids = 0;
         for (id response in result) {
             NSLog(@"tupian%@", response);
             if (ids == 0) {
-                self.fileIds = [[response objectForKey:@"body"] objectForKey:@"fileIds"];
+                self.fileIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
             } else {
-                self.fileIds = [[self.fileIds stringByAppendingString:@","] stringByAppendingString:[[response objectForKey:@"body"] objectForKey:@"fileIds"]];
+                self.fileIds = [[self.fileIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
             }
             ids++;
         }
+        CFUpdataInfoModel *model = [[CFUpdataInfoModel alloc]init];
+        model.imageTypeID = [NSString stringWithFormat:@"%ld", self.selectedIndex];
+        model.repairID = [NSString stringWithFormat:@"%@", self.repairId];
+        model.fileIds = self.fileIds;
+        [[CFFMDBManager shareManager] updateInfo:model];
         switch (self.selectedIndex) {
             case 0:
                 self.faultFileIds = self.fileIds;
@@ -645,11 +763,13 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
                 break;
         }
         NSLog(@"%@", self.fileIds);
+        [self submitOrderInfoWithPhoto:YES];
     });
 }
 #pragma mark - 获取已填写维修单信息
 - (void)getFillInOrderWithReapirId:(NSString *)repairId
 {
+    [MBManager showWaitingWithTitle:@"加载中"];
     NSDictionary *param = @{
                             @"repairId":repairId,
                             };
@@ -657,20 +777,14 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
         NSLog(@"dispatch%@", responseObject);
         NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
         if ([[dict objectForKey:@"code"] integerValue] == 200) {
+            [MBManager hideAlert];
             self.fillModel = [CFFillInOrderModel fillInOrderModelWithDictionary:[[responseObject objectForKey:@"body"] objectForKey:@"result"]];
             [self fillInOrderInfo];
         } else {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                
-            }];
-            [alert addAction:alertAction];
-            [self presentViewController:alert animated:YES completion:^{
-                
-            }];
+            [MBManager hideAlert];
         }
     } Failure:^(NSURLSessionDataTask *task, NSError *error) {
-        
+        [MBManager showBriefAlert:@"加载失败" time:1.0];
     }];
 }
 #pragma mark - 提交维修单信息
@@ -686,43 +800,8 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
 //故障描述 String faultInstruction
 //客户意见 String customerOpinion
 //处理意见 String handleOpinion
-- (void)submitOrderInfo
+- (void)submitOrderInfoWithPhoto:(BOOL)sender
 {
-    NSString *disIdStr = [NSString stringWithFormat:@"%d", [self.disId intValue]];
-    
-    if (self.hourTextField.textField.text.length < 1) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"请输入农机工作时长" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
-        }];
-        [alert addAction:alertAction];
-        [self presentViewController:alert animated:YES completion:^{
-            
-        }];
-        return;
-    }
-    if (self.mileageTextField.textField.text.length < 1) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"请输入农机行驶里程" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
-        }];
-        [alert addAction:alertAction];
-        [self presentViewController:alert animated:YES completion:^{
-            
-        }];
-        return;
-    }
-    if (_typeTextField.selecteButton.titleLabel.text.length < 1) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"请选择维修类型" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            
-        }];
-        [alert addAction:alertAction];
-        [self presentViewController:alert animated:YES completion:^{
-            
-        }];
-        return;
-    }
     if (self.faultFileIds.length < 1) {
         self.faultFileIds = @"";
     }
@@ -744,39 +823,149 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     if (self.remarks.length < 1) {
         self.remarks = @"";
     }
-    NSLog(@"%@", [self.hourTextField.textField.text stringByReplacingOccurrencesOfString:@" h" withString:@""]);
     NSDictionary *param = @{
-                            @"disId":disIdStr,
+                            @"disId":self.disId,
                             @"disNum":self.disNum,
-                            @"repairType":[NSString stringWithFormat:@"%ld", self.repairStyle],
                             @"faultFileIds":self.faultFileIds,
                             @"personFileIds":self.personFileIds,
                             @"token":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserToken"],
-                            @"useTime":[self.hourTextField.textField.text stringByReplacingOccurrencesOfString:@" h" withString:@""],
-                            @"driveDistance":[self.mileageTextField.textField.text stringByReplacingOccurrencesOfString:@" km" withString:@""],
+                            @"useTime":self.useTime,
+                            @"driveDistance":self.driveDistance,
                             @"machineInstruction":self.machineInstruction,
                             @"faultInstruction":self.faultInstruction,
                             @"customerOpinion":self.customerOpinion,
                             @"handleOpinion":self.handleOpinion,
                             @"remarks":self.remarks,
                             };
-    [CFAFNetWorkingMethod requestDataWithJavaUrl:@"repair/createRepair" Loading:1 Params:param Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+    [CFAFNetWorkingMethod requestDataWithJavaUrl:@"repair/createRepair" Loading:0 Params:param Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"%@", responseObject);
+        [MBManager hideAlert];
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"提交成功" preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//                for (UIViewController *viewController in self.navigationController.childViewControllers) {
-//                    if ([viewController isKindOfClass:[CFRepairsRecordViewController class]]) {
-//                        [self.navigationController popToViewController:viewController animated:YES];
-//                        return;
-//                    }
-//                }
-                [self.navigationController popViewControllerAnimated:YES];
-            }];
-            [alert addAction:alertAction];
-            [self presentViewController:alert animated:YES completion:^{
+            CGRect viewFrame = _orderTableView.frame;
+            _editSignArray = [NSMutableArray arrayWithObjects:@1, @1, @1, @1, @1, @1, @1, @1, nil];
+            if (self.faultFileIds.length < 1) {
+                if (_selectedIndex != 1) {
+                    for (int i = 0; i < self.signArray.count; i++) {
+                        [self.signArray replaceObjectAtIndex:i withObject:@0];
+                    }
+                    [self.signArray replaceObjectAtIndex:0 withObject:@1];
+                    _selectedIndex = 0;
+                }
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
                 
-            }];
+            } else if (self.personFileIds.length < 1) {
+                if (_selectedIndex != 0) {
+                    for (int i = 0; i < self.signArray.count; i++) {
+                        [self.signArray replaceObjectAtIndex:i withObject:@0];
+                    }
+                    [self.signArray replaceObjectAtIndex:1 withObject:@1];
+                    _selectedIndex = 1;
+                }
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+          else  if (self.useTime.length < 1 || self.driveDistance.length < 1) {
+              if (_selectedIndex != 0 && _selectedIndex != 1) {
+                  for (int i = 0; i < self.signArray.count; i++) {
+                      [self.signArray replaceObjectAtIndex:i withObject:@0];
+                  }
+                  [self.signArray replaceObjectAtIndex:2 withObject:@1];
+              }
+                self.selectedIndex = 2;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 196 * screenHeight);
+            }
+           else if (self.machineInstruction.length < 1) {
+               if (_selectedIndex != 0 && _selectedIndex != 1) {
+                   for (int i = 0; i < self.signArray.count; i++) {
+                       [self.signArray replaceObjectAtIndex:i withObject:@0];
+                   }
+                   [self.signArray replaceObjectAtIndex:3 withObject:@1];
+               }
+                self.selectedIndex = 3;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+           else if (self.faultInstruction.length < 1) {
+               if (_selectedIndex != 0 && _selectedIndex != 1) {
+                   for (int i = 0; i < self.signArray.count; i++) {
+                       [self.signArray replaceObjectAtIndex:i withObject:@0];
+                   }
+                   [self.signArray replaceObjectAtIndex:4 withObject:@1];
+               }
+                self.selectedIndex = 4;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+           else if (self.customerOpinion.length < 1) {
+            if (_selectedIndex != 0 && _selectedIndex != 1) {
+                    for (int i = 0; i < self.signArray.count; i++) {
+                        [self.signArray replaceObjectAtIndex:i withObject:@0];
+                    }
+                    [self.signArray replaceObjectAtIndex:5 withObject:@1];
+            }
+                self.selectedIndex = 5;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+           else if (self.handleOpinion.length < 1) {
+               if (_selectedIndex != 0 && _selectedIndex != 1) {
+                   for (int i = 0; i < self.signArray.count; i++) {
+                       [self.signArray replaceObjectAtIndex:i withObject:@0];
+                   }
+                   [self.signArray replaceObjectAtIndex:6 withObject:@1];
+               }
+               self.selectedIndex = 6;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+           else if (self.remarks.length < 1) {
+               if (_selectedIndex != 0 && _selectedIndex != 1) {
+                   for (int i = 0; i < self.signArray.count; i++) {
+                       [self.signArray replaceObjectAtIndex:i withObject:@0];
+                   }
+                   [self.signArray replaceObjectAtIndex:7 withObject:@0];
+               }
+                self.selectedIndex = 7;
+//                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+            if (self.faultFileIds.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:0 withObject:@0];
+            }
+            if (self.personFileIds.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:1 withObject:@0];
+            }
+            if (self.useTime.length < 1 || self.driveDistance.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:2 withObject:@0];
+            }
+            if (self.machineInstruction.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:3 withObject:@0];
+            }
+            if (self.faultInstruction.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:4 withObject:@0];
+            }
+            if (self.customerOpinion.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:5 withObject:@0];
+            }
+            if (self.handleOpinion.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:6 withObject:@0];
+            }
+            [self.orderTableView reloadData];
+//            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"提交成功" preferredStyle:UIAlertControllerStyleAlert];
+//            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//
+//            }];
+//            [alert addAction:alertAction];
+//            [self presentViewController:alert animated:YES completion:^{
+//
+//            }];
+            NSInteger editNumber = 0;
+            for (id i in self.editSignArray) {
+                if ([i integerValue] == 0) {
+                    editNumber++;
+                }
+            }
+            if (editNumber == 1) {
+                [self.submitButton setTitle:@"提交" forState:UIControlStateNormal];
+            } else if (editNumber == 0) {
+                [self.navigationController popViewControllerAnimated:YES];
+            } else {
+                
+            }
         } else {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[[responseObject objectForKey:@"head"]objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -793,21 +982,53 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
 }
 - (void)fillInOrderInfo
 {
-    self.faultFileIds = self.fillModel.faultFileIds;
-    self.personFileIds = self.fillModel.personFileIds;
-    _hourTextField.textField.text = [NSString stringWithFormat:@"%@ h", _fillModel.useTime];
-    _mileageTextField.textField.text = [NSString stringWithFormat:@"%@ km", _fillModel.driveDistance];
-    switch ([_fillModel.repairType integerValue]) {
-        case 0:
-            [_typeTextField.selecteButton setTitle:@"普通维修" forState:UIControlStateNormal];
-            break;
-        case 1:
-            [_typeTextField.selecteButton setTitle:@"外出维修" forState:UIControlStateNormal];
-            break;
-        default:
-            break;
+    NSMutableArray *tempArray = [NSMutableArray array];
+    
+    for (NSDictionary *dic in self.fillModel.faultFileInfo) {
+        if (self.faultFileIds.length == 0) {
+            self.faultFileIds = [dic objectForKey:@"fileId"];
+        } else {
+            self.faultFileIds = [[self.faultFileIds stringByAppendingString:@","] stringByAppendingString:[dic objectForKey:@"fileId"]];
+        }
+        [self.faultPhotoArray addObject:[dic objectForKey:@"filePath"]];
     }
-    [_typeTextField.selecteButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    for (NSString *str in self.faultPhotoArray) {
+        UIImage *image = [self getImageFromURL:str];
+        if (image == nil) {
+            image = [UIImage imageNamed:@"CF_RepairImage"];
+        }
+        [tempArray addObject:image];
+    }
+    self.faultPhotoArray = [NSMutableArray arrayWithArray:tempArray];
+    [tempArray removeAllObjects];
+    for (NSDictionary *dic in self.fillModel.personFileInfo) {
+        if (self.personFileIds.length == 0) {
+            self.personFileIds = [dic objectForKey:@"fileId"];
+        } else {
+            self.personFileIds = [[self.personFileIds stringByAppendingString:@","] stringByAppendingString:[dic objectForKey:@"fileId"]];
+        }
+        [self.personPhotoArray addObject:[dic objectForKey:@"filePath"]];
+    }
+
+    for (NSString *str in self.personPhotoArray) {
+        UIImage *image = [self getImageFromURL:str];
+        if (image == nil) {
+            image = [UIImage imageNamed:@"CF_RepairImage"];
+        }
+        [tempArray addObject:image];
+    }
+    self.personPhotoArray = [NSMutableArray arrayWithArray:tempArray];
+    if ([_fillModel.useTime integerValue] > 0) {
+        self.useTime = [NSString stringWithFormat:@"%@", _fillModel.useTime];
+    }
+    if ([_fillModel.driveDistance integerValue] > 0) {
+        self.driveDistance = [NSString stringWithFormat:@"%@", _fillModel.driveDistance];
+    }
+    self.faultInstruction = self.fillModel.faultInstruction;
+    self.machineInstruction = self.fillModel.machineInstruction;
+    self.customerOpinion = self.fillModel.customerOpinion;
+    self.handleOpinion = self.fillModel.handleOpinion;
+    self.remarks = self.fillModel.remarks;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.orderTableView reloadData];
     });
@@ -815,21 +1036,10 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
 - (void)selectedToUploadImage
 {
     self.vagueView.hidden = NO;
-    self.vagueViewStyle = 2;
     [_firstStyleButton setTitle:@"拍照" forState:UIControlStateNormal];
     [_secondStyleButton setTitle:@"从手机相册中选择" forState:UIControlStateNormal];
     [_firstStyleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [_secondStyleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-}
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    if (textField.tag == 1001) {
-        [textField.text stringByReplacingOccurrencesOfString:@"h" withString:@""];
-        textField.text = [textField.text stringByAppendingString:@" h"];
-    } else {
-        [textField.text stringByReplacingOccurrencesOfString:@"km" withString:@""];
-        textField.text = [textField.text stringByAppendingString:@" km"];
-    }
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
@@ -840,6 +1050,42 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray);
     [self.view endEditing:YES];
     self.vagueView.hidden = YES;
 }
+/**通过URL地址从网上获取图片*/
+- (UIImage*)getImageFromURL:(NSString*)fileURL
+{
+    UIImage *image;
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@", fileURL]];
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    image = [UIImage imageWithData:data];
+    return image;
+}
+//当键盘出现或改变时调用
+- (void)keyboardWillShow:(NSNotification *)aNotification
+{
+    //获取键盘的高度
+    NSDictionary *userInfo = [aNotification userInfo];
+    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+    CGRect keyboardRect = [aValue CGRectValue];
+    int height = keyboardRect.size.height;
+    [UIView animateWithDuration:0.5 animations:^{
+        if (_selectedIndex < 7) {
+            _fillScrollView.contentOffset = CGPointMake(0, height);
+        } else {
+            _fillScrollView.frame =CGRectMake(0, -height, self.view.frame.size.width, self.view.frame.size.height);
+        }
+//
+        
+    }];
+}
+
+//当键退出时调用
+- (void)keyboardWillHide:(NSNotification *)aNotification
+{
+    [UIView animateWithDuration:0.5 animations:^{
+        _fillScrollView.frame =CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    }];
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

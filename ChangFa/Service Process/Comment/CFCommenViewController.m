@@ -7,6 +7,7 @@
 //
 
 #import "CFCommenViewController.h"
+#import "CFPreviewPhotoViewController.h"
 #import "CFRepairsPhotoCell.h"
 #import "AddMachineCollectionViewCell.h"
 #import "CFReasonTextView.h"
@@ -97,9 +98,9 @@
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
     _commentPhotoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, _commentTexView.frame.size.height + _commentTexView.frame.origin.y + 20 * screenHeight, self.view.frame.size.width, 314 * screenHeight) collectionViewLayout:layout];
     _commentPhotoCollection.backgroundColor = [UIColor whiteColor];
-    layout.sectionInset = UIEdgeInsetsMake(0 * Height, 0 * Width, 0 * Height, 0 * Width);
-    layout.itemSize = CGSizeMake(200 * Width, 300 * Height);
-    layout.minimumLineSpacing = 0 * Width;
+    layout.sectionInset = UIEdgeInsetsMake(0 * screenHeight, 20 * screenWidth, 0 * screenHeight, 20 * screenWidth);
+    layout.itemSize = CGSizeMake(200 * screenWidth, 200 * screenHeight);
+    layout.minimumLineSpacing = 10 * screenWidth;
     layout.minimumInteritemSpacing = 0;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     _commentPhotoCollection.showsHorizontalScrollIndicator = NO;
@@ -114,7 +115,7 @@
     [releaseButton setBackgroundColor:ChangfaColor];
     [releaseButton setTitle:@"发布" forState:UIControlStateNormal];
     [releaseButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    releaseButton.layer.cornerRadius = 20 * Width;
+    releaseButton.layer.cornerRadius = 20 * screenWidth;
     [releaseButton addTarget:self action:@selector(uploadImagesArray) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:releaseButton];
 }
@@ -129,14 +130,27 @@
     _commentPhotoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
     if (indexPath.row == 0) {
         _addCommentPhotoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"addRepairsPhotoCellId" forIndexPath:indexPath];
-        _addCommentPhotoCell.addImageView.image = [UIImage imageNamed:@"CF_Repairs_AddPhoto"];
+        _addCommentPhotoCell.imageName = @"CF_AddPhoto";
         return _addCommentPhotoCell;
     }
     _commentPhotoCell.repairsPhoto.image = self.photoArray[indexPath.row - 1];
+    _commentPhotoCell.deleteButton.hidden = NO;
+    _commentPhotoCell.deleteButton.tag = 1000 + indexPath.row;
+    [_commentPhotoCell.deleteButton addTarget:self action:@selector(deleteImageButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     return _commentPhotoCell;
+}
+// 删除图片
+- (void)deleteImageButtonClick:(UIButton *)sender
+{
+    [self.photoArray removeObjectAtIndex:sender.tag - 1000 - 1];
+    [self.commentPhotoCollection reloadData];
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.row == 0) {
+        if (self.photoArray.count == 9) {
+            [MBManager showBriefAlert:@"最多上传9张图片" time:1.5];
+            return;
+        }
         [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status){
             if (status != PHAuthorizationStatusAuthorized) return;
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -155,15 +169,21 @@
             });
         }];
     } else {
-        
+        CFPreviewPhotoViewController *preview = [[CFPreviewPhotoViewController alloc]init];
+        preview.photoArray = self.photoArray;
+        preview.selectedIndex = indexPath.row - 1;
+        preview.headerHeight = navHeight;
+        [self presentViewController:preview animated:YES completion:^{
+                
+        }];
     }
 }
 #pragma mark - <CTAssetsPickerControllerDelegate>
 -(BOOL)assetsPickerController:(CTAssetsPickerController *)picker shouldSelectAsset:(PHAsset *)asset
 {
-    NSInteger max = 9;
+    NSInteger max = 9 - self.photoArray.count;
     if (picker.selectedAssets.count >= max) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:[NSString stringWithFormat:@"最多选择%zd张图片", max] preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:[NSString stringWithFormat:@"还可选择%zd张图片", max] preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:nil]];
         [picker presentViewController:alert animated:YES completion:nil];
         // 这里不能使用self来modal别的控制器，因为此时self.view不在window上
@@ -197,6 +217,7 @@
 #pragma mark-多图片上传
 - (void)uploadImagesArray
 {
+    [MBManager showWaitingWithTitle:@"上传图片中"];
     // 准备保存结果的数组，元素个数与上传的图片个数相同，先用 NSNull 占位
     NSMutableArray* result = [NSMutableArray array];
     for (UIImage* image in self.photoArray) {
@@ -231,9 +252,9 @@
         for (id response in result) {
             NSLog(@"tupian%@", response);
             if (ids == 0) {
-                self.fileIds = [[response objectForKey:@"body"] objectForKey:@"fileIds"];
+                self.fileIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
             } else {
-                self.fileIds = [[self.fileIds stringByAppendingString:@","] stringByAppendingString:[[response objectForKey:@"body"] objectForKey:@"fileIds"]];
+                self.fileIds = [[self.fileIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
             }
             ids++;
         }
@@ -249,6 +270,9 @@
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *params = @{@"file":@"",
                              @"userId":[userDefaults objectForKey:@"UserUid"],
+                             @"dispatchId":@"",
+                             @"token":@"",
+                             @"type":@"0",
                              };
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:@"http://192.168.31.68:8080/changfa_system/file/manyFileUpload.do?" parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
@@ -269,6 +293,7 @@
     _starLabel.text = [[NSString stringWithFormat:@"%f", sender.value] substringToIndex:3];
 }
 - (void)releaseButtonClick{
+    NSLog(@"%@ %@", _commentTexView.text, [_starLabel.text substringToIndex:1]);
     NSDictionary *params = @{
                              @"content":_commentTexView.text,
                              @"level":[_starLabel.text substringToIndex:1],

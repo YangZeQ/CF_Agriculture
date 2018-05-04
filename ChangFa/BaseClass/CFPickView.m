@@ -234,7 +234,7 @@
             model = self.cityArray[row];
             self.city = model.title;
             self.cityID = model.ID;
-            self.selectedInfo = [self.province stringByAppendingString:self.city];
+            self.selectedInfo = [[self.province stringByAppendingString:@"-"]stringByAppendingString:self.city];
 //            [self getDistrictInfo:model.ID];
         } else {
             model = self.areaArray[row];

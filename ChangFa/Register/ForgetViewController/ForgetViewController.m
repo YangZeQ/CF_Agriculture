@@ -34,7 +34,7 @@
 #pragma mark -创建视图
 - (void)creatView{
     // 手机号
-    _phoneNumberView = [[CFRegisterTextFieldView alloc] initWithImageName:@"Phone" Placeholder:@"请输入手机号" GetCode:NO SecretCode:NO Frame:CGRectMake(56 * Width, 64 + 44 * Height, self.view.frame.size.width - 2 * 56 * Width, 100 * Height) ScaleWidth:Width ScaleHeight:Height];
+    _phoneNumberView = [[CFRegisterTextFieldView alloc] initWithImageName:@"Phone" Placeholder:@"请输入手机号" GetCode:NO SecretCode:NO Frame:CGRectMake(56 * screenWidth, 64 + 44 * screenHeight, self.view.frame.size.width - 2 * 56 * screenWidth, 100 * screenHeight) ScaleWidth:screenWidth ScaleHeight:screenHeight];
     _phoneNumberView.textField.delegate = self;
     //限制弹出数字键盘
     _phoneNumberView.textField.keyboardType = UIKeyboardTypeNumberPad;
@@ -42,25 +42,25 @@
     _phoneNumberView.textField.returnKeyType = UIReturnKeyDone;
     [self.view addSubview:_phoneNumberView];
     // 验证码
-    _IdentifyView = [[CFRegisterTextFieldView alloc]initWithImageName:@"VerifiedCode" Placeholder:@"请输入验证码" GetCode:YES SecretCode:NO Frame:CGRectMake(_phoneNumberView.frame.origin.x, _phoneNumberView.frame.origin.y + _phoneNumberView.frame.size.height + 44 * Height, _phoneNumberView.frame.size.width, _phoneNumberView.frame.size.height) ScaleWidth:Width ScaleHeight:Height];
+    _IdentifyView = [[CFRegisterTextFieldView alloc]initWithImageName:@"VerifiedCode" Placeholder:@"请输入验证码" GetCode:YES SecretCode:NO Frame:CGRectMake(_phoneNumberView.frame.origin.x, _phoneNumberView.frame.origin.y + _phoneNumberView.frame.size.height + 44 * screenHeight, _phoneNumberView.frame.size.width, _phoneNumberView.frame.size.height) ScaleWidth:screenWidth ScaleHeight:screenHeight];
     [_IdentifyView.getCodeBtn addTarget:self action:@selector(getCodeNumber) forControlEvents:UIControlEventTouchUpInside];
     _IdentifyView.textField.delegate = self;
     _IdentifyView.textField.keyboardType = UIKeyboardTypeNumberPad;
     _IdentifyView.textField.returnKeyType = UIReturnKeyDone;
     [self.view addSubview:_IdentifyView];
     // 密码
-    _putSecretView = [[CFRegisterTextFieldView alloc]initWithImageName:@"SecretCode" Placeholder:@"请输入新密码" GetCode:NO SecretCode:YES Frame:CGRectMake(_phoneNumberView.frame.origin.x, _IdentifyView.frame.size.height + _IdentifyView.frame.origin.y + 44 * Height, _phoneNumberView.frame.size.width, _phoneNumberView.frame.size.height) ScaleWidth:Width ScaleHeight:Height];
+    _putSecretView = [[CFRegisterTextFieldView alloc]initWithImageName:@"SecretCode" Placeholder:@"请输入新密码" GetCode:NO SecretCode:YES Frame:CGRectMake(_phoneNumberView.frame.origin.x, _IdentifyView.frame.size.height + _IdentifyView.frame.origin.y + 44 * screenHeight, _phoneNumberView.frame.size.width, _phoneNumberView.frame.size.height) ScaleWidth:screenWidth ScaleHeight:screenHeight];
     _putSecretView.textField.secureTextEntry = YES;
     [self.view addSubview:_putSecretView];
     // 确认密码
-    _sureSecretView = [[CFRegisterTextFieldView alloc]initWithImageName:@"SureSecretCode" Placeholder:@"请确认密码" GetCode:NO SecretCode:NO Frame:CGRectMake(_phoneNumberView.frame.origin.x, _putSecretView.frame.size.height + _putSecretView.frame.origin.y + 44 * Height, _phoneNumberView.frame.size.width, _phoneNumberView.frame.size.height) ScaleWidth:Width ScaleHeight:Height];
+    _sureSecretView = [[CFRegisterTextFieldView alloc]initWithImageName:@"SureSecretCode" Placeholder:@"请确认密码" GetCode:NO SecretCode:NO Frame:CGRectMake(_phoneNumberView.frame.origin.x, _putSecretView.frame.size.height + _putSecretView.frame.origin.y + 44 * screenHeight, _phoneNumberView.frame.size.width, _phoneNumberView.frame.size.height) ScaleWidth:screenWidth ScaleHeight:screenHeight];
     _sureSecretView.textField.secureTextEntry = YES;
     [self.view addSubview:_sureSecretView];
 
     // 重置
     UIButton *registerBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    registerBtn.frame = CGRectMake(_phoneNumberView.frame.origin.x, _sureSecretView.frame.size.height + _sureSecretView.frame.origin.y + 100 * Height, _phoneNumberView.frame.size.width, 88 * Height);
-    registerBtn.layer.cornerRadius = 10 * Width;
+    registerBtn.frame = CGRectMake(_phoneNumberView.frame.origin.x, _sureSecretView.frame.size.height + _sureSecretView.frame.origin.y + 100 * screenHeight, _phoneNumberView.frame.size.width, 88 * screenHeight);
+    registerBtn.layer.cornerRadius = 10 * screenWidth;
     [registerBtn setBackgroundColor:ChangfaColor];
     [registerBtn setTitle:@"确定重置" forState:UIControlStateNormal];
     [registerBtn addTarget:self action:@selector(registerButtonClick) forControlEvents:UIControlEventTouchUpInside];

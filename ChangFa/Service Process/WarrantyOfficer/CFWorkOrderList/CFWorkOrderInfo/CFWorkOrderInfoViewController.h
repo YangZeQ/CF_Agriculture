@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface CFWorkOrderInfoViewController : UIViewController
+@property (nonatomic, assign)NSInteger pushType;   // completeorder push:2
 @property (nonatomic, strong)NSString *dispatchId;
 @end

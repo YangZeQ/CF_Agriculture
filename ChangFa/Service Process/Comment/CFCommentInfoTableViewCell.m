@@ -8,6 +8,7 @@
 
 #import "CFCommentInfoTableViewCell.h"
 #import "CFRepairsPhotoCell.h"
+#import "CFPreviewPhotoViewController.h"
 @interface CFCommentInfoTableViewCell()<UICollectionViewDelegate, UICollectionViewDataSource>
 @property (nonatomic, strong)UILabel *phoneLabel;
 @property (nonatomic, strong)UILabel *commentLabel;
@@ -49,7 +50,7 @@
     _repairsPhotoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 25 * screenHeight, self.contentView.frame.size.width, 250 * screenHeight) collectionViewLayout:layout];
     layout.sectionInset = UIEdgeInsetsMake(0, 25 * screenWidth, 0, 25 * screenWidth);
     layout.itemSize = CGSizeMake(250 * screenWidth, 250 * screenHeight);
-    layout.minimumLineSpacing = 10 * screenWidth;
+    layout.minimumLineSpacing = 20 * screenWidth;
     layout.minimumInteritemSpacing = 0 * screenHeight;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     _repairsPhotoCollection.showsHorizontalScrollIndicator = NO;
@@ -111,7 +112,16 @@
     [_repairsPhotoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", self.photoArray[indexPath.row]]] placeholderImage:[UIImage imageNamed:@"CF_RepairImage"]];
     return _repairsPhotoCell;
 }
-
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+//    CFPreviewPhotoViewController *preview = [[CFPreviewPhotoViewController alloc]init];
+//    preview.photoArray = self.photoArray;
+//    preview.selectedIndex = indexPath.row;
+//    preview.headerHeight = navHeight;
+//    [self presentViewController:preview animated:YES completion:^{
+//        
+//    }];
+}
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code

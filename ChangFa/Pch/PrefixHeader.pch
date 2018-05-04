@@ -20,15 +20,18 @@
 #import "MJRefresh.h"
 #import "UIImageView+WebCache.h"
 
-#define Height self.view.frame.size.height / 1334
-#define Width self.view.frame.size.width / 750
+#define Height self.view.frame.size.height / 667
+#define Width self.view.frame.size.width / 375
 #define screenHeight [UIScreen mainScreen].bounds.size.height / 1334
 #define screenWidth [UIScreen mainScreen].bounds.size.width / 750
+//#define screenHeight [UIScreen mainScreen].bounds.size.height / 1334
+//#define screenWidth [UIScreen mainScreen].bounds.size.width / 750
 #define selfWidith self.view.frame.size.width
 #define selfHeight self.view.frame.size.height
 #define ChangfaColor [UIColor colorWithRed:58 / 255.0 green:180 / 255.0 blue:139 / 255.0 alpha:1.0]
 #define BackgroundColor [UIColor colorWithRed:232 / 255.0 green:235 / 255.0 blue:234 / 255.0 alpha:1]
-#define navHeight self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height
+#define UserBackgroundColor [UIColor colorWithRed:244 / 255.0 green:247 / 255.0 blue:247 / 255.0 alpha:1]
+#define navHeight (self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height)
 #define CF_WIDTH [UIScreen mainScreen].bounds.size.width
 #define CF_HEIGHT [UIScreen mainScreen].bounds.size.height
 ////判断设备类型
@@ -36,13 +39,6 @@
 //#define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
 //#define iPhone6 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? (CGSizeEqualToSize(CGSizeMake(750, 1334), [[UIScreen mainScreen] currentMode].size)) : NO)
 //#define iPhone6plus ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? (CGSizeEqualToSize(CGSizeMake(1125, 2001), [[UIScreen mainScreen] currentMode].size) || CGSizeEqualToSize(CGSizeMake(1242, 2208), [[UIScreen mainScreen] currentMode].size)) : NO)
-//
-//#define kScreenHeight [UIScreen mainScreen].bounds.size.height
-//#define kScreenWidth [UIScreen mainScreen].bounds.size.width
-//#define kWidth(R) (R)*(kScreenWidth)/320 这里的320我是针对5s为标准适配的,如果需要其他标准可以修改
-//#define kHeight(R) kWidth(R)  这里的568我是针对5s为标准适配的,如果需要其他标准可以修改
-//
-//#define font(R) (R)*(kScreenWidth)/320.0  这里是5s屏幕字体
 #define CFFONT20 [UIFont systemFontOfSize:[self autoScaleW:20]]
 #define CFFONT18 [UIFont systemFontOfSize:[self autoScaleW:18]]
 #define CFFONT16 [UIFont systemFontOfSize:[self autoScaleW:16]]
@@ -50,6 +46,8 @@
 #define CFFONT14 [UIFont systemFontOfSize:[self autoScaleW:14]]
 #define CFFONT13 [UIFont systemFontOfSize:[self autoScaleW:13]]
 #define CFFONT12 [UIFont systemFontOfSize:[self autoScaleW:12]]
+#define CFFONT11 [UIFont systemFontOfSize:[self autoScaleW:11]]
+#define CFFONT9 [UIFont systemFontOfSize:[self autoScaleW:9]]
 
 #define UserHeadUrl [userDefault objectForKey:@"UserHeadUrl"]
 // 测试接口
@@ -57,7 +55,7 @@
 
 // 线上接口
 #define onlineUrl @"http://47.96.20.14:8085/api/v1/"
-#define onlineJavaUrl @"http://192.168.31.68:8080/changfa_system/"
+#define onlineJavaUrl @"http://192.168.43.98:8080/changfa_system/"
 #define CF_Amap @"9a565181533f74f5cc5c4902391b8f7b"
 #define CF_Bugly @"1abc035ec9"
 // Include any system framework and library headers here that should be included in all compilation units.

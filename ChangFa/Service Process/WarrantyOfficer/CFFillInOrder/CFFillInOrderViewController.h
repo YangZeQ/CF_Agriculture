@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-typedef void(^uploadImageBlock)(BOOL changeStatus);
 @interface CFFillInOrderViewController : UIViewController
+@property (nonatomic, strong)NSString *dispatchId;
 @property (nonatomic, strong)NSString *repairId;
 @property (nonatomic, strong)NSString *disId;
 @property (nonatomic, strong)NSString *disNum;
-@property (nonatomic, copy)uploadImageBlock uploadImageBlock;
 @end

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface CFCommentInfoViewController : UIViewController
+@property (nonatomic, assign)NSInteger pushType;  // completeorder push:2
 @property (nonatomic, strong)NSString *serviceId;
 @property (nonatomic, strong)NSString *commentLevel;
 @end

@@ -143,7 +143,7 @@
     
     UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     submitButton.frame = CGRectMake(30 * screenWidth, self.view.frame.size.height - 130 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-    submitButton.layer.cornerRadius = 20 * Width;
+    submitButton.layer.cornerRadius = 20 * screenWidth;
     [submitButton setTitle:@"提交" forState:UIControlStateNormal];
     [submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [submitButton setBackgroundColor:ChangfaColor];

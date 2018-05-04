@@ -5,7 +5,6 @@
 //  Created by dev on 2017/12/29.
 //  Copyright © 2017年 dev. All rights reserved.
 //
-
 #import "CFHomePageViewController.h"
 #import "CFBasePageControl.h"
 #import "MyMachineCollectionViewCell.h"
@@ -22,6 +21,8 @@
 #import "CFSalesPersonMyAgencyViewController.h"
 #import "CFAgencyManagerViewController.h"
 #import "SDCycleScrollView.h"
+#import "CFAddMachineViewController.h"
+#import "ScanViewController.h"
 
 #import "CFCommenViewController.h"
 
@@ -32,8 +33,15 @@
 #import "CFMapNavigationViewController.h"
 @interface CFHomePageViewController ()<SDCycleScrollViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate, BandMachineViewControllerDelegate, UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong)UIButton *rightButton;
-//@property (nonatomic, strong)UIScrollView *imageScrollView;
+@property (nonatomic, strong)UIView *navigationView;
+@property (nonatomic, strong)UILabel *navigationLabel;
+@property (nonatomic, strong)UILabel *locationLabel;
+@property (nonatomic, strong)UIImageView *weatherImage;
+@property (nonatomic, strong)UILabel *temperatureLabel;
+@property (nonatomic, strong)UILabel *temperatureRangeLabel;
 @property (nonatomic, strong)SDCycleScrollView *imageScrollView;
+@property (nonatomic, strong)UILabel *imageTitleLabel;
+@property (nonatomic, strong)SDCycleScrollView *machineScrollView;
 @property (nonatomic, strong)CFBasePageControl *pageView;
 @property (nonatomic, strong)UICollectionView *machineCollection;
 @property (nonatomic, strong)MyMachineCollectionViewCell *machineCell;
@@ -41,7 +49,7 @@
 @property (nonatomic, strong)UICollectionViewCell *cell;
 @property (nonatomic, strong)NSMutableArray *myMachineArray;
 @property (nonatomic, strong)NSMutableArray *carouselFigureArray;
-
+@property (nonatomic, strong)UIView *signView;
 @property (nonatomic, strong)UITableView *orderTableView;
 @property (nonatomic, strong)NSMutableArray *orderArray;
 @end
@@ -90,29 +98,29 @@
 - (void)creatHomePageView
 {
     // 模拟导航栏铺设
-    UIView *navigationView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, navHeight)];
-    
-    navigationView.backgroundColor = ChangfaColor;
-    [self.view addSubview:navigationView];
-    UILabel *navigationLable = [[UILabel alloc]initWithFrame:CGRectMake(0, 20, navigationView.frame.size.width, 44)];
-    navigationLable.text = @"常发农装";
-    navigationLable.font = [UIFont systemFontOfSize:[self autoScaleW:15]];
-    navigationLable.userInteractionEnabled = YES;
-    navigationLable.font = [UIFont systemFontOfSize:[self autoScaleW:20]];
-    navigationLable.textAlignment = NSTextAlignmentCenter;
-    navigationLable.textColor = [UIColor whiteColor];
-    [navigationView addSubview:navigationLable];
+    _navigationView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, navHeight)];
+    NSLog(@"navheight:%lf", navHeight);
+    _navigationView.backgroundColor = ChangfaColor;
+    [self.view addSubview:_navigationView];
+    _navigationLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 20, _navigationView.frame.size.width, 44)];
+    _navigationLabel.text = @"常发农装";
+    _navigationLabel.userInteractionEnabled = YES;
+    _navigationLabel.font = [UIFont systemFontOfSize:[self autoScaleW:20]];
+    _navigationLabel.textAlignment = NSTextAlignmentCenter;
+    _navigationLabel.textColor = [UIColor whiteColor];
+    [_navigationView addSubview:_navigationLabel];
     
     _rightButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _rightButton.frame = CGRectMake(navigationView.frame.size.width - 44, 0, 44, 44);
+    _rightButton.frame = CGRectMake(_navigationView.frame.size.width - 44 * Width, 0, 44 * Width, 44);
     [_rightButton setImage:[UIImage imageNamed:@"xinxi"] forState:UIControlStateNormal];
     [_rightButton addTarget:self action:@selector(rightButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [navigationLable addSubview:_rightButton];
+    [_navigationLabel addSubview:_rightButton];
 //轮播图
     [self getCarouselImage];
-    _imageScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, navigationView.frame.size.height, self.view.frame.size.width, 402 * Height) delegate:self placeholderImage:[UIImage imageNamed:@"SDCycleScrollView"]];
-    _imageScrollView.currentPageDotImage = [UIImage imageNamed:@"yuandian"];
-    _imageScrollView.pageDotImage = [UIImage imageNamed:@"yuanhuan"];
+    _imageScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, _navigationView.frame.size.height, self.view.frame.size.width, 406 * screenHeight) delegate:self placeholderImage:[UIImage imageNamed:@"SDCycleScrollView"]];
+    _imageScrollView.currentPageDotImage = [UIImage imageNamed:@"ImageScroll_Current"];
+    _imageScrollView.pageDotImage = [UIImage imageNamed:@"ImageScroll_Other"];
+    _imageScrollView.pageControlDotSize = CGSizeMake(30 * screenWidth, 8 * screenHeight);
     [self.view addSubview:_imageScrollView];
     
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
@@ -166,18 +174,18 @@
     [self.view addSubview:agencyView];
     
     UIButton *statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    statusButton.frame = CGRectMake(103 * screenWidth, 88 * screenHeight, 68 * screenWidth, 68 * screenHeight);
+    statusButton.frame = CGRectMake((CF_WIDTH - 66 * screenWidth * 4) / 8, 88 * screenHeight, 66 * screenWidth, 66 * screenHeight);
     [statusButton setImage:[UIImage imageNamed:@"CF_Agency_MachineStatus"] forState:UIControlStateNormal];
     [statusButton addTarget:self action:@selector(agencyMachineStatusButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [agencyView addSubview:statusButton];
-    UILabel *statusLabel = [[UILabel alloc]initWithFrame:CGRectMake(21 * screenWidth, statusButton.frame.size.height + statusButton.frame.origin.y + 50 * screenHeight, 85 * 2 * screenWidth + 68 * screenWidth, 50 * screenHeight)];
+    UILabel *statusLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, statusButton.frame.size.height + statusButton.frame.origin.y + 30 * screenHeight, CF_WIDTH / 4, 50 * screenHeight)];
     statusLabel.text = @"库存信息";
     statusLabel.textAlignment = NSTextAlignmentCenter;
     [agencyView addSubview:statusLabel];
     
     
     UIButton *managerButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    managerButton.frame = CGRectMake(statusButton.frame.size.width + statusButton.frame.origin.x + 85 * 2 * screenWidth, statusButton.frame.origin.y, statusButton.frame.size.width, statusButton.frame.size.height);
+    managerButton.frame = CGRectMake(statusButton.frame.size.width + statusButton.frame.origin.x + (CF_WIDTH - 66 * screenWidth * 4) / 4, statusButton.frame.origin.y, statusButton.frame.size.width, statusButton.frame.size.height);
     [managerButton setImage:[UIImage imageNamed:@"CF_Agency_Manager"] forState:UIControlStateNormal];
     [managerButton addTarget:self action:@selector(agencyManagerButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [agencyView addSubview:managerButton];
@@ -187,7 +195,7 @@
     [agencyView addSubview:managerLabel];
     
     UIButton *sellButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    sellButton.frame = CGRectMake(managerButton.frame.size.width + managerButton.frame.origin.x + 85 * 2 * screenWidth, managerButton.frame.origin.y, managerButton.frame.size.width, managerButton.frame.size.height);
+    sellButton.frame = CGRectMake(managerButton.frame.size.width + managerButton.frame.origin.x + (CF_WIDTH - 66 * screenWidth * 4) / 4, managerButton.frame.origin.y, managerButton.frame.size.width, managerButton.frame.size.height);
     [sellButton setImage:[UIImage imageNamed:@"CF_Agency_Sell"] forState:UIControlStateNormal];
     [sellButton addTarget:self action:@selector(agencySellButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [agencyView addSubview:sellButton];
@@ -195,6 +203,16 @@
     sellLabel.text = @"农机出售";
     sellLabel.textAlignment = NSTextAlignmentCenter;
     [agencyView addSubview:sellLabel];
+    
+    UIButton *orderButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    orderButton.frame = CGRectMake(sellButton.frame.size.width + sellButton.frame.origin.x + (CF_WIDTH - 66 * screenWidth * 4) / 4, sellButton.frame.origin.y, sellButton.frame.size.width, sellButton.frame.size.height);
+    [orderButton setImage:[UIImage imageNamed:@"CF_Agency_Sell"] forState:UIControlStateNormal];
+    [orderButton addTarget:self action:@selector(agencySellButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [agencyView addSubview:orderButton];
+    UILabel *orderLabel = [[UILabel alloc]initWithFrame:CGRectMake(sellLabel.frame.size.width + sellLabel.frame.origin.x, sellLabel.frame.origin.y, sellLabel.frame.size.width, sellLabel.frame.size.height)];
+    orderLabel.text = @"派工单";
+    orderLabel.textAlignment = NSTextAlignmentCenter;
+    [agencyView addSubview:orderLabel];
 }
 - (void)agencyMachineStatusButtonClick
 {
@@ -223,16 +241,32 @@
     salesPersonBackView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:salesPersonBackView];
     
+//    UIButton *scanButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    scanButton.frame = CGRectMake((CF_WIDTH / 2 - 66 * screenWidth) / 2, 60 * screenHeight, 66 * screenWidth, 66 * screenHeight);
+//    [scanButton setImage:[UIImage imageNamed:@"CF_ScanImage"] forState:UIControlStateNormal];
+//    [scanButton addTarget:self action:@selector(tapScanView) forControlEvents:UIControlEventTouchUpInside];
+//    [salesPersonBackView addSubview:scanButton];
+//
+//    UILabel *scanLabel = [[UILabel alloc]initWithFrame:CGRectMake((CF_WIDTH / 2 - 200 * screenWidth) / 2, scanButton.frame.size.height + scanButton.frame.origin.y + 30 * screenHeight, 200 * screenWidth, 50 * screenHeight)];
+//    scanLabel.text = @"扫一扫";
+//    scanLabel.font = CFFONT15;
+//    scanLabel.textColor = [UIColor grayColor];
+//    scanLabel.textAlignment = NSTextAlignmentCenter;
+//    [salesPersonBackView addSubview:scanLabel];
+    
     UIButton *agencyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    agencyButton.frame = CGRectMake(332 * screenWidth, 60 * screenHeight, 86 * screenWidth, 86 * screenHeight);
-    [agencyButton setImage:[UIImage imageNamed:@"agencyImage"] forState:UIControlStateNormal];
+    agencyButton.frame = CGRectMake((CF_WIDTH - 66 * screenWidth) / 2, 60 * screenHeight, 66 * screenWidth, 66 * screenHeight);
+    [agencyButton setImage:[UIImage imageNamed:@"CF_AgencyImage"] forState:UIControlStateNormal];
     [agencyButton addTarget:self action:@selector(agencyButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [salesPersonBackView addSubview:agencyButton];
     
-    UILabel *agencyLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, agencyButton.frame.size.height + agencyButton.frame.origin.y + 50 * screenHeight, self.view.frame.size.width, 50 * screenHeight)];
+    UILabel *agencyLabel = [[UILabel alloc]initWithFrame:CGRectMake((CF_WIDTH - 200 * screenWidth) / 2, agencyButton.frame.size.height + agencyButton.frame.origin.y + 30 * screenHeight, 200 * screenWidth, 50 * screenHeight)];
     agencyLabel.text =@"我的经销商";
+    agencyLabel.font = CFFONT15;
+    agencyLabel.textColor = [UIColor grayColor];
     agencyLabel.textAlignment = NSTextAlignmentCenter;
     [salesPersonBackView addSubview:agencyLabel];
+
 }
 - (void)agencyButtonClick
 {
@@ -242,34 +276,127 @@
 // 农机手
 - (void)createMachineWorkerView
 {
-    // 我的农机
-    UILabel *myMachineLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * Width, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 40 * Height, selfWidith - 30 * Width, 50 * Height)];
+    UILabel *myMachineLabel = [[UILabel alloc]initWithFrame:CGRectMake(38 * screenWidth, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 30 * screenHeight, selfWidith - 30 * screenWidth, 50 * screenHeight)];
     myMachineLabel.text = @"我的农机";
-    myMachineLabel.textColor = [UIColor darkGrayColor];
-    myMachineLabel.font = CFFONT18;
+    myMachineLabel.textColor = [UIColor grayColor];
+    myMachineLabel.font = CFFONT14;
     [self.view addSubview:myMachineLabel];
     
-    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-    _machineCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, myMachineLabel.frame.origin.y + myMachineLabel.frame.size.height, self.view.frame.size.width, 414 * Height) collectionViewLayout:layout];
-    _machineCollection.backgroundColor = [UIColor whiteColor];
-    layout.sectionInset = UIEdgeInsetsMake(0 * Height, 0 * Width, 0 * Height, 0 * Width);
-    layout.itemSize = CGSizeMake(334 * Width, 414 * Height);
-    layout.minimumLineSpacing = 0 * Width;
-    layout.minimumInteritemSpacing = 0;
-    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    _machineCollection.showsHorizontalScrollIndicator = NO;
-    _machineCollection.delegate = self;
-    _machineCollection.dataSource = self;
-    [_machineCollection registerClass:[MyMachineCollectionViewCell class] forCellWithReuseIdentifier:@"machineCellId"];
-    [_machineCollection registerClass:[AddMachineCollectionViewCell class] forCellWithReuseIdentifier:@"addMachineCellId"];
-    [self.view addSubview:_machineCollection];
-    [self getMyMachineInformation];
+//    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+//    _machineCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, myMachineLabel.frame.origin.y + myMachineLabel.frame.size.height, self.view.frame.size.width, 414 * screenHeight) collectionViewLayout:layout];
+//    _machineCollection.backgroundColor = [UIColor whiteColor];
+//    layout.sectionInset = UIEdgeInsetsMake(0 * screenHeight, 0 * screenWidth, 0 * screenHeight, 0 * screenWidth);
+//    layout.itemSize = CGSizeMake(334 * screenWidth, 414 * screenHeight);
+//    layout.minimumLineSpacing = 10 * screenWidth;
+//    layout.minimumInteritemSpacing = 0;
+//    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+//    _machineCollection.showsHorizontalScrollIndicator = NO;
+//    _machineCollection.delegate = self;
+//    _machineCollection.dataSource = self;
+//    [_machineCollection registerClass:[MyMachineCollectionViewCell class] forCellWithReuseIdentifier:@"machineCellId"];
+//    [_machineCollection registerClass:[AddMachineCollectionViewCell class] forCellWithReuseIdentifier:@"addMachineCellId"];
+//    [self.view addSubview:_machineCollection];
+//    [self getMyMachineInformation];
+//    return;
+    _rightButton.hidden = YES;
+    self.view.backgroundColor = UserBackgroundColor;
+    
+    _navigationView.backgroundColor = [UIColor whiteColor];
+    _navigationLabel.text = @"丁酉年腊月初六";
+    _navigationLabel.font = CFFONT13;
+    _navigationLabel.textColor = [UIColor blackColor];
+    UIImageView *locationImage = [[UIImageView alloc]initWithFrame:CGRectMake(30 * screenWidth, 34, 24 * screenWidth, 32 * screenHeight)];
+    locationImage.image = [UIImage imageNamed:@"Home_Location"];
+    [_navigationView addSubview:locationImage];
+    _locationLabel = [[UILabel alloc]initWithFrame:CGRectMake(73 * screenWidth, 34, 60 * screenWidth, 28 * screenHeight)];
+    _locationLabel.text = @"常州";
+    _locationLabel.textColor = [UIColor grayColor];
+    _locationLabel.font = CFFONT14;
+    [_navigationView addSubview:_locationLabel];
+    
+    _weatherImage = [[UIImageView alloc]initWithFrame:CGRectMake(600 * screenWidth, 33, 44 * screenWidth, 44 * screenHeight)];
+    _weatherImage.image = [UIImage imageNamed:@"Home_Weather"];
+    [_navigationView addSubview:_weatherImage];
+    _temperatureLabel = [[UILabel alloc]initWithFrame:CGRectMake(688 * screenWidth, 28, 40 * screenWidth, 40 * screenHeight)];
+    _temperatureLabel.text = @"8°";
+    _temperatureLabel.font = CFFONT18;
+    [_navigationView addSubview:_temperatureLabel];
+    _temperatureRangeLabel = [[UILabel alloc]initWithFrame:CGRectMake(672 * screenWidth, 51, 56 * screenWidth, 17 * screenHeight)];
+    _temperatureRangeLabel.text = @"6/10°";
+    _temperatureRangeLabel.font = CFFONT9;
+    _temperatureRangeLabel.textAlignment = NSTextAlignmentRight;
+    [_navigationView addSubview:_temperatureRangeLabel];
+    // 我的农机
+
+    
+    //轮播图标题栏
+    UIImageView *scrollTitleView = [[UIImageView alloc]initWithFrame:CGRectMake(0, _imageScrollView.frame.size.height - 80 * screenHeight, CF_WIDTH, 80 * screenHeight)];
+    scrollTitleView.image = [UIImage imageNamed:@"ImageScroll_Title"];
+    [_imageScrollView addSubview:scrollTitleView];
+    _imageTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(20 * screenWidth, 0, CF_WIDTH, 70 * screenHeight)];
+    _imageTitleLabel.text = @"每日资讯：常发农机开启新旅程";
+    _imageTitleLabel.font = CFFONT16;
+    _imageScrollView.pageControlBottomOffset = -10 * screenHeight;
+    [scrollTitleView addSubview:_imageTitleLabel];
+    
+//    _imageScrollView.titleLabelHeight = 60 * screenHeight;
+//    _imageScrollView.titleLabelTextFont = CFFONT16;
+//    _imageScrollView.titlesGroup = [NSArray arrayWithObjects:@"每日资讯：常发农机开启新旅程", nil];
+//    _imageScrollView.titleLabelBackgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
+//    _imageScrollView.pageControlBottomOffset = 80 * screenHeight;
+    
+    // 添加农机
+    UILabel *additionLabel = [[UILabel alloc]initWithFrame:CGRectMake(555 * screenWidth, myMachineLabel.frame.origin.y, 120 * screenWidth, myMachineLabel.frame.size.height)];
+    additionLabel.text = @"添加农机";
+    additionLabel.font = CFFONT14;
+    additionLabel.textColor = [UIColor grayColor];
+    additionLabel.userInteractionEnabled = YES;
+    [self.view addSubview:additionLabel];
+    UIButton *additionButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    additionButton.frame = CGRectMake(additionLabel.frame.size.width + additionLabel.frame.origin.x + 20 * screenWidth, additionLabel.frame.origin.y + 10 * screenHeight, 30 * screenWidth, 30                                                                        * screenHeight);
+    [additionButton setImage:[UIImage imageNamed:@"Home_Addition"] forState:UIControlStateNormal];
+    [additionButton addTarget:self action:@selector(additionButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:additionButton];
+    UIButton *additionMachineButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    additionMachineButton.frame = CGRectMake(additionLabel.frame.origin.x, additionLabel.frame.origin.y, additionLabel.frame.size.width + additionButton.frame.size.width + 20 * screenWidth, additionLabel.frame.size.height);
+    [additionMachineButton addTarget:self action:@selector(additionButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:additionMachineButton];
+    
+    // 农机轮播图
+    _machineScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, additionLabel.frame.size.height + additionLabel.frame.origin.y + 8 * screenHeight, CF_WIDTH, 300 * screenHeight) delegate:self placeholderImage:[UIImage imageNamed:@"Home_Machine_Placeholder"]];
+    _machineScrollView.currentPageDotImage = [UIImage imageNamed:@"yuandian"];
+    _machineScrollView.pageDotImage = [UIImage imageNamed:@"yuanhuan"];
+    _machineScrollView.pageControlBottomOffset = -42 * screenHeight;
+    _machineScrollView.hidesForSinglePage = NO;
+    _machineScrollView.delegate = self;
+    _machineScrollView.pageControlDotSize = CGSizeMake(10 * screenWidth, 10 * screenWidth);
+    [self.view addSubview:_machineScrollView];
+    
+    // 功能列表
+    UIView *functionView = [[UIView alloc]initWithFrame:CGRectMake(0, _machineScrollView.frame.size.height + _machineScrollView.frame.origin.y + 30  * screenHeight, CF_WIDTH, 200 * screenHeight)];
+    functionView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:functionView];
+    NSArray *functionImageArray = [NSArray arrayWithObjects:@"Home_Function_Repair", @"Home_Function_RepairRecord", @"Home_Function_Warning", @"Home_Function_Financial", nil];
+    NSArray *functionTitleArray = [NSArray arrayWithObjects:@"报修", @"报修记录", @"报警信息", @"金融服务", nil];
+    for (int i = 0; i < functionImageArray.count; i++) {
+        UIImageView *functionImage = [[UIImageView alloc]initWithFrame:CGRectMake(CF_WIDTH / 4 * i + (CF_WIDTH / 4 - 50 *screenWidth) / 2, 35 * screenHeight, 60 * screenWidth, 60 * screenHeight)];
+        functionImage.image = [UIImage imageNamed:functionImageArray[i]];
+        [functionView addSubview:functionImage];
+        
+        UILabel *functionLabel = [[UILabel alloc]initWithFrame:CGRectMake(CF_WIDTH / 4 * i, functionImage.frame.size.height + functionImage.frame.origin.y +  30 * screenHeight, CF_WIDTH / 4, 50 * screenHeight)];
+        functionLabel.text = functionTitleArray[i];
+        functionLabel.font = CFFONT14;
+        functionLabel.textAlignment = NSTextAlignmentCenter;
+        [functionView addSubview:functionLabel];
+    }
+    
 }
 #pragma mark -SDCycleScrollView Delegate实现
 - (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index
 {
     
 }
+
 #pragma mark -UICollectionView Delegate实现
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -319,18 +446,25 @@
     [orderButton setImage:[UIImage imageNamed:@"CF_WorkOrder"] forState:UIControlStateNormal];
     [orderButton addTarget:self action:@selector(orderButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [salesPersonBackView addSubview:orderButton];
+    _signView = [[UIView alloc]initWithFrame:CGRectMake(orderButton.frame.size.width + orderButton.frame.origin.x - 10 * screenWidth, orderButton.frame.origin.y - 10 * screenHeight, 20 * screenWidth, 20 * screenHeight)];
+    _signView.backgroundColor = [UIColor redColor];
+    _signView.layer.cornerRadius = 10 * screenWidth;
+    _signView.hidden = YES;
+    [salesPersonBackView addSubview:_signView];
     
-    UILabel *orderLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, orderButton.frame.size.height + orderButton.frame.origin.y + 50 * screenHeight, self.view.frame.size.width, 50 * screenHeight)];
+    UILabel *orderLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, orderButton.frame.size.height + orderButton.frame.origin.y + 30 * screenHeight, self.view.frame.size.width, 50 * screenHeight)];
     orderLabel.text =@"派工单";
+    orderLabel.font = CFFONT15;
+    orderLabel.textColor = [UIColor grayColor];
     orderLabel.textAlignment = NSTextAlignmentCenter;
     [salesPersonBackView addSubview:orderLabel];
     
-    self.orderTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, salesPersonBackView.frame.size.height + salesPersonBackView.frame.origin.y + 20 * screenHeight, CF_WIDTH, 370 * screenHeight) style:UITableViewStyleGrouped];
-    self.orderTableView.delegate = self;
-    self.orderTableView.dataSource = self;
-    self.orderTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.orderTableView.backgroundColor = BackgroundColor;
-    [self.view addSubview:self.orderTableView];
+//    self.orderTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, salesPersonBackView.frame.size.height + salesPersonBackView.frame.origin.y + 20 * screenHeight, CF_WIDTH, 370 * screenHeight) style:UITableViewStyleGrouped];
+//    self.orderTableView.delegate = self;
+//    self.orderTableView.dataSource = self;
+//    self.orderTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//    self.orderTableView.backgroundColor = BackgroundColor;
+//    [self.view addSubview:self.orderTableView];
     
     [self getWaittingForReceiveOrderList];
 }
@@ -401,11 +535,34 @@
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
             NSDictionary *dictBody = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"body"]];
             [self.myMachineArray removeAllObjects];
+            NSMutableArray *modelArray = [NSMutableArray array];
             for (NSDictionary *dictResult in [dictBody objectForKey:@"resultList"]) {
                 MachineModel *model = [MachineModel machineModelWithDictionary:dictResult];
                 [self.myMachineArray addObject:model];
-                [self.machineCollection reloadData];
+                [modelArray addObject:@""];
+                UIView *machineView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, CF_WIDTH, 300 * screenHeight)];
+                machineView.backgroundColor = [UIColor whiteColor];
+                UIImageView *machineImage = [[UIImageView alloc]initWithFrame:CGRectMake(20 * screenWidth, 60 * screenHeight, 260 * screenWidth, 180 * screenHeight)];
+                machineImage.image = [UIImage imageNamed:@"Machine_Image"];
+                [machineView addSubview:machineImage];
+                UILabel *machineNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineImage.frame.size.width + machineImage.frame.origin.x + 20 * screenWidth, 84 * screenHeight, CF_WIDTH - 330 * screenWidth, 30 * screenHeight)];
+                machineNameLabel.text = [NSString stringWithFormat:@"类型：%@", model.productName];
+                machineNameLabel.font = CFFONT16;
+                [machineView addSubview:machineNameLabel];
+                UILabel *machineTypeLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineNameLabel.frame.size.height + machineNameLabel.frame.origin.y + 20 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
+                machineTypeLabel.text = [NSString stringWithFormat:@"型号：%@", model.productModel];
+                machineTypeLabel.font = CFFONT16;
+                [machineView addSubview:machineTypeLabel];
+                UILabel *machineRemarkLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineTypeLabel.frame.size.height + machineTypeLabel.frame.origin.y + 20 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
+                machineRemarkLabel.text = [NSString stringWithFormat:@"备注：%@", model.note];
+                machineRemarkLabel.font = CFFONT14;
+                machineRemarkLabel.textColor = [UIColor grayColor];
+                [machineView addSubview:machineRemarkLabel];
+                [self.machineScrollView.machineModelArray addObject:machineView];
+//                [self.machineCollection reloadData];
             }
+            self.machineScrollView.imageURLStringsGroup = modelArray;
+            self.machineScrollView.isAddMachineView = YES;
         } else if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 300) {
             [self.myMachineArray removeAllObjects];
             [self.machineCollection reloadData];
@@ -493,6 +650,7 @@
     NSDictionary *param = @{
                             @"repairUserId":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserUid"],
                             @"status":@7,
+                            @"repairMobile":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserPhone"],
                             };
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"dispatch/selectDispatchsByStatus" Loading:0 Params:param Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"dispatch%@", responseObject);
@@ -502,12 +660,18 @@
             for (NSDictionary *dict in [[responseObject objectForKey:@"body"] objectForKey:@"resultList"]) {
                 CFWorkOrderModel *model = [CFWorkOrderModel orderModelWithDictionary:dict];
                 [self.orderArray addObject:model];
+                _signView.hidden = NO;
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.orderTableView reloadData];
             });
             
+        } else if([[dict objectForKey:@"code"] integerValue] == 300) {
+            _signView.hidden = YES;
         } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.orderTableView reloadData];
+            });
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 
@@ -520,6 +684,16 @@
     } Failure:^(NSURLSessionDataTask *task, NSError *error) {
         
     }];
+}
+// 添加农机
+- (void)additionButtonClick
+{
+    CFAddMachineViewController *addMachine = [[CFAddMachineViewController alloc]init];
+    [self.navigationController pushViewController:addMachine animated:YES];
+}
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    NSLog(@"it's ok");
 }
 - (void)didReceiveMemoryWarning
 {

@@ -8,6 +8,7 @@
 
 #import "CFRepairsDetailInfoViewController.h"
 #import "CFRepairsStationInfoViewController.h"
+#import "CFPreviewPhotoViewController.h"
 #import "CFRegisterTextFieldView.h"
 #import "CFPickView.h"
 #import "CFReasonTextView.h"
@@ -20,6 +21,7 @@
 
 @property (nonatomic, strong)UIView *machineNumberView;
 @property (nonatomic, strong)UILabel *machineNumber;
+@property (nonatomic, strong)UILabel *photoNumberLabel;
 @property (nonatomic, strong)UIView *lineView;
 @property (nonatomic, strong)UIButton *selecteButton;
 @property (nonatomic, strong)MachineModel *model;
@@ -51,7 +53,7 @@
 }
 - (void)createRepairsView{
     _repairsScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    _repairsScrollView.contentSize = CGSizeMake(0, 1864 * screenHeight);
+    _repairsScrollView.contentSize = CGSizeMake(0, 1550 * screenHeight);
     _repairsScrollView.backgroundColor = BackgroundColor;
     [self.view addSubview:_repairsScrollView];
     
@@ -106,16 +108,21 @@
     photoLabel.font = CFFONT15;
     photoLabel.textColor = [UIColor darkGrayColor];
     [_repairsScrollView addSubview:photoLabel];
+    _photoNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(CF_WIDTH / 2, photoLabel.frame.origin.y, (CF_WIDTH - 60 * screenWidth) / 2, photoLabel.frame.size.height)];
+    _photoNumberLabel.text = [[NSString stringWithFormat:@"%ld", self.recordModel.filePath.count] stringByAppendingString:@"/9"];
+    _photoNumberLabel.textAlignment = NSTextAlignmentRight;
+    _photoNumberLabel.font = CFFONT13;
+    [self.repairsScrollView addSubview:_photoNumberLabel];
     
-    _photoView = [[UIView alloc]initWithFrame:CGRectMake(0, photoLabel.frame.size.height + photoLabel.frame.origin.y + 10 * screenWidth, self.view.frame.size.width, 414 * screenHeight)];
+    _photoView = [[UIView alloc]initWithFrame:CGRectMake(0, photoLabel.frame.size.height + photoLabel.frame.origin.y + 30 * screenWidth, self.view.frame.size.width, 250 * screenHeight)];
     [_repairsScrollView addSubview:_photoView];
     
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
     _repairsPhotoCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, _photoView.frame.size.height) collectionViewLayout:layout];
-    _repairsPhotoCollection.backgroundColor = [UIColor whiteColor];
-    layout.sectionInset = UIEdgeInsetsMake(0 * Height, 20 * Width, 0 * Height, 20 * Width);
-    layout.itemSize = CGSizeMake(334 * Width, 414 * Height);
-    layout.minimumLineSpacing = 0 * Width;
+    _repairsPhotoCollection.backgroundColor = BackgroundColor;
+    layout.sectionInset = UIEdgeInsetsMake(0 * screenHeight, 20 * screenWidth, 0 * screenHeight, 20 * screenWidth);
+    layout.itemSize = CGSizeMake(250 * screenWidth, 250 * screenHeight);
+    layout.minimumLineSpacing = 20 * screenWidth;
     layout.minimumInteritemSpacing = 0;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     _repairsPhotoCollection.showsHorizontalScrollIndicator = NO;
@@ -123,15 +130,7 @@
     _repairsPhotoCollection.dataSource = self;
     [_repairsPhotoCollection registerClass:[CFRepairsPhotoCell class] forCellWithReuseIdentifier:@"repairsPhotoCellId"];
     [_photoView addSubview:_repairsPhotoCollection];
-    
-//    UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    submitButton.frame = CGRectMake(30 * screenWidth, _photoView.frame.size.height + _photoView.frame.origin.y + 100 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-//    submitButton.layer.cornerRadius = 20 * Width;
-//    [submitButton setTitle:@"确定" forState:UIControlStateNormal];
-//    [submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    [submitButton setBackgroundColor:ChangfaColor];
-//    [submitButton addTarget:self action:@selector(submitButtonClick) forControlEvents:UIControlEventTouchUpInside];
-//    [_repairsScrollView addSubview:submitButton];
+
 }
 // 布局农机信息
 - (void)layoutWorkerMachineNumberView{
@@ -165,7 +164,7 @@
     UILabel *numberLabel = [[UILabel alloc]initWithFrame:CGRectMake(nameLabel.frame.origin.x, typeLabel.frame.size.height + typeLabel.frame.origin.y + 30 * screenHeight, nameLabel.frame.size.width, nameLabel.frame.size.height)];
     numberLabel.text = [@"备注："stringByAppendingString:[NSString stringWithFormat:@"%@",_recordModel.machineRemarks]];
     numberLabel.font = CFFONT14;
-    numberLabel.textColor = [UIColor redColor];
+    numberLabel.textColor = ChangfaColor;
     [_machineNumberView addSubview:numberLabel];
 }
 #pragma mark -collectionViewDelegate/DataSource
@@ -183,6 +182,16 @@
     [_repairsPhotoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", self.recordModel.filePath[indexPath.row]]] placeholderImage:[UIImage imageNamed:@"CF_RepairImage"]];
     return _repairsPhotoCell;
 }
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    CFPreviewPhotoViewController *preview = [[CFPreviewPhotoViewController alloc]init];
+    preview.photoArray = self.recordModel.filePath;
+    preview.selectedIndex = indexPath.row;
+    preview.headerHeight = navHeight;
+    [self presentViewController:preview animated:YES completion:^{
+        
+    }];
+}
 - (void)selecteButtonClick{
     self.vagueView.hidden = NO;
 }
@@ -196,9 +205,7 @@
     repairsStation.stationModel.location = self.recordModel.serviceLocation;
     [self.navigationController pushViewController:repairsStation animated:YES];
 }
-- (void)submitButtonClick{
-    [self.navigationController popViewControllerAnimated:YES];
-}
+
 - (void)leftButtonClick{
     [self.navigationController popViewControllerAnimated:YES];
 }

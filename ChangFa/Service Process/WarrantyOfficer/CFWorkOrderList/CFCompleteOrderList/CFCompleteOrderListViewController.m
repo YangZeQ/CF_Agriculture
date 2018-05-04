@@ -35,19 +35,20 @@
 }
 - (void)createCompleteOrderListView
 {
-    _orderTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, CF_WIDTH, CF_HEIGHT) style:UITableViewStylePlain];
+    _orderTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, CF_WIDTH, CF_HEIGHT) style:UITableViewStyleGrouped];
     _orderTableView.delegate = self;
     _orderTableView.dataSource = self;
     _orderTableView.backgroundColor = BackgroundColor;
+    _orderTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_orderTableView];
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return _orderArray.count;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _orderArray.count;
+    return 1;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -57,7 +58,7 @@
         cell = [[CFWorkOrderTableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];
     }
     cell.cellStyle = 2;
-    cell.model = self.orderArray[indexPath.row];
+    cell.model = self.orderArray[indexPath.section];
     return cell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -85,6 +86,7 @@
     NSDictionary *param = @{
                             @"repairUserId":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserUid"],
                             @"status":@15,
+                            @"repairMobile":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserPhone"],
                             };
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"dispatch/selectDispatchsByStatus" Loading:0 Params:param Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"dispatch%@", responseObject);

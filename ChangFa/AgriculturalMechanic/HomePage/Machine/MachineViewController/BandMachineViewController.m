@@ -147,7 +147,7 @@
     
     UIButton *bandMachineButton = [UIButton buttonWithType:UIButtonTypeCustom];
     bandMachineButton.frame = CGRectMake(30 * screenWidth, _remarkView.frame.size.height + _remarkView.frame.origin.y + 100 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-    bandMachineButton.layer.cornerRadius = 20 * Width;
+    bandMachineButton.layer.cornerRadius = 20 * screenWidth;
     [bandMachineButton setTitle:@"绑定" forState:UIControlStateNormal];
     [bandMachineButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [bandMachineButton setBackgroundColor:ChangfaColor];
@@ -185,7 +185,7 @@
     
     _bandButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _bandButton.frame = CGRectMake(30 * screenWidth, self.view.frame.size.height - 180 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-    _bandButton.layer.cornerRadius = 20 * Width;
+    _bandButton.layer.cornerRadius = 20 * screenWidth;
     [_bandButton setTitle:@"确定" forState:UIControlStateNormal];
     [_bandButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_bandButton setBackgroundColor:ChangfaColor];

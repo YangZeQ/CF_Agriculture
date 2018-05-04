@@ -33,7 +33,7 @@
     self.navigationItem.title = @"派工单";
     [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, nil]];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"fanhuiwhite"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftButtonClick)];
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"CF_OrderList_Scan"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(rightButtonClick)];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"CF_OrderList_Scan"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(rightButtonClick)];
     [self createWorkOrderListView];
     // Do any additional setup after loading the view.
 }
@@ -71,6 +71,7 @@
     CFWorkOrderModel *model = self.orderListArray[indexPath.section];
     CFWorkOrderInfoViewController *orderInfo = [[CFWorkOrderInfoViewController alloc]init];
     orderInfo.dispatchId = model.dispatchId;
+    NSLog(@"%@", orderInfo.dispatchId);
     [self.navigationController pushViewController:orderInfo animated:YES];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -84,6 +85,14 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     return 0.001f;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    return nil;
+}
+-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    return nil;
 }
 - (void)leftButtonClick
 {
@@ -107,6 +116,7 @@
 {
     NSDictionary *param = @{
                             @"repairUserId":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserUid"],
+                            @"repairMobile":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserPhone"],
                             };
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"dispatch/selectAllDispatchs" Loading:0 Params:param Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"dispatch%@", responseObject);

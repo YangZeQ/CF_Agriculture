@@ -7,14 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CFAttributeTouchView.h"
+#import "YYText.h"
 
 @interface CFRepairsRecordCourseTableViewCell : UITableViewCell
 @property (nonatomic, strong)UILabel *lineTopLabel;
 @property (nonatomic, strong)UILabel *lineBottomLabel;
 @property (nonatomic, strong)UIImageView *courseImageView;
-@property (nonatomic, strong)UILabel *courseLabel;
-@property (nonatomic, strong)CFAttributeTouchView *courseview;
+@property (nonatomic, strong)YYLabel *courseLabel;
 @property (nonatomic, strong)UILabel *timeLabel;
 @property (nonatomic, strong)UILabel *dayLabel;
 @property (nonatomic, strong)UILabel *dayTimeLabel;

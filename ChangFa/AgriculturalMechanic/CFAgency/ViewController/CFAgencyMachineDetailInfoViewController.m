@@ -142,7 +142,7 @@
     UIButton *userPhoneButton = [UIButton buttonWithType:UIButtonTypeCustom];
     userPhoneButton.frame = CGRectMake(_userNameLabel.frame.size.width + _userNameLabel.frame.origin.x, 66 * screenHeight, 50 * screenWidth, 50 * screenHeight);
     [userPhoneButton setBackgroundImage:[UIImage imageNamed:@"dianhua"] forState:UIControlStateNormal];
-    [userPhoneButton addTarget:self action:@selector(callUserPhone) forControlEvents:UIControlEventTouchUpInside];
+    [userPhoneButton addTarget:self action:@selector(callTheUser) forControlEvents:UIControlEventTouchUpInside];
     [userBackView addSubview:userPhoneButton];
     
     _outputLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineImage.frame.origin.x, _userPhoneLabel.frame.size.height + _userPhoneLabel.frame.origin.y + 50 * screenHeight, _userNameLabel.frame.size.width, _machineNameLabel.frame.size.height)];
@@ -203,7 +203,7 @@
 - (void)leftButtonClick{
     [self.navigationController popViewControllerAnimated:YES];
 }
-- (void)callUserPhone{
+- (void)callTheUser{
     NSMutableString *str=[[NSMutableString alloc] initWithFormat:@"tel:%@", _model.tel];
     UIWebView *callWebview = [[UIWebView alloc] init];
     [callWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:str]]];

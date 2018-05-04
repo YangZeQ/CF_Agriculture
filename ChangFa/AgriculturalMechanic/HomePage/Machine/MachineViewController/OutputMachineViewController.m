@@ -174,7 +174,7 @@
     
     _outputButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _outputButton.frame = CGRectMake(30 * screenWidth, self.view.frame.size.height - 180 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-    _outputButton.layer.cornerRadius = 20 * Width;
+    _outputButton.layer.cornerRadius = 20 * screenWidth;
     [_outputButton setTitle:@"确定" forState:UIControlStateNormal];
     [_outputButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_outputButton setBackgroundColor:ChangfaColor];

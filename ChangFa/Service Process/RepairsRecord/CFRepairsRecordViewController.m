@@ -60,7 +60,7 @@
 - (void)createRepairsRecordView
 {
     self.repairsRecordTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStylePlain];
-    self.repairsRecordTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//    self.repairsRecordTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.repairsRecordTableView.delegate = self;
     self.repairsRecordTableView.dataSource = self;
     self.repairsRecordTableView.backgroundColor = BackgroundColor;
@@ -96,6 +96,18 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 20 * screenHeight;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 0.01f;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    return nil;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    return nil;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     CFRepairsRecordTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];

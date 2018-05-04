@@ -63,27 +63,33 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"DIDSELECTED");
     CFRepairsStationTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     self.stationBlock(cell.model);
     [self.navigationController popViewControllerAnimated:YES];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 296 * screenHeight;
+    return 248 * screenHeight;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 20 * screenHeight;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 0.01f;
 }
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     UIView *headView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, CF_WIDTH, 20 * screenHeight)];
     headView.backgroundColor = BackgroundColor;
     return headView;
 }
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    return nil;
+}
 - (void)getStationInfo:(UIButton *)sender
 {
-    NSLog(@"button");
     CFRepairsStationInfoViewController *stationInfo = [[CFRepairsStationInfoViewController alloc]init];
     stationInfo.stationModel = self.stationArray[sender.tag - 1000];
     [self.navigationController pushViewController:stationInfo animated:YES];

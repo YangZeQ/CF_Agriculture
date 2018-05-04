@@ -44,12 +44,12 @@
 
     // 常发图标
     UIImageView *imageChang = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"logo"]];
-    imageChang.frame = CGRectMake(self.view.frame.size.width / 2 - 130 * Width, self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height + 90 * Height, 260 * screenWidth, 260 * screenHeight);
+    imageChang.frame = CGRectMake(self.view.frame.size.width / 2 - 130 * screenWidth, self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height + 90 * screenHeight, 260 * screenWidth, 260 * screenHeight);
     [self.view addSubview:imageChang];
     // 账号、密码
 //    _accountText = [[UITextField alloc]initWithFrame:CGRectMake(56 * Width, 450 * Height, selfWidith - 56 * 2 * Width, 100 * Height)];
-    _accountText = [[CFLoginTextField alloc]initWithFrame:CGRectMake(56 * Width, 550 * Height, selfWidith - 56 * 2 * Width, 100 * Height)];
-    UIView *accountLine = [[UIView alloc]initWithFrame:CGRectMake(0, _accountText.frame.size.height - 2 * Height, _accountText.frame.size.width, 2 * Height)];
+    _accountText = [[CFLoginTextField alloc]initWithFrame:CGRectMake(56 * screenWidth, 550 * screenHeight, selfWidith - 56 * 2 * screenWidth, 100 * screenHeight)];
+    UIView *accountLine = [[UIView alloc]initWithFrame:CGRectMake(0, _accountText.frame.size.height - 2 * screenHeight, _accountText.frame.size.width, 2 * screenHeight)];
     accountLine.backgroundColor = [UIColor grayColor];
     [_accountText addSubview:accountLine];
     _accountText.placeholder = @"请输入账号";
@@ -63,7 +63,7 @@
     _accountText.font = [UIFont systemFontOfSize:[self autoScaleW:14]];
     _accountText.borderStyle = UITextBorderStyleNone;
     UIImageView *accountImage = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Account"]];
-    accountImage.frame = CGRectMake(0, 0, 50 * Width, 50 * Height);
+    accountImage.frame = CGRectMake(0, 0, 50 * screenWidth, 50 * screenHeight);
     accountImage.contentMode = UIViewContentModeCenter;
     _accountText.leftView = accountImage;
     _accountText.leftViewMode = UITextFieldViewModeAlways;
@@ -72,15 +72,15 @@
     [self.view addSubview:_accountText];
 
 //    _secretText = [[UITextField alloc]initWithFrame:CGRectMake(_accountText.frame.origin.x, _accountText.frame.origin.y + _accountText.frame.size.height + 5 * Height, _accountText.frame.size.width, _accountText.frame.size.height)];
-    _secretText = [[CFLoginTextField alloc]initWithFrame:CGRectMake(_accountText.frame.origin.x, _accountText.frame.origin.y + _accountText.frame.size.height + 55 * Height, _accountText.frame.size.width, _accountText.frame.size.height)];
-    UIView *secretLine = [[UIView alloc]initWithFrame:CGRectMake(0, _accountText.frame.size.height - 2 * Height, _accountText.frame.size.width, 2 * Height)];
+    _secretText = [[CFLoginTextField alloc]initWithFrame:CGRectMake(_accountText.frame.origin.x, _accountText.frame.origin.y + _accountText.frame.size.height + 55 * screenHeight, _accountText.frame.size.width, _accountText.frame.size.height)];
+    UIView *secretLine = [[UIView alloc]initWithFrame:CGRectMake(0, _accountText.frame.size.height - 2 * screenHeight, _accountText.frame.size.width, 2 * screenHeight)];
     secretLine.backgroundColor = [UIColor grayColor];
     [_secretText addSubview:secretLine];
     _secretText.placeholder = @"请输入密码";
     _secretText.font = [UIFont systemFontOfSize:[self autoScaleW:14]];
     _secretText.borderStyle = UITextBorderStyleNone;
     UIImageView *secretLeft = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"LoginSecretCode"]];
-    secretLeft.frame = CGRectMake(0, 0, 50 * Width, 50 * Height);
+    secretLeft.frame = CGRectMake(0, 0, 50 * screenWidth, 50 * screenHeight);
     secretLeft.contentMode = UIViewContentModeCenter;
     _secretText.leftView = secretLeft;
     _secretText.leftViewMode = UITextFieldViewModeAlways;
@@ -107,7 +107,7 @@
     UIButton *landBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     landBtn.backgroundColor = ChangfaColor;
     landBtn.userInteractionEnabled = YES;
-    landBtn.layer.cornerRadius = 20 * Width;
+    landBtn.layer.cornerRadius = 20 * screenWidth;
 //    landBtn.frame = CGRectMake(_accountText.frame.origin.x, _accountText.frame.origin.y + _accountText.frame.size.height * 3, _accountText.frame.size.width, _accountText.frame.size.height);
     landBtn.frame = CGRectMake(_accountText.frame.origin.x, _accountText.frame.origin.y + _accountText.frame.size.height * 4, _accountText.frame.size.width, _accountText.frame.size.height);
     [landBtn setTitle:@"登录" forState:UIControlStateNormal];
@@ -116,7 +116,7 @@
     
     // 注册账号、忘记密码
     UIButton *registerBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    registerBtn.frame = CGRectMake(_accountText.frame.origin.x, landBtn.frame.size.height + landBtn.frame.origin.y, 200 * Width, 100 * Height);
+    registerBtn.frame = CGRectMake(_accountText.frame.origin.x, landBtn.frame.size.height + landBtn.frame.origin.y, 200 * screenWidth, 100 * screenHeight);
     registerBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     registerBtn.contentEdgeInsets = UIEdgeInsetsMake(0,5 * screenWidth, 0, 0);
     registerBtn.titleLabel.font = [UIFont systemFontOfSize:[self autoScaleW:14]];

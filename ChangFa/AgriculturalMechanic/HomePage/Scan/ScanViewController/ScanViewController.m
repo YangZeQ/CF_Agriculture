@@ -50,20 +50,20 @@
 
     // 设置需要解析的数据类型，二维码
     self.metadataOutput.metadataObjectTypes = @[
-AVMetadataObjectTypeDataMatrixCode,
-AVMetadataObjectTypeITF14Code,
-AVMetadataObjectTypeInterleaved2of5Code,
-AVMetadataObjectTypeAztecCode,
-AVMetadataObjectTypeQRCode,
-AVMetadataObjectTypePDF417Code,
-AVMetadataObjectTypeCode128Code,
-AVMetadataObjectTypeCode93Code,
-AVMetadataObjectTypeEAN8Code,
-AVMetadataObjectTypeEAN13Code,
-AVMetadataObjectTypeCode39Mod43Code,
-AVMetadataObjectTypeCode39Code,
-AVMetadataObjectTypeUPCECode,
-];
+                                                AVMetadataObjectTypeDataMatrixCode,
+                                                AVMetadataObjectTypeITF14Code,
+                                                AVMetadataObjectTypeInterleaved2of5Code,
+                                                AVMetadataObjectTypeAztecCode,
+                                                AVMetadataObjectTypeQRCode,
+                                                AVMetadataObjectTypePDF417Code,
+                                                AVMetadataObjectTypeCode128Code,
+                                                AVMetadataObjectTypeCode93Code,
+                                                AVMetadataObjectTypeEAN8Code,
+                                                AVMetadataObjectTypeEAN13Code,
+                                                AVMetadataObjectTypeCode39Mod43Code,
+                                                AVMetadataObjectTypeCode39Code,
+                                                AVMetadataObjectTypeUPCECode,
+                                                ];
     AVCaptureVideoPreviewLayer * layer = [AVCaptureVideoPreviewLayer layerWithSession:_session];
     
     layer.videoGravity=AVLayerVideoGravityResize;
@@ -145,6 +145,8 @@ AVMetadataObjectTypeUPCECode,
         }
         if ([self.getInfoType isEqualToString:@"retreat"]) {
             [self getRetreatDetailMachineInformation:obj.stringValue];
+        } else if ([self.getInfoType isEqualToString:@"repair"]){
+            [self getMachineLocation:obj.stringValue];
         } else {
             [self getDetailMachineInformation:obj.stringValue];
         }
@@ -160,7 +162,7 @@ AVMetadataObjectTypeUPCECode,
                                   @"carBar":@"",
                                   };
         dictPost = [NSMutableDictionary dictionaryWithDictionary:strDic];
-    } else{
+    } else {
         NSDictionary *strDic = @{ @"imei":@"",
                                   @"carBar":string,
                                   };
@@ -215,7 +217,15 @@ AVMetadataObjectTypeUPCECode,
             }];
         }
     } Failure:^(NSURLSessionDataTask *task, NSError *error) {
-        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"获取信息失败，请重新扫描" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self.session startRunning];
+        }];
+        [alert addAction:alertAction];
+        [self presentViewController:alert animated:YES completion:^{
+            
+        }];
+        [self.session stopRunning];
     }];
 }
 #pragma mark -获取退换农机详情
@@ -238,6 +248,44 @@ AVMetadataObjectTypeUPCECode,
     }
     
     [CFAFNetWorkingMethod requestDataWithUrl:@"machinery/sweepCodeGetCarInfo?" Params:dictPost Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"%@", responseObject);
+        NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
+        if ([[dict objectForKey:@"code"] integerValue] == 200) {
+            MachineModel *model = [MachineModel machineModelWithDictionary:[responseObject objectForKey:@"body"]];
+            [self.delegate scanGetInformation:model];
+            [self dismissViewControllerAnimated:YES completion:^{
+                
+            }];
+        } else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [self.session startRunning];
+            }];
+            [alert addAction:alertAction];
+            [self presentViewController:alert animated:YES completion:^{
+                
+            }];
+        }
+    } Failure:^(NSURLSessionDataTask *task, NSError *error) {
+        
+    }];
+}
+#pragma mark -获取农机位置
+- (void)getMachineLocation:(NSString *)string{
+    NSMutableDictionary *dictPost = [NSMutableDictionary dictionary];
+    if (string.length == 15) {
+        NSDictionary *strDic = @{ @"imei":string,
+                                  @"carBar":@"",
+                                  };
+        dictPost = [NSMutableDictionary dictionaryWithDictionary:strDic];
+    } else{
+        NSDictionary *strDic = @{ @"imei":@"",
+                                  @"carBar":string,
+                                  };
+        dictPost = [NSMutableDictionary dictionaryWithDictionary:strDic];
+    }
+    
+    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/getUserCarLoaction?" Params:dictPost Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"%@", responseObject);
         NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
         if ([[dict objectForKey:@"code"] integerValue] == 200) {

@@ -211,6 +211,21 @@
             
         } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
             [MBManager hideAlert];
+            if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 505) {
+                [userDefaults setObject:nil forKey:@"UserToken"];
+                [userDefaults setObject:nil forKey:@"UserUid"];
+                [userDefaults setObject:nil forKey:@"UserName"];
+                [userDefaults setObject:nil forKey:@"UserPhone"];
+                [userDefaults setObject:nil forKey:@"UserBindNum"];
+                [userDefaults setObject:nil forKey:@"UserDistributorId"];
+                [userDefaults setObject:nil forKey:@"UserHeadUrl"];
+                //            [userDefaults setObject:nil forKey:@"UserLocation"];"<null>"
+                [userDefaults setObject:nil forKey:@"UserRoleType"];
+                [userDefaults setObject:nil forKey:@"UserLoginType"];
+                CFLoginViewController *login = [[CFLoginViewController alloc]init];
+                UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:login];
+                [UIApplication sharedApplication].delegate.window.rootViewController = nav;
+            }
             success(task,responseObject);
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
             //在这里可以对请求出错做统一的处理
@@ -290,6 +305,21 @@
             
         } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
             [MBManager hideAlert];
+            if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 505) {
+                [userDefaults setObject:nil forKey:@"UserToken"];
+                [userDefaults setObject:nil forKey:@"UserUid"];
+                [userDefaults setObject:nil forKey:@"UserName"];
+                [userDefaults setObject:nil forKey:@"UserPhone"];
+                [userDefaults setObject:nil forKey:@"UserBindNum"];
+                [userDefaults setObject:nil forKey:@"UserDistributorId"];
+                [userDefaults setObject:nil forKey:@"UserHeadUrl"];
+                //            [userDefaults setObject:nil forKey:@"UserLocation"];"<null>"
+                [userDefaults setObject:nil forKey:@"UserRoleType"];
+                [userDefaults setObject:nil forKey:@"UserLoginType"];
+                CFLoginViewController *login = [[CFLoginViewController alloc]init];
+                UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:login];
+                [UIApplication sharedApplication].delegate.window.rootViewController = nav;
+            }
             success(task,responseObject);
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
             //在这里可以对请求出错做统一的处理
@@ -369,6 +399,21 @@
             
         } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
             [MBManager hideAlert];
+            if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 505) {
+                [userDefaults setObject:nil forKey:@"UserToken"];
+                [userDefaults setObject:nil forKey:@"UserUid"];
+                [userDefaults setObject:nil forKey:@"UserName"];
+                [userDefaults setObject:nil forKey:@"UserPhone"];
+                [userDefaults setObject:nil forKey:@"UserBindNum"];
+                [userDefaults setObject:nil forKey:@"UserDistributorId"];
+                [userDefaults setObject:nil forKey:@"UserHeadUrl"];
+                //            [userDefaults setObject:nil forKey:@"UserLocation"];"<null>"
+                [userDefaults setObject:nil forKey:@"UserRoleType"];
+                [userDefaults setObject:nil forKey:@"UserLoginType"];
+                CFLoginViewController *login = [[CFLoginViewController alloc]init];
+                UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:login];
+                [UIApplication sharedApplication].delegate.window.rootViewController = nav;
+            }
             success(task,responseObject);
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
             //在这里可以对请求出错做统一的处理
@@ -438,7 +483,6 @@
             [userDefaults setObject:nil forKey:@"UserBindNum"];
             [userDefaults setObject:nil forKey:@"UserDistributorId"];
             [userDefaults setObject:nil forKey:@"UserHeadUrl"];
-            //            [userDefaults setObject:nil forKey:@"UserLocation"];"<null>"
             [userDefaults setObject:nil forKey:@"UserRoleType"];
             [userDefaults setObject:nil forKey:@"UserLoginType"];
             CFLoginViewController *login = [[CFLoginViewController alloc]init];

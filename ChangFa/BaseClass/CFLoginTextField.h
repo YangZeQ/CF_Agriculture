@@ -11,3 +11,7 @@
 @interface CFLoginTextField : UITextField
 
 @end
+
+@interface CFNumberTextField : UITextField
+
+@end

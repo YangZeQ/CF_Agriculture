@@ -16,4 +16,6 @@ pod 'Bugly', '~> 2.5.0'
 pod 'AMapSearch', '~> 5.7.0'
 pod 'AMap2DMap', '~> 5.6.0'
 pod 'AMapLocation', '~> 2.6.0'
+pod 'FMDB', '~> 2.7.2'
+pod 'YYText', '~> 1.0.7'
 end        

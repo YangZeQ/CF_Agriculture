@@ -39,12 +39,15 @@
 		8B573F19201AD46D007E0241 /* CFSalesPersonStatusTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B573F18201AD46D007E0241 /* CFSalesPersonStatusTableViewCell.m */; };
 		8B57CF8420413DD100C8E2A1 /* UIAlertController+EndEditing.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B57CF8320413DD100C8E2A1 /* UIAlertController+EndEditing.m */; };
 		8B57D3A120059A7D0069118E /* NewsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B57D3A020059A7D0069118E /* NewsModel.m */; };
+		8B58FF212090013D00930A33 /* AdditionScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B58FF202090013D00930A33 /* AdditionScanView.m */; };
+		8B58FF242090039900930A33 /* CFAddMachineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B58FF232090039900930A33 /* CFAddMachineViewController.m */; };
 		8B5988FC200EE57200A35683 /* OutputMachineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5988FB200EE57200A35683 /* OutputMachineViewController.m */; };
 		8B598900200EF06D00A35683 /* MachineInfoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5988FF200EF06D00A35683 /* MachineInfoTableViewCell.m */; };
 		8B598903200EF07F00A35683 /* MachinebarTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B598902200EF07F00A35683 /* MachinebarTableViewCell.m */; };
 		8B598906200EF09800A35683 /* InfoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B598905200EF09800A35683 /* InfoTableViewCell.m */; };
 		8B5A93F8203FBC7C000CDAC4 /* CFReasonTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A93F7203FBC7C000CDAC4 /* CFReasonTextView.m */; };
 		8B5A93FB203FDAC4000CDAC4 /* UILabel+SizeToFitHeightAndWidth.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A93FA203FDAC4000CDAC4 /* UILabel+SizeToFitHeightAndWidth.m */; };
+		8B5AEB7E209152FD002F82A6 /* CFInstallTerminalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5AEB7D209152FD002F82A6 /* CFInstallTerminalViewController.m */; };
 		8B5BFB862059F2570031A673 /* CFClassMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5BFB852059F2570031A673 /* CFClassMethod.m */; };
 		8B5C7D9A202158BE00E47E1A /* CFMBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5C7D99202158BE00E47E1A /* CFMBProgressHUD.m */; };
 		8B5C7D9D2021860400E47E1A /* UIViewController+CFGlobalMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5C7D9C2021860400E47E1A /* UIViewController+CFGlobalMethod.m */; };
@@ -58,8 +61,16 @@
 		8B5F2F24202828DA00BF04B0 /* CFAgencyExchangeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F2F23202828DA00BF04B0 /* CFAgencyExchangeViewController.m */; };
 		8B5F2F27202828EF00BF04B0 /* CFAgencyReturnViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F2F26202828EF00BF04B0 /* CFAgencyReturnViewController.m */; };
 		8B5F71F8204CCE0E00D9A709 /* CFCommentInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F71F7204CCE0E00D9A709 /* CFCommentInfoViewController.m */; };
+		8B6304D82099A9D300B4DD6B /* CFMyMachineListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6304D72099A9D300B4DD6B /* CFMyMachineListViewController.m */; };
+		8B6304DB2099B31500B4DD6B /* CFMyMachineListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6304DA2099B31500B4DD6B /* CFMyMachineListTableViewCell.m */; };
+		8B64FE9D2079B6B700FE546F /* CFFMDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B64FE9C2079B6B700FE546F /* CFFMDBManager.m */; };
+		8B64FEA02079B6FA00FE546F /* CFUpdataInfoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B64FE9F2079B6FA00FE546F /* CFUpdataInfoModel.m */; };
+		8B64FEA32079B85800FE546F /* CFUpdataImageModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B64FEA22079B85800FE546F /* CFUpdataImageModel.m */; };
 		8B67710D2047E6780009D8DD /* CFRepairsDetailInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B67710C2047E6780009D8DD /* CFRepairsDetailInfoViewController.m */; };
 		8B6771102047F26F0009D8DD /* CFRepairsPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B67710F2047F26F0009D8DD /* CFRepairsPhotoCell.m */; };
+		8B67C3B2207C802C00A37497 /* CFShowFillInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B67C3B1207C802C00A37497 /* CFShowFillInfoViewController.m */; };
+		8B67C3B5207CB6BA00A37497 /* CFCompleteCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B67C3B4207CB6BA00A37497 /* CFCompleteCommentViewController.m */; };
+		8B67C3B8207CBDFD00A37497 /* CFRefillOrderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B67C3B7207CBDFD00A37497 /* CFRefillOrderViewController.m */; };
 		8B6A15CB204A1D2E001E12FC /* CFRepairsRecordTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6A15CA204A1D2E001E12FC /* CFRepairsRecordTableViewCell.m */; };
 		8B6A15CE204A1D8F001E12FC /* CFRepairsRecordInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6A15CD204A1D8F001E12FC /* CFRepairsRecordInfoViewController.m */; };
 		8B6A15D2204A4A3D001E12FC /* CFCommenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6A15D1204A4A3D001E12FC /* CFCommenViewController.m */; };
@@ -78,6 +89,7 @@
 		8B73F355202D48D20098606F /* CFAgencyApplicationRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B73F354202D48D20098606F /* CFAgencyApplicationRecordViewController.m */; };
 		8B73F358202D65DA0098606F /* CFAgencyApplicationRecordTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B73F357202D65DA0098606F /* CFAgencyApplicationRecordTableViewCell.m */; };
 		8B74F90F20749E6600000203 /* CFPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B74F90E20749E6600000203 /* CFPhotoViewController.m */; };
+		8B793425207F35BA004BCDFF /* CFPreviewPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B793424207F35BA004BCDFF /* CFPreviewPhotoViewController.m */; };
 		8B7C538D206222E000327E78 /* CFFillInOrderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7C538C206222E000327E78 /* CFFillInOrderViewController.m */; };
 		8B7C53902062440F00327E78 /* CFFillOrderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7C538F2062440F00327E78 /* CFFillOrderView.m */; };
 		8B7C539320624FAA00327E78 /* CFFillInOrderViewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7C539220624FAA00327E78 /* CFFillInOrderViewTableViewCell.m */; };
@@ -89,11 +101,17 @@
 		8B81DEEA202298D300CE2022 /* CFAFNetworkingManage.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B81DEE7202298D200CE2022 /* CFAFNetworkingManage.m */; };
 		8B81DEEB202298D300CE2022 /* CFAFNetWorkingMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B81DEE8202298D300CE2022 /* CFAFNetWorkingMethod.m */; };
 		8B830A802071BD5400D4B391 /* CFFillInOrderModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B830A7F2071BD5400D4B391 /* CFFillInOrderModel.m */; };
+		8B83725D20859D5800EEEDDD /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B83725C20859D5800EEEDDD /* TestViewController.m */; };
 		8B86E1C8205F47F800336F48 /* CFWorkOrderTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B86E1C7205F47F800336F48 /* CFWorkOrderTableViewCell.m */; };
 		8B86E1CB205F48B900336F48 /* CFWorkOrderModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B86E1CA205F48B900336F48 /* CFWorkOrderModel.m */; };
 		8B86E1CF205F557A00336F48 /* CFWorkOrderInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B86E1CE205F557A00336F48 /* CFWorkOrderInfoViewController.m */; };
 		8B89F49C2023EF0C004705CB /* UICollectionViewCell+CFGlobalMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B89F49B2023EF0C004705CB /* UICollectionViewCell+CFGlobalMethod.m */; };
 		8B89F49F2023F007004705CB /* CFPickView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B89F49E2023F007004705CB /* CFPickView.m */; };
+		8BA9A8232094151800DE5B4A /* CFPersonalCenterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA9A8222094151800DE5B4A /* CFPersonalCenterViewController.m */; };
+		8BA9A8262094425C00DE5B4A /* CFPersonalCenterTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA9A8252094425C00DE5B4A /* CFPersonalCenterTableViewCell.m */; };
+		8BA9A82B209451EB00DE5B4A /* CFIntegralViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA9A82A209451EB00DE5B4A /* CFIntegralViewController.m */; };
+		8BA9A82E209455FA00DE5B4A /* CFIntegralTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA9A82D209455FA00DE5B4A /* CFIntegralTableViewCell.m */; };
+		8BA9A8312094592300DE5B4A /* CFPersonalInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA9A8302094592300DE5B4A /* CFPersonalInfoViewController.m */; };
 		8BB1C187206CE3DC0067CBD2 /* CFWordOrderInfoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BB1C186206CE3DC0067CBD2 /* CFWordOrderInfoModel.m */; };
 		8BD18F2E202AD71100FFB637 /* CFAgencyReturnStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BD18F2D202AD71100FFB637 /* CFAgencyReturnStatusViewController.m */; };
 		8BD18F32202B0D7A00FFB637 /* CFAgencyEXchangeStatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BD18F31202B0D7A00FFB637 /* CFAgencyEXchangeStatusViewController.m */; };
@@ -246,6 +264,10 @@
 		8B57CF8320413DD100C8E2A1 /* UIAlertController+EndEditing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+EndEditing.m"; sourceTree = "<group>"; };
 		8B57D39F20059A7D0069118E /* NewsModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewsModel.h; sourceTree = "<group>"; };
 		8B57D3A020059A7D0069118E /* NewsModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewsModel.m; sourceTree = "<group>"; };
+		8B58FF1F2090013D00930A33 /* AdditionScanView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdditionScanView.h; sourceTree = "<group>"; };
+		8B58FF202090013D00930A33 /* AdditionScanView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AdditionScanView.m; sourceTree = "<group>"; };
+		8B58FF222090039900930A33 /* CFAddMachineViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAddMachineViewController.h; sourceTree = "<group>"; };
+		8B58FF232090039900930A33 /* CFAddMachineViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFAddMachineViewController.m; sourceTree = "<group>"; };
 		8B5988FA200EE57200A35683 /* OutputMachineViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutputMachineViewController.h; sourceTree = "<group>"; };
 		8B5988FB200EE57200A35683 /* OutputMachineViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OutputMachineViewController.m; sourceTree = "<group>"; };
 		8B5988FE200EF06D00A35683 /* MachineInfoTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MachineInfoTableViewCell.h; sourceTree = "<group>"; };
@@ -258,6 +280,8 @@
 		8B5A93F7203FBC7C000CDAC4 /* CFReasonTextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFReasonTextView.m; sourceTree = "<group>"; };
 		8B5A93F9203FDAC4000CDAC4 /* UILabel+SizeToFitHeightAndWidth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UILabel+SizeToFitHeightAndWidth.h"; sourceTree = "<group>"; };
 		8B5A93FA203FDAC4000CDAC4 /* UILabel+SizeToFitHeightAndWidth.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UILabel+SizeToFitHeightAndWidth.m"; sourceTree = "<group>"; };
+		8B5AEB7C209152FD002F82A6 /* CFInstallTerminalViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFInstallTerminalViewController.h; sourceTree = "<group>"; };
+		8B5AEB7D209152FD002F82A6 /* CFInstallTerminalViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFInstallTerminalViewController.m; sourceTree = "<group>"; };
 		8B5BFB842059F2570031A673 /* CFClassMethod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFClassMethod.h; sourceTree = "<group>"; };
 		8B5BFB852059F2570031A673 /* CFClassMethod.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFClassMethod.m; sourceTree = "<group>"; };
 		8B5C7D98202158BE00E47E1A /* CFMBProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFMBProgressHUD.h; sourceTree = "<group>"; };
@@ -285,10 +309,26 @@
 		8B5F2F26202828EF00BF04B0 /* CFAgencyReturnViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFAgencyReturnViewController.m; sourceTree = "<group>"; };
 		8B5F71F6204CCE0E00D9A709 /* CFCommentInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFCommentInfoViewController.h; sourceTree = "<group>"; };
 		8B5F71F7204CCE0E00D9A709 /* CFCommentInfoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFCommentInfoViewController.m; sourceTree = "<group>"; };
+		8B6304D62099A9D300B4DD6B /* CFMyMachineListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFMyMachineListViewController.h; sourceTree = "<group>"; };
+		8B6304D72099A9D300B4DD6B /* CFMyMachineListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFMyMachineListViewController.m; sourceTree = "<group>"; };
+		8B6304D92099B31500B4DD6B /* CFMyMachineListTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFMyMachineListTableViewCell.h; sourceTree = "<group>"; };
+		8B6304DA2099B31500B4DD6B /* CFMyMachineListTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFMyMachineListTableViewCell.m; sourceTree = "<group>"; };
+		8B64FE9B2079B6B700FE546F /* CFFMDBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFFMDBManager.h; sourceTree = "<group>"; };
+		8B64FE9C2079B6B700FE546F /* CFFMDBManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFFMDBManager.m; sourceTree = "<group>"; };
+		8B64FE9E2079B6FA00FE546F /* CFUpdataInfoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFUpdataInfoModel.h; sourceTree = "<group>"; };
+		8B64FE9F2079B6FA00FE546F /* CFUpdataInfoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFUpdataInfoModel.m; sourceTree = "<group>"; };
+		8B64FEA12079B85800FE546F /* CFUpdataImageModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFUpdataImageModel.h; sourceTree = "<group>"; };
+		8B64FEA22079B85800FE546F /* CFUpdataImageModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFUpdataImageModel.m; sourceTree = "<group>"; };
 		8B67710B2047E6780009D8DD /* CFRepairsDetailInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFRepairsDetailInfoViewController.h; sourceTree = "<group>"; };
 		8B67710C2047E6780009D8DD /* CFRepairsDetailInfoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFRepairsDetailInfoViewController.m; sourceTree = "<group>"; };
 		8B67710E2047F26F0009D8DD /* CFRepairsPhotoCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFRepairsPhotoCell.h; sourceTree = "<group>"; };
 		8B67710F2047F26F0009D8DD /* CFRepairsPhotoCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFRepairsPhotoCell.m; sourceTree = "<group>"; };
+		8B67C3B0207C802C00A37497 /* CFShowFillInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFShowFillInfoViewController.h; sourceTree = "<group>"; };
+		8B67C3B1207C802C00A37497 /* CFShowFillInfoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFShowFillInfoViewController.m; sourceTree = "<group>"; };
+		8B67C3B3207CB6BA00A37497 /* CFCompleteCommentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFCompleteCommentViewController.h; sourceTree = "<group>"; };
+		8B67C3B4207CB6BA00A37497 /* CFCompleteCommentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFCompleteCommentViewController.m; sourceTree = "<group>"; };
+		8B67C3B6207CBDFD00A37497 /* CFRefillOrderViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFRefillOrderViewController.h; sourceTree = "<group>"; };
+		8B67C3B7207CBDFD00A37497 /* CFRefillOrderViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFRefillOrderViewController.m; sourceTree = "<group>"; };
 		8B6A15C9204A1D2E001E12FC /* CFRepairsRecordTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFRepairsRecordTableViewCell.h; sourceTree = "<group>"; };
 		8B6A15CA204A1D2E001E12FC /* CFRepairsRecordTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFRepairsRecordTableViewCell.m; sourceTree = "<group>"; };
 		8B6A15CC204A1D8F001E12FC /* CFRepairsRecordInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFRepairsRecordInfoViewController.h; sourceTree = "<group>"; };
@@ -325,6 +365,8 @@
 		8B73F357202D65DA0098606F /* CFAgencyApplicationRecordTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFAgencyApplicationRecordTableViewCell.m; sourceTree = "<group>"; };
 		8B74F90D20749E6600000203 /* CFPhotoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPhotoViewController.h; sourceTree = "<group>"; };
 		8B74F90E20749E6600000203 /* CFPhotoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFPhotoViewController.m; sourceTree = "<group>"; };
+		8B793423207F35BA004BCDFF /* CFPreviewPhotoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPreviewPhotoViewController.h; sourceTree = "<group>"; };
+		8B793424207F35BA004BCDFF /* CFPreviewPhotoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFPreviewPhotoViewController.m; sourceTree = "<group>"; };
 		8B7C538B206222E000327E78 /* CFFillInOrderViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFFillInOrderViewController.h; sourceTree = "<group>"; };
 		8B7C538C206222E000327E78 /* CFFillInOrderViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFFillInOrderViewController.m; sourceTree = "<group>"; };
 		8B7C538E2062440F00327E78 /* CFFillOrderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFFillOrderView.h; sourceTree = "<group>"; };
@@ -347,6 +389,8 @@
 		8B81DEE8202298D300CE2022 /* CFAFNetWorkingMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFAFNetWorkingMethod.m; sourceTree = "<group>"; };
 		8B830A7E2071BD5400D4B391 /* CFFillInOrderModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFFillInOrderModel.h; sourceTree = "<group>"; };
 		8B830A7F2071BD5400D4B391 /* CFFillInOrderModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFFillInOrderModel.m; sourceTree = "<group>"; };
+		8B83725B20859D5800EEEDDD /* TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		8B83725C20859D5800EEEDDD /* TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		8B86E1C6205F47F800336F48 /* CFWorkOrderTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFWorkOrderTableViewCell.h; sourceTree = "<group>"; };
 		8B86E1C7205F47F800336F48 /* CFWorkOrderTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFWorkOrderTableViewCell.m; sourceTree = "<group>"; };
 		8B86E1C9205F48B900336F48 /* CFWorkOrderModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFWorkOrderModel.h; sourceTree = "<group>"; };
@@ -357,6 +401,16 @@
 		8B89F49B2023EF0C004705CB /* UICollectionViewCell+CFGlobalMethod.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UICollectionViewCell+CFGlobalMethod.m"; sourceTree = "<group>"; };
 		8B89F49D2023F007004705CB /* CFPickView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPickView.h; sourceTree = "<group>"; };
 		8B89F49E2023F007004705CB /* CFPickView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFPickView.m; sourceTree = "<group>"; };
+		8BA9A8212094151800DE5B4A /* CFPersonalCenterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPersonalCenterViewController.h; sourceTree = "<group>"; };
+		8BA9A8222094151800DE5B4A /* CFPersonalCenterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFPersonalCenterViewController.m; sourceTree = "<group>"; };
+		8BA9A8242094425C00DE5B4A /* CFPersonalCenterTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPersonalCenterTableViewCell.h; sourceTree = "<group>"; };
+		8BA9A8252094425C00DE5B4A /* CFPersonalCenterTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFPersonalCenterTableViewCell.m; sourceTree = "<group>"; };
+		8BA9A829209451EB00DE5B4A /* CFIntegralViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFIntegralViewController.h; sourceTree = "<group>"; };
+		8BA9A82A209451EB00DE5B4A /* CFIntegralViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFIntegralViewController.m; sourceTree = "<group>"; };
+		8BA9A82C209455FA00DE5B4A /* CFIntegralTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFIntegralTableViewCell.h; sourceTree = "<group>"; };
+		8BA9A82D209455FA00DE5B4A /* CFIntegralTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFIntegralTableViewCell.m; sourceTree = "<group>"; };
+		8BA9A82F2094592300DE5B4A /* CFPersonalInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPersonalInfoViewController.h; sourceTree = "<group>"; };
+		8BA9A8302094592300DE5B4A /* CFPersonalInfoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFPersonalInfoViewController.m; sourceTree = "<group>"; };
 		8BB1C185206CE3DC0067CBD2 /* CFWordOrderInfoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFWordOrderInfoModel.h; sourceTree = "<group>"; };
 		8BB1C186206CE3DC0067CBD2 /* CFWordOrderInfoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFWordOrderInfoModel.m; sourceTree = "<group>"; };
 		8BD18F2C202AD71100FFB637 /* CFAgencyReturnStatusViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAgencyReturnStatusViewController.h; sourceTree = "<group>"; };
@@ -521,6 +575,8 @@
 				8B35D7062063A9DE0075F980 /* CFCompleteOrderListViewController.m */,
 				8B35D7092063B7090075F980 /* CFCompleteOrderInfoViewController.h */,
 				8B35D70A2063B7090075F980 /* CFCompleteOrderInfoViewController.m */,
+				8B67C3B3207CB6BA00A37497 /* CFCompleteCommentViewController.h */,
+				8B67C3B4207CB6BA00A37497 /* CFCompleteCommentViewController.m */,
 			);
 			path = CFCompleteOrderList;
 			sourceTree = "<group>";
@@ -639,6 +695,7 @@
 		8B5396BD200E023E00D0AF4D /* PersonInfo */ = {
 			isa = PBXGroup;
 			children = (
+				8BA9A828209451B400DE5B4A /* CF_Integral */,
 				8B5396C0200E027F00D0AF4D /* PersonView */,
 				8B5396BF200E027200D0AF4D /* PersonModel */,
 				8B5396BE200E025000D0AF4D /* PersonViewController */,
@@ -653,6 +710,10 @@
 				D794AA2C2002196B00CC8313 /* PersonViewController.m */,
 				8B7184C5200CA2DA001DF227 /* ChangImageViewController.h */,
 				8B7184C6200CA2DA001DF227 /* ChangImageViewController.m */,
+				8BA9A8212094151800DE5B4A /* CFPersonalCenterViewController.h */,
+				8BA9A8222094151800DE5B4A /* CFPersonalCenterViewController.m */,
+				8BA9A82F2094592300DE5B4A /* CFPersonalInfoViewController.h */,
+				8BA9A8302094592300DE5B4A /* CFPersonalInfoViewController.m */,
 			);
 			path = PersonViewController;
 			sourceTree = "<group>";
@@ -671,6 +732,8 @@
 			children = (
 				D723EB16200440E200F71389 /* PersonTableViewCell.h */,
 				D723EB17200440E200F71389 /* PersonTableViewCell.m */,
+				8BA9A8242094425C00DE5B4A /* CFPersonalCenterTableViewCell.h */,
+				8BA9A8252094425C00DE5B4A /* CFPersonalCenterTableViewCell.m */,
 			);
 			path = PersonView;
 			sourceTree = "<group>";
@@ -678,6 +741,8 @@
 		8B5396C1200E02AB00D0AF4D /* MachineViewController */ = {
 			isa = PBXGroup;
 			children = (
+				8B5AEB7C209152FD002F82A6 /* CFInstallTerminalViewController.h */,
+				8B5AEB7D209152FD002F82A6 /* CFInstallTerminalViewController.m */,
 				D71C138C1FFD036000A546DA /* BandMachineViewController.h */,
 				D71C138D1FFD036000A546DA /* BandMachineViewController.m */,
 				8B7F7F7D2015C49D007F5E10 /* CFBindIMEIViewController.h */,
@@ -688,6 +753,8 @@
 				D794AA2F200267D000CC8313 /* MachineInfoViewController.m */,
 				8B5988FA200EE57200A35683 /* OutputMachineViewController.h */,
 				8B5988FB200EE57200A35683 /* OutputMachineViewController.m */,
+				8B6304D62099A9D300B4DD6B /* CFMyMachineListViewController.h */,
+				8B6304D72099A9D300B4DD6B /* CFMyMachineListViewController.m */,
 			);
 			path = MachineViewController;
 			sourceTree = "<group>";
@@ -716,6 +783,8 @@
 			children = (
 				8B56DF622010908800F1DC48 /* Company-BindMachine */,
 				8B5988FD200EF03C00A35683 /* OutputMachineView */,
+				8B6304D92099B31500B4DD6B /* CFMyMachineListTableViewCell.h */,
+				8B6304DA2099B31500B4DD6B /* CFMyMachineListTableViewCell.m */,
 			);
 			path = MachineView;
 			sourceTree = "<group>";
@@ -752,6 +821,8 @@
 			children = (
 				D71C13951FFE0B6500A546DA /* ScanViewController.h */,
 				D71C13961FFE0B6500A546DA /* ScanViewController.m */,
+				8B58FF222090039900930A33 /* CFAddMachineViewController.h */,
+				8B58FF232090039900930A33 /* CFAddMachineViewController.m */,
 			);
 			path = ScanViewController;
 			sourceTree = "<group>";
@@ -761,6 +832,8 @@
 			children = (
 				D71C13981FFE10D100A546DA /* ScanView.h */,
 				D71C13991FFE10D100A546DA /* ScanView.m */,
+				8B58FF1F2090013D00930A33 /* AdditionScanView.h */,
+				8B58FF202090013D00930A33 /* AdditionScanView.m */,
 			);
 			path = ScanView;
 			sourceTree = "<group>";
@@ -933,6 +1006,19 @@
 			path = "Long-Controller";
 			sourceTree = "<group>";
 		};
+		8B64FE9A2079B69400FE546F /* FMDB */ = {
+			isa = PBXGroup;
+			children = (
+				8B64FE9B2079B6B700FE546F /* CFFMDBManager.h */,
+				8B64FE9C2079B6B700FE546F /* CFFMDBManager.m */,
+				8B64FE9E2079B6FA00FE546F /* CFUpdataInfoModel.h */,
+				8B64FE9F2079B6FA00FE546F /* CFUpdataInfoModel.m */,
+				8B64FEA12079B85800FE546F /* CFUpdataImageModel.h */,
+				8B64FEA22079B85800FE546F /* CFUpdataImageModel.m */,
+			);
+			path = FMDB;
+			sourceTree = "<group>";
+		};
 		8B6A15CF204A4903001E12FC /* Comment */ = {
 			isa = PBXGroup;
 			children = (
@@ -1069,17 +1155,32 @@
 			path = "CFAgency-ApplicationRecord";
 			sourceTree = "<group>";
 		};
+		8B793422207F31F9004BCDFF /* PreviewPhoto */ = {
+			isa = PBXGroup;
+			children = (
+				8B793423207F35BA004BCDFF /* CFPreviewPhotoViewController.h */,
+				8B793424207F35BA004BCDFF /* CFPreviewPhotoViewController.m */,
+			);
+			path = PreviewPhoto;
+			sourceTree = "<group>";
+		};
 		8B7C538A206221CB00327E78 /* CFFillInOrder */ = {
 			isa = PBXGroup;
 			children = (
 				8B7C538B206222E000327E78 /* CFFillInOrderViewController.h */,
 				8B7C538C206222E000327E78 /* CFFillInOrderViewController.m */,
+				8B67C3B6207CBDFD00A37497 /* CFRefillOrderViewController.h */,
+				8B67C3B7207CBDFD00A37497 /* CFRefillOrderViewController.m */,
+				8B67C3B0207C802C00A37497 /* CFShowFillInfoViewController.h */,
+				8B67C3B1207C802C00A37497 /* CFShowFillInfoViewController.m */,
 				8B7C539120624FAA00327E78 /* CFFillInOrderViewTableViewCell.h */,
 				8B7C539220624FAA00327E78 /* CFFillInOrderViewTableViewCell.m */,
 				8B7C538E2062440F00327E78 /* CFFillOrderView.h */,
 				8B7C538F2062440F00327E78 /* CFFillOrderView.m */,
 				8B830A7E2071BD5400D4B391 /* CFFillInOrderModel.h */,
 				8B830A7F2071BD5400D4B391 /* CFFillInOrderModel.m */,
+				8B83725B20859D5800EEEDDD /* TestViewController.h */,
+				8B83725C20859D5800EEEDDD /* TestViewController.m */,
 			);
 			path = CFFillInOrder;
 			sourceTree = "<group>";
@@ -1149,6 +1250,17 @@
 				8B86E1CE205F557A00336F48 /* CFWorkOrderInfoViewController.m */,
 			);
 			path = CFWorkOrderInfo;
+			sourceTree = "<group>";
+		};
+		8BA9A828209451B400DE5B4A /* CF_Integral */ = {
+			isa = PBXGroup;
+			children = (
+				8BA9A829209451EB00DE5B4A /* CFIntegralViewController.h */,
+				8BA9A82A209451EB00DE5B4A /* CFIntegralViewController.m */,
+				8BA9A82C209455FA00DE5B4A /* CFIntegralTableViewCell.h */,
+				8BA9A82D209455FA00DE5B4A /* CFIntegralTableViewCell.m */,
+			);
+			path = CF_Integral;
 			sourceTree = "<group>";
 		};
 		8BD18F2B202AD44E00FFB637 /* CFAgency-Return */ = {
@@ -1246,6 +1358,8 @@
 		D702F6411FF13BF5002A2B78 /* ChangFa */ = {
 			isa = PBXGroup;
 			children = (
+				8B793422207F31F9004BCDFF /* PreviewPhoto */,
+				8B64FE9A2079B69400FE546F /* FMDB */,
 				8B5BFB832059F0E00031A673 /* CF_ClassMethods */,
 				8B52CAEC2044EB0400281387 /* Service Process */,
 				8B81DEE22022989A00CE2022 /* CFAFNetWorkingMethod */,
@@ -1561,25 +1675,29 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-ChangFa/Pods-ChangFa-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
 				"${BUILT_PRODUCTS_DIR}/CTAssetsPickerController/CTAssetsPickerController.framework",
+				"${BUILT_PRODUCTS_DIR}/Charts/Charts.framework",
+				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
 				"${BUILT_PRODUCTS_DIR}/HCSStarRatingView/HCSStarRatingView.framework",
 				"${BUILT_PRODUCTS_DIR}/MBProgressHUD/MBProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework",
 				"${BUILT_PRODUCTS_DIR}/PureLayout/PureLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/SDCycleScrollView/SDCycleScrollView.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
-				"${BUILT_PRODUCTS_DIR}/Charts/Charts.framework",
+				"${BUILT_PRODUCTS_DIR}/YYText/YYText.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CTAssetsPickerController.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Charts.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HCSStarRatingView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MBProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJRefresh.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PureLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDCycleScrollView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Charts.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYText.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1631,6 +1749,7 @@
 			files = (
 				D7222CD81FF639E20063929E /* CFBasePageControl.m in Sources */,
 				8B42405C20610743009E60D8 /* CFMapTableViewCell.m in Sources */,
+				8B67C3B8207CBDFD00A37497 /* CFRefillOrderViewController.m in Sources */,
 				8B3BAF87204EC15400BD03AF /* CFRepairsSelectedViewController.m in Sources */,
 				8BE745A1206E434F00D620AF /* LineDashPolyline.m in Sources */,
 				8BE745A0206E434F00D620AF /* MANaviRoute.m in Sources */,
@@ -1654,6 +1773,8 @@
 				8B89F49C2023EF0C004705CB /* UICollectionViewCell+CFGlobalMethod.m in Sources */,
 				8B5396B8200DCE8B00D0AF4D /* PersonModel.m in Sources */,
 				8B6A15D2204A4A3D001E12FC /* CFCommenViewController.m in Sources */,
+				8BA9A82E209455FA00DE5B4A /* CFIntegralTableViewCell.m in Sources */,
+				8B6304DB2099B31500B4DD6B /* CFMyMachineListTableViewCell.m in Sources */,
 				8B5988FC200EE57200A35683 /* OutputMachineViewController.m in Sources */,
 				8B35D70B2063B7090075F980 /* CFCompleteOrderInfoViewController.m in Sources */,
 				8B7EDBA02029A63B006ECEDC /* CFAgencyRetreatStatusViewController.m in Sources */,
@@ -1661,21 +1782,26 @@
 				8B598906200EF09800A35683 /* InfoTableViewCell.m in Sources */,
 				8B86E1CF205F557A00336F48 /* CFWorkOrderInfoViewController.m in Sources */,
 				8B3BAF8A204EC17F00BD03AF /* CFRepairsMachineTableViewCell.m in Sources */,
+				8BA9A8312094592300DE5B4A /* CFPersonalInfoViewController.m in Sources */,
 				8B6DB885204949E1003EDF4B /* CFRepairsRecordViewController.m in Sources */,
 				8B56DF65201090CA00F1DC48 /* BindAndOutputView.m in Sources */,
 				D7222CDF1FFB25740063929E /* MyMachineCollectionViewCell.m in Sources */,
 				8BE745A5206E436300D620AF /* MANaviAnnotationView.m in Sources */,
+				8B5AEB7E209152FD002F82A6 /* CFInstallTerminalViewController.m in Sources */,
 				8B6DB87E2049324B003EDF4B /* CFRepairsStationModel.m in Sources */,
 				8BD18F2E202AD71100FFB637 /* CFAgencyReturnStatusViewController.m in Sources */,
 				D71C138B1FFCD27400A546DA /* CFBaseNavigationViewController.m in Sources */,
 				8B7C538D206222E000327E78 /* CFFillInOrderViewController.m in Sources */,
 				8B5A93F8203FBC7C000CDAC4 /* CFReasonTextView.m in Sources */,
+				8B67C3B2207C802C00A37497 /* CFShowFillInfoViewController.m in Sources */,
 				D723EB0F2002FC5C00F71389 /* SliderManager.m in Sources */,
 				8B51BE9C2018466E00712327 /* CFAgencySendingTableViewCell.m in Sources */,
 				8B5F2F21202828A400BF04B0 /* CFAgencyRetreatViewController.m in Sources */,
 				D723EB1520033A6D00F71389 /* MyMachineMapTableViewCell.m in Sources */,
 				8B572E202017256F00DAC3E9 /* CFAgencyPutInStorageViewController.m in Sources */,
+				8B83725D20859D5800EEEDDD /* TestViewController.m in Sources */,
 				8B5C7D9D2021860400E47E1A /* UIViewController+CFGlobalMethod.m in Sources */,
+				8B793425207F35BA004BCDFF /* CFPreviewPhotoViewController.m in Sources */,
 				8BE7459E206E434F00D620AF /* MANaviPolyline.m in Sources */,
 				8BE745AB206E444D00D620AF /* ErrorInfoUtility.m in Sources */,
 				8B7F7F7620158EE5007F5E10 /* CFRelieveIMEIViewController.m in Sources */,
@@ -1683,10 +1809,14 @@
 				D723EB2C20045A4E00F71389 /* PickView.m in Sources */,
 				8B81DEE12022960800CE2022 /* MBManager.m in Sources */,
 				8B5F2F1D2028012100BF04B0 /* CFManagerTypeView.m in Sources */,
+				8B64FEA02079B6FA00FE546F /* CFUpdataInfoModel.m in Sources */,
 				D71F4BEB1FFC7A9800950E42 /* SystemNewsViewController.m in Sources */,
+				8B58FF242090039900930A33 /* CFAddMachineViewController.m in Sources */,
 				8B6771102047F26F0009D8DD /* CFRepairsPhotoCell.m in Sources */,
+				8BA9A8262094425C00DE5B4A /* CFPersonalCenterTableViewCell.m in Sources */,
 				8B6DB87820492386003EDF4B /* CFRepairsStationViewController.m in Sources */,
 				8B5F71F8204CCE0E00D9A709 /* CFCommentInfoViewController.m in Sources */,
+				8B64FEA32079B85800FE546F /* CFUpdataImageModel.m in Sources */,
 				8B6DB87B2049297B003EDF4B /* CFRepairsStationTableViewCell.m in Sources */,
 				D70FD8B11FF21DBB008CADFB /* RegisterViewController.m in Sources */,
 				8B6DB881204932BC003EDF4B /* CFRepairsStationInfoViewController.m in Sources */,
@@ -1698,6 +1828,7 @@
 				8B86E1CB205F48B900336F48 /* CFWorkOrderModel.m in Sources */,
 				8B6A15CE204A1D8F001E12FC /* CFRepairsRecordInfoViewController.m in Sources */,
 				8B3E1DFA204D38C9002A2CCB /* CFAlarmNewsTableViewCell.m in Sources */,
+				8B58FF212090013D00930A33 /* AdditionScanView.m in Sources */,
 				8B0D45142052A4DF0033C31F /* CFAttributeTouchView.m in Sources */,
 				D71C138E1FFD036000A546DA /* BandMachineViewController.m in Sources */,
 				8BE811C42006F4E10086D127 /* MapPinView.m in Sources */,
@@ -1705,6 +1836,7 @@
 				8B7184C7200CA2DA001DF227 /* ChangImageViewController.m in Sources */,
 				8B6EDBA92019E6BC0082DEF0 /* CFSalesPersonMyAgencyViewController.m in Sources */,
 				D723EB18200440E200F71389 /* PersonTableViewCell.m in Sources */,
+				8BA9A8232094151800DE5B4A /* CFPersonalCenterViewController.m in Sources */,
 				8B5F2F27202828EF00BF04B0 /* CFAgencyReturnViewController.m in Sources */,
 				8B81DEEA202298D300CE2022 /* CFAFNetworkingManage.m in Sources */,
 				8B4240592060DB2D009E60D8 /* CFMapNavigationViewController.m in Sources */,
@@ -1717,6 +1849,7 @@
 				D723EB2620044DCF00F71389 /* City.m in Sources */,
 				8B5BFB862059F2570031A673 /* CFClassMethod.m in Sources */,
 				8B6EDBB02019FC320082DEF0 /* AgencyModel.m in Sources */,
+				8BA9A82B209451EB00DE5B4A /* CFIntegralViewController.m in Sources */,
 				8B830A802071BD5400D4B391 /* CFFillInOrderModel.m in Sources */,
 				8B6EDBAC2019F46E0082DEF0 /* CFSalesPersonMyAgencyTableViewCell.m in Sources */,
 				8B5732EC201DAF040098C0A4 /* CFPickViewController.m in Sources */,
@@ -1732,6 +1865,7 @@
 				8B572E1A20170F3000DAC3E9 /* CFAgencySellViewController.m in Sources */,
 				8B572E23201725A000DAC3E9 /* CFAgencySoldViewController.m in Sources */,
 				8B3E1DF7204D33FB002A2CCB /* CFAlarmNewsViewController.m in Sources */,
+				8B67C3B5207CB6BA00A37497 /* CFCompleteCommentViewController.m in Sources */,
 				8B572E1720170A8A00DAC3E9 /* CFAgencyMachineStatusViewController.m in Sources */,
 				8B573F13201AB9C3007E0241 /* CFSalesPersonAgencyInfoViewController.m in Sources */,
 				8B5732E9201D9E800098C0A4 /* ProvinceModel.m in Sources */,
@@ -1739,6 +1873,7 @@
 				8B5C7D9A202158BE00E47E1A /* CFMBProgressHUD.m in Sources */,
 				D7222CD51FF5C1720063929E /* MapViewController.m in Sources */,
 				8B7C53902062440F00327E78 /* CFFillOrderView.m in Sources */,
+				8B6304D82099A9D300B4DD6B /* CFMyMachineListViewController.m in Sources */,
 				D794AA30200267D000CC8313 /* MachineInfoViewController.m in Sources */,
 				8BD18F32202B0D7A00FFB637 /* CFAgencyEXchangeStatusViewController.m in Sources */,
 				8B51BE9F20185FAB00712327 /* CFAgencyPutInStorageTableViewCell.m in Sources */,
@@ -1746,6 +1881,7 @@
 				D71C13A62000936A00A546DA /* PutNumberViewController.m in Sources */,
 				D70FD8B41FF28546008CADFB /* ForgetViewController.m in Sources */,
 				8BB1C187206CE3DC0067CBD2 /* CFWordOrderInfoModel.m in Sources */,
+				8B64FE9D2079B6B700FE546F /* CFFMDBManager.m in Sources */,
 				8B5F2F1A2027F05500BF04B0 /* CFAgencyManagerViewController.m in Sources */,
 				8B3E1DF1204D064A002A2CCB /* CFCommentInfoTableViewCell.m in Sources */,
 				8B5F2F24202828DA00BF04B0 /* CFAgencyExchangeViewController.m in Sources */,
@@ -1941,7 +2077,7 @@
 					"\"${PODS_ROOT}/Headers/Public\"/**",
 				);
 				INFOPLIST_FILE = ChangFa/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1985,7 +2121,7 @@
 					"\"${PODS_ROOT}/Headers/Public\"/**",
 				);
 				INFOPLIST_FILE = ChangFa/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

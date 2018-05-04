@@ -16,7 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationLable.text = @"输入车架号";
+    self.navigationLable.text = @"输入车辆编码";
     [self.leftButton setImage:[UIImage imageNamed:@"fanhuiwhite"] forState:UIControlStateNormal];
     [self.leftButton addTarget:self action:@selector(leftButtonClick) forControlEvents:UIControlEventTouchUpInside];
     self.view.backgroundColor = BackgroundColor;
@@ -28,12 +28,12 @@
     putInView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:putInView];
     self.numberTextField = [[UITextField alloc]initWithFrame:CGRectMake(50 * screenWidth, 0, self.view.frame.size.width - 50 * screenWidth, putInView.frame.size.height)];
-    self.numberTextField.placeholder = @"请输入车架号";
+    self.numberTextField.placeholder = @"请输入";
     [putInView addSubview:self.numberTextField];
     
     UIButton *bandButton = [UIButton buttonWithType:UIButtonTypeCustom];
     bandButton.frame = CGRectMake(30 * screenWidth, putInView.frame.size.height + putInView.frame.origin.y + 360 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-    bandButton.layer.cornerRadius = 20 * Width;
+    bandButton.layer.cornerRadius = 20 * screenWidth;
     [bandButton setTitle:@"绑定" forState:UIControlStateNormal];
     [bandButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [bandButton setBackgroundColor:ChangfaColor];

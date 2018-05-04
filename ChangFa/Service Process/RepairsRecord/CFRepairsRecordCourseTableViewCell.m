@@ -39,9 +39,9 @@
     _lineBottomLabel = [[UILabel alloc]initWithFrame:CGRectMake(_lineTopLabel.frame.origin.x, _courseImageView.frame.size.height + _courseImageView.frame.origin.y, _lineTopLabel.frame.size.width, 105 * screenHeight)];
     _lineBottomLabel.backgroundColor = ChangfaColor;
     
-    _courseLabel = [[UILabel alloc]initWithFrame:CGRectMake(44 * screenWidth + _lineTopLabel.frame.origin.x, 20 * screenHeight, CF_WIDTH - (194 * screenWidth + _lineTopLabel.frame.origin.x), 50 * screenHeight)];
+    _courseLabel = [[YYLabel alloc]initWithFrame:CGRectMake(44 * screenWidth + _lineTopLabel.frame.origin.x, 20 * screenHeight, CF_WIDTH - (114 * screenWidth + _lineTopLabel.frame.origin.x), 50 * screenHeight)];
     _courseLabel.font = CFFONT14;
-    _courseview = [[CFAttributeTouchView alloc]initWithFrame:CGRectMake(44 * screenWidth + _lineTopLabel.frame.origin.x, 20 * screenHeight, CF_WIDTH - (194 * screenWidth + _lineTopLabel.frame.origin.x), 40 * screenHeight)];
+    _courseLabel.textColor = [UIColor grayColor];
     
     _timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(_courseLabel.frame.origin.x, _courseLabel.frame.size.height + _courseLabel.frame.origin.y + 10 * screenHeight, _courseLabel.frame.size.width, _courseLabel.frame.size.height)];
     _timeLabel.font = CFFONT13;
@@ -50,7 +50,6 @@
     [self.contentView addSubview:_lineTopLabel];
     [self.contentView addSubview:_courseImageView];
     [self.contentView addSubview:_lineBottomLabel];
-    [self.contentView addSubview:_courseview];
     [self.contentView addSubview:_courseLabel];
     [self.contentView addSubview:_timeLabel];
 }
@@ -68,6 +67,12 @@
     _dayTimeLabel.textColor = [UIColor grayColor];
     _dayTimeLabel.font = CFFONT12;
     [self.contentView addSubview:_dayTimeLabel];
+    _timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(_dayLabel.frame.origin.x, _dayLabel.frame.origin.y, _dayLabel.frame.size.width, _dayLabel.frame.size.height + _dayTimeLabel.frame.size.height)];
+    _timeLabel.font = CFFONT12;
+    _timeLabel.numberOfLines = 0;
+    _timeLabel.textAlignment = NSTextAlignmentCenter;
+    _timeLabel.textColor = [UIColor grayColor];
+    [self.contentView addSubview:_timeLabel];
     
     _lineTopLabel = [[UILabel alloc]initWithFrame:CGRectMake(130 * screenWidth, 0, 2 * screenWidth, 70 * screenHeight)];
     _lineTopLabel.backgroundColor = ChangfaColor;
@@ -78,7 +83,7 @@
     _lineBottomLabel = [[UILabel alloc]initWithFrame:CGRectMake(_lineTopLabel.frame.origin.x, _courseImageView.frame.size.height + _courseImageView.frame.origin.y, _lineTopLabel.frame.size.width, 70 * screenHeight)];
     _lineBottomLabel.backgroundColor = ChangfaColor;
     
-    _courseLabel = [[UILabel alloc]initWithFrame:CGRectMake(20 * screenWidth + _lineTopLabel.frame.origin.x + _lineTopLabel.frame.size.width, _courseImageView.frame.origin.y - 15 * screenHeight, CF_WIDTH - (194 * screenWidth + _lineTopLabel.frame.origin.x), 50 * screenHeight)];
+    _courseLabel = [[YYLabel alloc]initWithFrame:CGRectMake(20 * screenWidth + _lineTopLabel.frame.origin.x + _lineTopLabel.frame.size.width, _courseImageView.frame.origin.y - 15 * screenHeight, CF_WIDTH - (194 * screenWidth + _lineTopLabel.frame.origin.x), 50 * screenHeight)];
     _courseLabel.font = CFFONT14;
     
 //    _courseLabel.text = @"到达";
@@ -90,7 +95,7 @@
 }
 - (void)setStatus:(NSInteger)status
 {
-    switch (status + 7) {
+    switch (status) {
         case 7:
             _courseLabel.text = @"未接单";
 //            _courseLabel.textColor = [UIColor redColor];
@@ -123,7 +128,14 @@
             _courseLabel.text = @"待审核";
 //            _courseLabel.textColor = ChangfaColor;
             break;
-            
+        case 15:
+            _courseLabel.text = @"审核通过";
+            //            _courseLabel.textColor = ChangfaColor;
+            break;
+        case 16:
+            _courseLabel.text = @"审核不通过";
+            //            _courseLabel.textColor = ChangfaColor;
+            break;
         default:
             break;
     }

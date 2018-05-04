@@ -105,19 +105,6 @@
     [putInButton addTarget:self action:@selector(putInNumberClick:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:putInButton];
     
-//    if ([scanType isEqualToString:@"BarCode"]) {
-//        navigationLable.text = @"扫描二维码";
-//        titleLabel.text = @"将二维码放入框内，即可自动扫描";
-//        lastLabel.text = @"未扫到二维码？点击输入";
-//        [scanButton setTitle:@"扫描二维码" forState:UIControlStateNormal];
-//        [putInButton setTitle:@"输入" forState:UIControlStateNormal];
-//    } else {
-//        navigationLable.text = @"扫描车架号";
-//        titleLabel.text = @"将条码放入框内，即可自动扫描";
-//        lastLabel.text = @"未扫到条码？点击输入车架号";
-//        [scanButton setTitle:@"扫描车架号" forState:UIControlStateNormal];
-//        [putInButton setTitle:@"输入车架号" forState:UIControlStateNormal];
-//    }
     navigationLable.text = @"二维码/条码";
     titleLabel.text = @"将二维码/条码放入框内，即可自动扫描";
     lastLabel.text = @"未扫到二维码/条码？点击输入";

@@ -14,6 +14,7 @@
 @property (nonatomic, strong)UILabel *machineType;
 @property (nonatomic, strong)UILabel *machineNote;
 @property (nonatomic, strong)UILabel *recordStatus;
+@property (nonatomic, strong)UILabel *timeLabel;
 @end
 
 @implementation CFRepairsRecordTableViewCell
@@ -41,16 +42,23 @@
     _machineType.font = CFFONT15;
     [self.contentView addSubview:_machineType];
     //状态
-    _recordStatus = [[UILabel alloc]initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width - 180 * screenWidth, _machineType.frame.origin.y, 150 * screenWidth, _machineName.frame.size.height)];
+    _recordStatus = [[UILabel alloc]initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width - 180 * screenWidth, _machineName.frame.origin.y, 150 * screenWidth, _machineName.frame.size.height)];
     _recordStatus.textAlignment = NSTextAlignmentRight;
     _recordStatus.text = @"";
     _recordStatus.font = CFFONT14;
     [self.contentView addSubview:_recordStatus];
     //备注
-    _machineNote = [[UILabel alloc]initWithFrame:CGRectMake(_machineType.frame.origin.x, _machineType.frame.size.height + _machineType.frame.origin.y + 5 * screenHeight, _machineType.frame.size.width, _machineType.frame.size.height)];
+    _machineNote = [[UILabel alloc]initWithFrame:CGRectMake(_machineType.frame.origin.x, _machineType.frame.size.height + _machineType.frame.origin.y + 5 * screenHeight, _machineType.frame.size.width - _recordStatus.frame.size.width - 100 * screenWidth, _machineType.frame.size.height)];
     _machineNote.text = @"备注：";
     _machineNote.font = CFFONT15;
     [self.contentView addSubview:_machineNote];
+    
+    //时间
+    _timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(_recordStatus.frame.origin.x - 100 * screenWidth, _machineNote.frame.origin.y, _recordStatus.frame.size.width + 100 * screenWidth, _recordStatus.frame.size.height)];
+    _timeLabel.text = @"";
+    _timeLabel.font = CFFONT13;
+    _timeLabel.textAlignment = NSTextAlignmentRight;
+    [self.contentView addSubview:_timeLabel];
 }
 - (void)setRecordModel:(CFRepairsRecordModel *)recordModel
 {
@@ -77,7 +85,7 @@
             _recordStatus.textColor = ChangfaColor;
             break;
         case 2:
-            _recordStatus.text = @"审核通过";
+            _recordStatus.text = @"等待三包员接单";
             _recordStatus.textColor = ChangfaColor;
             break;
         case 3:
@@ -102,6 +110,7 @@
     _machineName.text = [@"名称：" stringByAppendingString:recordModel.machineName];
     _machineType.text = [@"类型：" stringByAppendingString:recordModel.machineModel];
     _machineNote.text = [@"备注：" stringByAppendingString:recordModel.machineRemarks];
+    _timeLabel.text = [@"" stringByAppendingString:[recordModel.reportTime substringWithRange:NSMakeRange(0, 16)]];
 }
 - (void)awakeFromNib {
     [super awakeFromNib];

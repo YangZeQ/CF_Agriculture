@@ -9,13 +9,16 @@
 #import "CFRepairsRecordInfoViewController.h"
 #import "CFRepairsDetailInfoViewController.h"
 #import "CFCommenViewController.h"
+#import "CFPreviewPhotoViewController.h"
 #import "CFRepairsRecordCourseTableViewCell.h"
-
-@interface CFRepairsRecordInfoViewController ()<UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate>
+#import "CFRepairsPhotoCell.h"
+#import "YYText.h"
+@interface CFRepairsRecordInfoViewController ()<UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, UICollectionViewDelegate, UICollectionViewDataSource>
 @property (nonatomic, strong)UIView *courseView;
 @property (nonatomic, strong)UITableView *courseTableView;
 @property (nonatomic, strong)NSMutableArray *courseArray;
 @property (nonatomic, strong)NSMutableArray *timeArray;
+@property (nonatomic, strong)NSMutableArray *photoArray;
 @property (nonatomic, strong)NSArray *titleArray;
 @property (nonatomic, strong)NSString *reportId;
 
@@ -23,8 +26,11 @@
 @property (nonatomic, strong)UILabel *phoneLabel;
 @property (nonatomic, strong)UILabel *commentInfoLabele;
 @property (nonatomic, strong)UILabel *oddNumbersLabel;
+@property (nonatomic, strong)UICollectionView *photoColleectionView;
+@property (nonatomic, strong)UILabel *commentTimeLabel;
 @property (nonatomic, strong)UILabel *completeTimeLabel;
 @property (nonatomic, strong)UILabel *createTimeLabel;
+@property (nonatomic, strong)CFRepairsPhotoCell *photoCell;
 @end
 
 @implementation CFRepairsRecordInfoViewController
@@ -42,13 +48,23 @@
     }
     return _timeArray;
 }
+- (NSMutableArray *)photoArray
+{
+    if (_photoArray == nil) {
+        _photoArray = [NSMutableArray array];
+    }
+    return _photoArray;
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.view.backgroundColor = BackgroundColor;
-    self.titleArray = @[@"已提交", @"审核通过", @"已接单", @"维修结束", @"待评价", @"已完成"];
+    self.titleArray = @[@"已提交", @"等待三包员接单", @"已接单", @"维修中", @"待评价", @"已完成"];
     if (self.setTitle) {
         self.navigationItem.title = @"报修成功";
+        self.navigationItem.hidesBackButton = YES;
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(rightButtonClick)];
+        [self.navigationItem.rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
     } else {
         switch ([_recordModel.status integerValue]) {
             case 1:
@@ -72,9 +88,10 @@
             default:
                 break;
         }
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"fanhuiwhite"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftButtonClick)];
     }
     [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, nil]];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"fanhuiwhite"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftButtonClick)];
+    
     [self getRecordStatusInfo];
     [self createRecordInfoView];
     // Do any additional setup after loading the view.
@@ -167,10 +184,24 @@
     _commentInfoLabele.text = _recordModel.commentContent;
     [_commentView addSubview:_commentInfoLabele];
     //图片
-    UIImageView *commentImageVeiw = [[UIImageView alloc]initWithFrame:CGRectMake(commentLabel.frame.origin.x, _commentInfoLabele.frame.size.height + _commentInfoLabele.frame.origin.y + 20 * screenHeight, 160 * screenWidth, 160 * screenHeight)];
-    [_commentView addSubview:commentImageVeiw];
-    UILabel *commentTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(commentLabel.frame.origin.x, commentImageVeiw.frame.size.height + commentImageVeiw.frame.origin.y + 20 * screenHeight, commentLabel.frame.size.width,  commentLabel.frame.size.height)];
-    [_commentView addSubview:commentTimeLabel];
+    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+    _photoColleectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(commentLabel.frame.origin.x, _commentInfoLabele.frame.size.height + _commentInfoLabele.frame.origin.y + 20 * screenHeight, CF_WIDTH - 60 * screenWidth, 180 * screenHeight) collectionViewLayout:layout];
+    _photoColleectionView.backgroundColor = [UIColor whiteColor];
+    layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    layout.itemSize = CGSizeMake(180 * screenWidth, 180 * screenHeight);
+    layout.minimumLineSpacing = 10 * screenWidth;
+    layout.minimumInteritemSpacing = 0 * screenWidth;
+    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    _photoColleectionView.showsHorizontalScrollIndicator = NO;
+    _photoColleectionView.delegate = self;
+    _photoColleectionView.dataSource = self;
+    [_photoColleectionView registerClass:[CFRepairsPhotoCell class] forCellWithReuseIdentifier:@"repairsPhotoCellId"];
+    [_commentView addSubview:_photoColleectionView];
+    
+    _commentTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(commentLabel.frame.origin.x, _photoColleectionView.frame.size.height + _photoColleectionView.frame.origin.y + 20 * screenHeight, commentLabel.frame.size.width,  commentLabel.frame.size.height)];
+    _commentTimeLabel.font = CFFONT14;
+    _commentTimeLabel.textColor = [UIColor grayColor];
+    [_commentView addSubview:_commentTimeLabel];
     
     UIView *timeView = [[UIView alloc]initWithFrame:CGRectMake(0, _commentView.frame.size.height + _commentView.frame.origin.y + 30 * screenHeight, CF_WIDTH, 200 * screenHeight)];
     timeView.backgroundColor = [UIColor whiteColor];
@@ -205,29 +236,53 @@
     }
     if (indexPath.row == 0) {
         cell.lineTopLabel.hidden = YES;
+        cell.courseLabel.textColor = [UIColor blackColor];
         if (_courseArray.count == 1) {
             cell.lineBottomLabel.hidden = YES;
         }
         cell.courseImageView.frame = CGRectMake(60 * screenWidth, cell.lineTopLabel.frame.size.height, 26 * screenWidth, 26 * screenHeight);
         cell.lineBottomLabel.frame = CGRectMake(cell.lineTopLabel.frame.origin.x, cell.courseImageView.frame.size.height + cell.courseImageView.frame.origin.y, cell.lineTopLabel.frame.size.width, 102 * screenHeight);
         cell.courseImageView.image = [UIImage imageNamed:@"CF_Course_Doing"];
-        if (self.courseArray.count == 5) {
-            [cell.courseLabel removeFromSuperview];
-            cell.courseview.content = @"待评价，去评价";
-            cell.courseview.eventBlock = ^(NSAttributedString *str) {
-                [self goCommentView];
-            };
-        } else {
+        if ([self.courseArray[indexPath.row] integerValue] == 5) {
+            NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:@"待评价，去评价"];
+            text.yy_font = CFFONT14;
+            text.yy_color = [UIColor grayColor];
+            
+            [text yy_setTextHighlightRange:NSMakeRange(4, 3)//设置点击的位置
+                                     color:ChangfaColor
+                           backgroundColor:[UIColor whiteColor]
+                                 tapAction:^(UIView *containerView, NSAttributedString *text, NSRange range, CGRect rect){
+                                     [self goCommentView];
+                                 }];
+            cell.courseLabel.attributedText = text;
+            cell.courseLabel.userInteractionEnabled = YES;
+        } else  {
             cell.courseLabel.text = self.titleArray[[self.courseArray[indexPath.row] integerValue] - 1];
         }
 
     } else if (indexPath.row == self.courseArray.count - 1) {
+        cell.lineTopLabel.hidden = NO;
         cell.lineBottomLabel.hidden = YES;
+        cell.courseImageView.image = [UIImage imageNamed:@"CF_Course_Done"];
         cell.courseLabel.text = self.titleArray[[self.courseArray[indexPath.row] integerValue] - 1];
     } else {
+        cell.lineTopLabel.hidden = NO;
+        cell.lineBottomLabel.hidden = NO;
+        cell.courseImageView.image = [UIImage imageNamed:@"CF_Course_Done"];
         cell.courseLabel.text = self.titleArray[[self.courseArray[indexPath.row] integerValue] - 1];
     }
-    
+    if (self.courseArray.count >= 3 && [self.courseArray[indexPath.row] integerValue] == 3) {
+        NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"已接单，维修员【%@%@】", self.recordModel.repairUserName, self.recordModel.repairMobile]];
+        text.yy_color = [UIColor grayColor];
+        text.yy_font = CFFONT14;
+        [text yy_setTextHighlightRange:NSMakeRange(8 + self.recordModel.repairUserName.length, self.recordModel.repairMobile.length)//设置点击的位置
+                                 color:ChangfaColor
+                       backgroundColor:[UIColor whiteColor]
+                             tapAction:^(UIView *containerView, NSAttributedString *text, NSRange range, CGRect rect){
+                                 [self callTheUser];
+                             }];
+        cell.courseLabel.attributedText = text;
+    }
     cell.timeLabel.text = self.timeArray[indexPath.row];
 
     return cell;
@@ -235,6 +290,31 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 160 * screenHeight;
+}
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 1;
+}
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return self.photoArray.count;
+}
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    _photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
+    [_photoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@", self.photoArray[indexPath.row]]] placeholderImage:[UIImage imageNamed:@"CF_RepairImage"]];
+    
+    return _photoCell;
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    CFPreviewPhotoViewController *preview = [[CFPreviewPhotoViewController alloc]init];
+    preview.photoArray = self.photoArray;
+    preview.selectedIndex = indexPath.row;
+    preview.headerHeight = navHeight;
+    [self presentViewController:preview animated:YES completion:^{
+        
+    }];
 }
 #pragma mark - 报修详情
 - (void)getRecordInfo
@@ -272,7 +352,7 @@
         self.courseArray = (NSMutableArray *)[[self.courseArray reverseObjectEnumerator] allObjects];
         self.timeArray = (NSMutableArray *)[[self.timeArray reverseObjectEnumerator] allObjects];
         CGRect courseFrame = _courseView.frame;
-        self.courseView.frame = CGRectMake(courseFrame.origin.x, courseFrame.origin.y, courseFrame.size.width, (34 + 160 * self.recordModel.statusArray.count) * screenHeight);
+        self.courseView.frame = CGRectMake(courseFrame.origin.x, courseFrame.origin.y, courseFrame.size.width, (34 + 160 * self.courseArray.count) * screenHeight);
         if (self.courseArray.count > 5) {
             self.courseTableView.frame = CGRectMake(0, 17 * screenHeight, _courseView.frame.size.width, 160 * 5 * screenHeight);
         } else {
@@ -292,9 +372,13 @@
         [self.courseArray addObject:[arr[0] objectForKey:@"status"]];
         [self.timeArray addObject:[arr[1] objectForKey:@"time"]];
     }
-    NSLog(@"%@", self.courseArray[0]);
+    if (self.setTitle) {
+        [self.courseArray removeObjectAtIndex:1];
+        [self.timeArray removeObjectAtIndex:1];
+    }
     _phoneLabel.text = _recordModel.mobile;
     _commentInfoLabele.text = _recordModel.commentContent;
+    _commentTimeLabel.text = _recordModel.finishTime;
     _completeTimeLabel.text = [@"完成时间：" stringByAppendingString:_recordModel.finishTime];
     _createTimeLabel.text = [@"创建时间：" stringByAppendingString:_recordModel.reportTime];
     
@@ -308,10 +392,41 @@
         commentLevelImage.image = [UIImage imageNamed:@"CF_Comment_Star_Full"];
         [_phoneLabel addSubview:commentLevelImage];
     }
+    self.photoArray = _recordModel.filePath;
+    [self.photoColleectionView reloadData];
 }
 - (void)leftButtonClick
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    if (self.setTitle) {
+        for (UIViewController *viewController in self.navigationController.childViewControllers) {
+            if ([viewController isKindOfClass:[SliderViewController class]]) {
+                [self.navigationController popToViewController:viewController animated:YES];
+            }
+        }
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+- (void)rightButtonClick
+{
+    if (self.setTitle) {
+        for (UIViewController *viewController in self.navigationController.childViewControllers) {
+            if ([viewController isKindOfClass:[SliderViewController class]]) {
+                [self.navigationController popToViewController:viewController animated:YES];
+            }
+        }
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+#pragma mark - 打电话
+- (void)callTheUser{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSMutableString *str=[[NSMutableString alloc] initWithFormat:@"tel:%@", _recordModel.repairMobile];
+        UIWebView *callWebview = [[UIWebView alloc] init];
+        [callWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:str]]];
+        [self.view addSubview:callWebview];
+    });
 }
 - (void)didReceiveMemoryWarning
 {
