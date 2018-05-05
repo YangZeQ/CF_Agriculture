@@ -67,6 +67,18 @@
         [headerView addSubview:_headerImage];
         [headerView addSubview:name];
         [headerView addSubview:phoneNumber];
+    }else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 2) {
+        UILabel *name = [[UILabel alloc]initWithFrame:CGRectMake(_headerImage.frame.size.width + _headerImage.frame.origin.x + 20 * screenWidth, _headerImage.frame.origin.y + 25 * screenHeight, 300 * screenWidth, 40 * screenHeight)];
+        name.textColor = [UIColor whiteColor];
+        name.font = [UIFont systemFontOfSize:[self autoScaleW:16]];
+        name.text = [userDefault objectForKey:@"UserName"];
+        UILabel *phoneNumber = [[UILabel alloc]initWithFrame:CGRectMake(name.frame.origin.x, name.frame.origin.y + name.frame.size.height + 30 * screenHeight, name.frame.size.width, name.frame.size.height)];
+        phoneNumber.textColor = [UIColor whiteColor];
+        phoneNumber.font = [UIFont systemFontOfSize:[self autoScaleW:16]];
+        phoneNumber.text = [userDefault objectForKey:@"UserLocation"];
+        [headerView addSubview:_headerImage];
+        [headerView addSubview:name];
+        [headerView addSubview:phoneNumber];
     } else {
         UILabel *name = [[UILabel alloc]initWithFrame:CGRectMake(_headerImage.frame.size.width + _headerImage.frame.origin.x + 20 * screenWidth, _headerImage.frame.origin.y + _headerImage.frame.size.height / 2 - 20 * screenHeight, 300 * screenWidth, 40 * screenHeight)];
         name.textColor = [UIColor whiteColor];
@@ -119,7 +131,7 @@
         version.titleLabel.textColor = [UIColor grayColor];
         version.backgroundColor = [UIColor whiteColor];
         [self.view addSubview:version];
-    } else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 6) {
+    } else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 6 || [[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 6) {
         CFMisteViewButton *CompleteOrder = [[CFMisteViewButton alloc]initWithFrame:CGRectMake(0, headerView.frame.size.height + 30 * screenHeight, [UIScreen mainScreen].bounds.size.width, 120 * screenHeight)];
         CompleteOrder.imageName = @"CF_CompleteOrder";
         CompleteOrder.titleName = @"已完成派工单";

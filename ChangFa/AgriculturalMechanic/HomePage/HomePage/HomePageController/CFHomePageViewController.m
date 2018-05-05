@@ -206,7 +206,7 @@
     
     UIButton *orderButton = [UIButton buttonWithType:UIButtonTypeCustom];
     orderButton.frame = CGRectMake(sellButton.frame.size.width + sellButton.frame.origin.x + (CF_WIDTH - 66 * screenWidth * 4) / 4, sellButton.frame.origin.y, sellButton.frame.size.width, sellButton.frame.size.height);
-    [orderButton setImage:[UIImage imageNamed:@"CF_Agency_Sell"] forState:UIControlStateNormal];
+    [orderButton setImage:[UIImage imageNamed:@"CF_WorkOrder"] forState:UIControlStateNormal];
     [orderButton addTarget:self action:@selector(agencySellButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [agencyView addSubview:orderButton];
     UILabel *orderLabel = [[UILabel alloc]initWithFrame:CGRectMake(sellLabel.frame.size.width + sellLabel.frame.origin.x, sellLabel.frame.origin.y, sellLabel.frame.size.width, sellLabel.frame.size.height)];

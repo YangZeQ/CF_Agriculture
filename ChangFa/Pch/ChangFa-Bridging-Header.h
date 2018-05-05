@@ -9,5 +9,4 @@
 #ifndef ChangFa_Bridging_Header_h
 #define ChangFa_Bridging_Header_h
 #import <Charts/Charts-Swift.h>
-
 #endif /* ChangFa_Bridging_Header_h */
