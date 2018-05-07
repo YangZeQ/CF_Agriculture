@@ -52,7 +52,7 @@
     [self.view addSubview:personalInfoImage];
     
     UIImageView *headerImage = [[UIImageView alloc]initWithFrame:CGRectMake((CF_WIDTH - 180 * screenWidth) / 2, 89 * screenWidth, 180 * screenWidth, 180 * screenHeight)];
-    [headerImage sd_setImageWithURL:[NSURL URLWithString:[[NSUserDefaults standardUserDefaults] objectForKey:@"UserHeadUrl"]] placeholderImage:[UIImage imageNamed:@"touxiang"]];
+    [headerImage sd_setImageWithURL:[NSURL URLWithString:[[NSUserDefaults standardUserDefaults] objectForKey:@"UserHeadUrl"]] placeholderImage:[UIImage imageNamed:@"Person_HeaderPhoto"]];
     headerImage.layer.cornerRadius = 90 * screenWidth;
     headerImage.clipsToBounds = YES;
     headerImage.userInteractionEnabled = YES;

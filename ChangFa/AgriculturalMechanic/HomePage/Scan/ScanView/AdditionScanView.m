@@ -25,6 +25,7 @@
 @property (nonatomic, strong)UIView *userInfoView;
 @property (nonatomic, assign)BOOL isTurning;
 @property (nonatomic, assign)BOOL isReversed;
+@property (nonatomic, assign)BOOL lightSelect;
 
 @property (nonatomic, strong)UIView *bottomView;
 @end
@@ -80,6 +81,18 @@
     scanTitleLabel.text = @"将条码/二维码放入框内即可自动扫描";
     scanTitleLabel.textAlignment = NSTextAlignmentCenter;
     [_topView addSubview:scanTitleLabel];
+    
+    _lightLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, scanTitleLabel.frame.size.height + scanTitleLabel.frame.origin.y + 483 * screenHeight, _topView.frame.size.width, 30 * screenHeight)];
+    _lightLabel.font = CFFONT14;
+    _lightLabel.text = @"轻点照亮";
+    _lightLabel.textAlignment = NSTextAlignmentCenter;
+    _lightLabel.textColor = [UIColor whiteColor];
+    [_topView addSubview:_lightLabel];
+    UIButton *lightButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    lightButton.frame = CGRectMake(90 * screenWidth, 107 * screenHeight, 510 * screenWidth, 510 * screenHeight);
+    [lightButton addTarget:self action:@selector(lightButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [_topView addSubview:lightButton];
+    _lightSelect = NO;
     
     UILabel *scanRemindLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 667 * screenHeight, _topView.frame.size.width, 30 * screenHeight)];
     scanRemindLabel.text = @"不能扫描？试试手动输入";
@@ -380,4 +393,14 @@
     }
 }
 
+- (void)lightButtonClick
+{
+    _lightSelect = !_lightSelect;
+    if (_lightSelect) {
+        _lightLabel.text = @"轻点关闭";
+    } else {
+        _lightLabel.text = @"轻点照亮";
+    }
+    self.lightBlock(_lightSelect);
+}
 @end

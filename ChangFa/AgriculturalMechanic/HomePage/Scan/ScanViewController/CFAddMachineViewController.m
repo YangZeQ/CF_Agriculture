@@ -85,8 +85,14 @@
     UIImageView *scanBoxImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, layer.frame.size.width, layer.frame.size.height)];
     scanBoxImage.image = [UIImage imageNamed:@"Scan_Box"];
     [layer addSublayer:scanBoxImage.layer];
+    UIImageView *lightImage = [[UIImageView alloc]initWithFrame:CGRectMake(241 * screenWidth, 413 * screenHeight, 28 * screenWidth, 30 * screenHeight)];
+    lightImage.image = [UIImage imageNamed:@"Scan_Light"];
+    [layer addSublayer:lightImage.layer];
     
     __block CFAddMachineViewController *blockSelf = self;
+    self.additionView.lightBlock = ^(BOOL selected) {
+        [blockSelf lightButtonClick:selected];
+    };
     self.additionView.textNumberBlock = ^(NSString *text) {
         [blockSelf getDetailMachineInformation:text];
     };
@@ -157,7 +163,27 @@
         }];
     }];
 }
-
+/**
+ *  开启/关闭手电筒
+ */
+- (void)lightButtonClick:(BOOL)select
+{
+    Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
+    if (captureDeviceClass != nil) {
+        AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+        if ([device hasTorch] && [device hasFlash]){
+            [device lockForConfiguration:nil];
+            if (select) {
+                [device setTorchMode:AVCaptureTorchModeOn];
+                [device setFlashMode:AVCaptureFlashModeOn];
+            } else {
+                [device setTorchMode:AVCaptureTorchModeOff];
+                [device setFlashMode:AVCaptureFlashModeOff];
+            }
+            [device unlockForConfiguration];
+        }
+    }
+}
 - (void)installTerminalButtonClick
 {
     CFInstallTerminalViewController *installTerminal = [[CFInstallTerminalViewController alloc]init];
@@ -184,11 +210,7 @@
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [self.additionView.scanView endEditing:YES];
-    [self.view endEditing:YES];
-}
+
 - (void)dealloc
 {
     NSLog(@"CFADD_Block");
