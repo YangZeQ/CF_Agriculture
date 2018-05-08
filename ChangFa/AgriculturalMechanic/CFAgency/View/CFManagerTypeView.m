@@ -33,18 +33,15 @@
                                       Text:(NSString *)text{
     self.backgroundColor = [UIColor whiteColor];
     
-    UIImageView *viewImage = [[UIImageView alloc]initWithFrame:CGRectMake(60 * screenWidth, 60 * screenHeight, 100 * screenWidth, 100 * screenHeight)];
+    UIImageView *viewImage = [[UIImageView alloc]initWithFrame:CGRectMake(36 * screenWidth, 48 * screenHeight, 64 * screenWidth, 64 * screenHeight)];
     viewImage.image = [UIImage imageNamed:viewImg];
-    UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(viewImage.frame.size.width + 60 * screenWidth, 50 * screenHeight, self.frame.size.width - viewImage.frame.size.width - 180 * screenWidth,  60 * screenHeight)];
-    titleLabel.textColor = ChangfaColor;
-    titleLabel.textAlignment = NSTextAlignmentRight;
+    UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(viewImage.frame.size.width + viewImage.frame.origin.x + 32 * screenWidth, 36 * screenHeight, self.frame.size.width - viewImage.frame.size.width - 124 * screenWidth,  34 * screenHeight)];
     titleLabel.text = title;
-    UILabel *textLabel = [[UILabel alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x, titleLabel.frame.size.height + titleLabel.frame.origin.y, titleLabel.frame.size.width, titleLabel.frame.size.height)];
+    UILabel *textLabel = [[UILabel alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x, titleLabel.frame.size.height + titleLabel.frame.origin.y + 28 * screenHeight, titleLabel.frame.size.width, titleLabel.frame.size.height)];
     textLabel.text = text;
     textLabel.textColor = [UIColor grayColor];
-    textLabel.textAlignment = NSTextAlignmentRight;
     textLabel.font = CFFONT14;
-    UIImageView *buttonImage = [[UIImageView alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x + titleLabel.frame.size.width + 20 * screenWidth, 85 * screenHeight, 30 * screenWidth, 50 * screenHeight)];
+    UIImageView *buttonImage = [[UIImageView alloc]initWithFrame:CGRectMake(self.frame.size.width - 56 * screenWidth, 56 * screenHeight, 26 * screenWidth, 48 * screenHeight)];
     buttonImage.image = [UIImage imageNamed:@"xiugai"];
     self.viewButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.viewButton.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);

@@ -19,7 +19,7 @@
 }
 - (void)createButtonView{
 
-    _buttonImage = [[UIImageView alloc]initWithFrame:CGRectMake(30 * screenWidth, 30 * screenHeight, 60 * screenWidth, 60 * screenHeight)];
+    _buttonImage = [[UIImageView alloc]initWithFrame:CGRectMake(30 * screenWidth, 36 * screenHeight, 48 * screenWidth, 48 * screenHeight)];
     _buttonImage.image = [UIImage imageNamed:_imageName];
     _buttonImage.userInteractionEnabled = YES;
     [self addSubview:_buttonImage];

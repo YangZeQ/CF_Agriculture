@@ -19,7 +19,8 @@
 #import "CFAgencyMachineStatusViewController.h"
 #import "CFAgencySellViewController.h"
 #import "CFSalesPersonMyAgencyViewController.h"
-#import "CFAgencyManagerViewController.h"
+#import "CFChooseTypeViewController.h"
+//#import "CFAgencyManagerViewController.h"
 #import "SDCycleScrollView.h"
 #import "CFAddMachineViewController.h"
 #import "ScanViewController.h"
@@ -31,7 +32,7 @@
 #import "CFWorkOrderTableViewCell.h"
 #import "CFWorkOrderModel.h"
 #import "CFMapNavigationViewController.h"
-@interface CFHomePageViewController ()<SDCycleScrollViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate, BandMachineViewControllerDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface CFHomePageViewController ()<SDCycleScrollViewDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate, BandMachineViewControllerDelegate, UITableViewDelegate, UITableViewDataSource, scanViewControllerDelegate>
 @property (nonatomic, strong)UIButton *rightButton;
 @property (nonatomic, strong)UIView *navigationView;
 @property (nonatomic, strong)UILabel *navigationLabel;
@@ -173,46 +174,35 @@
     agencyView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:agencyView];
     
-    UIButton *statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    statusButton.frame = CGRectMake((CF_WIDTH - 66 * screenWidth * 4) / 8, 88 * screenHeight, 66 * screenWidth, 66 * screenHeight);
-    [statusButton setImage:[UIImage imageNamed:@"CF_Agency_MachineStatus"] forState:UIControlStateNormal];
-    [statusButton addTarget:self action:@selector(agencyMachineStatusButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [agencyView addSubview:statusButton];
-    UILabel *statusLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, statusButton.frame.size.height + statusButton.frame.origin.y + 30 * screenHeight, CF_WIDTH / 4, 50 * screenHeight)];
-    statusLabel.text = @"库存信息";
-    statusLabel.textAlignment = NSTextAlignmentCenter;
-    [agencyView addSubview:statusLabel];
-    
-    
-    UIButton *managerButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    managerButton.frame = CGRectMake(statusButton.frame.size.width + statusButton.frame.origin.x + (CF_WIDTH - 66 * screenWidth * 4) / 4, statusButton.frame.origin.y, statusButton.frame.size.width, statusButton.frame.size.height);
-    [managerButton setImage:[UIImage imageNamed:@"CF_Agency_Manager"] forState:UIControlStateNormal];
-    [managerButton addTarget:self action:@selector(agencyManagerButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [agencyView addSubview:managerButton];
-    UILabel *managerLabel = [[UILabel alloc]initWithFrame:CGRectMake(statusLabel.frame.size.width + statusLabel.frame.origin.x, statusLabel.frame.origin.y, statusLabel.frame.size.width, statusLabel.frame.size.height)];
-    managerLabel.text = @"库存管理";
-    managerLabel.textAlignment = NSTextAlignmentCenter;
-    [agencyView addSubview:managerLabel];
-    
-    UIButton *sellButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    sellButton.frame = CGRectMake(managerButton.frame.size.width + managerButton.frame.origin.x + (CF_WIDTH - 66 * screenWidth * 4) / 4, managerButton.frame.origin.y, managerButton.frame.size.width, managerButton.frame.size.height);
-    [sellButton setImage:[UIImage imageNamed:@"CF_Agency_Sell"] forState:UIControlStateNormal];
-    [sellButton addTarget:self action:@selector(agencySellButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [agencyView addSubview:sellButton];
-    UILabel *sellLabel = [[UILabel alloc]initWithFrame:CGRectMake(managerLabel.frame.size.width + managerLabel.frame.origin.x, managerLabel.frame.origin.y, managerLabel.frame.size.width, managerLabel.frame.size.height)];
-    sellLabel.text = @"农机出售";
-    sellLabel.textAlignment = NSTextAlignmentCenter;
-    [agencyView addSubview:sellLabel];
+    UIButton *scanButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    scanButton.frame = CGRectMake((CF_WIDTH / 3 - 66 * screenWidth) / 2, 88 * screenHeight, 66 * screenWidth, 66 * screenHeight);
+    [scanButton setImage:[UIImage imageNamed:@"Agency_Scan"] forState:UIControlStateNormal];
+    [scanButton addTarget:self action:@selector(agencySellButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [agencyView addSubview:scanButton];
+    UILabel *scanLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, scanButton.frame.size.height + scanButton.frame.origin.y + 30 * screenHeight, CF_WIDTH / 3, 50 * screenHeight)];
+    scanLabel.text = @"扫一扫";
+    scanLabel.textAlignment = NSTextAlignmentCenter;
+    [agencyView addSubview:scanLabel];
     
     UIButton *orderButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    orderButton.frame = CGRectMake(sellButton.frame.size.width + sellButton.frame.origin.x + (CF_WIDTH - 66 * screenWidth * 4) / 4, sellButton.frame.origin.y, sellButton.frame.size.width, sellButton.frame.size.height);
-    [orderButton setImage:[UIImage imageNamed:@"CF_WorkOrder"] forState:UIControlStateNormal];
-    [orderButton addTarget:self action:@selector(agencySellButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    orderButton.frame = CGRectMake(CF_WIDTH / 3 + scanButton.frame.origin.x, scanButton.frame.origin.y, scanButton.frame.size.width, scanButton.frame.size.height);
+    [orderButton setImage:[UIImage imageNamed:@"Agency_Order"] forState:UIControlStateNormal];
+    [orderButton addTarget:self action:@selector(agencyOrderButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [agencyView addSubview:orderButton];
-    UILabel *orderLabel = [[UILabel alloc]initWithFrame:CGRectMake(sellLabel.frame.size.width + sellLabel.frame.origin.x, sellLabel.frame.origin.y, sellLabel.frame.size.width, sellLabel.frame.size.height)];
+    UILabel *orderLabel = [[UILabel alloc]initWithFrame:CGRectMake(CF_WIDTH / 3, scanLabel.frame.origin.y, scanLabel.frame.size.width, scanLabel.frame.size.height)];
     orderLabel.text = @"派工单";
     orderLabel.textAlignment = NSTextAlignmentCenter;
     [agencyView addSubview:orderLabel];
+    
+    UIButton *statusButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    statusButton.frame = CGRectMake(CF_WIDTH / 3 * 2 + scanButton.frame.origin.x, scanButton.frame.origin.y, scanButton.frame.size.width, scanButton.frame.size.height);
+    [statusButton setImage:[UIImage imageNamed:@"Agency_ Inventory"] forState:UIControlStateNormal];
+    [statusButton addTarget:self action:@selector(agencyMachineStatusButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    [agencyView addSubview:statusButton];
+    UILabel *statusLabel = [[UILabel alloc]initWithFrame:CGRectMake(CF_WIDTH / 3 * 2, scanLabel.frame.origin.y, scanLabel.frame.size.width, scanLabel.frame.size.height)];
+    statusLabel.text = @"库存信息";
+    statusLabel.textAlignment = NSTextAlignmentCenter;
+    [agencyView addSubview:statusLabel];
 }
 - (void)agencyMachineStatusButtonClick
 {
@@ -224,13 +214,24 @@
 }
 - (void)agencySellButtonClick
 {
-    CFAgencySellViewController *sell = [[CFAgencySellViewController alloc]init];
-    [self.navigationController pushViewController:sell animated:YES];
+    ScanViewController *scan = [[ScanViewController alloc]init];
+    scan.delegate = self;
+//    scan.scanType = @"0";
+//    [self.navigationController pushViewController:scan animated:YES];
+    [self presentViewController:scan animated:NO completion:^{
+        
+    }];
 }
-- (void)agencyManagerButtonClick
+- (void)scanGetInformation:(MachineModel *)model
 {
-    CFAgencyManagerViewController *manager = [[CFAgencyManagerViewController alloc]init];
-    [self.navigationController pushViewController:manager animated:YES];
+    CFChooseTypeViewController *choose = [[CFChooseTypeViewController alloc]init];
+    choose.machineModel = model;
+    [self.navigationController pushViewController:choose animated:YES];
+}
+- (void)agencyOrderButtonClick
+{
+    CFWorkOrderListViewController *orderList = [[CFWorkOrderListViewController alloc]init];
+    [self.navigationController pushViewController:orderList animated:YES];
 }
 // 销售员
 - (void)createSalesPersonView

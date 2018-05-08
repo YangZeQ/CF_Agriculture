@@ -90,6 +90,7 @@
 		8B73F358202D65DA0098606F /* CFAgencyApplicationRecordTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B73F357202D65DA0098606F /* CFAgencyApplicationRecordTableViewCell.m */; };
 		8B74F90F20749E6600000203 /* CFPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B74F90E20749E6600000203 /* CFPhotoViewController.m */; };
 		8B793425207F35BA004BCDFF /* CFPreviewPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B793424207F35BA004BCDFF /* CFPreviewPhotoViewController.m */; };
+		8B7BBB9220A13C870033182B /* CFChooseTypeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7BBB9120A13C870033182B /* CFChooseTypeViewController.m */; };
 		8B7C538D206222E000327E78 /* CFFillInOrderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7C538C206222E000327E78 /* CFFillInOrderViewController.m */; };
 		8B7C53902062440F00327E78 /* CFFillOrderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7C538F2062440F00327E78 /* CFFillOrderView.m */; };
 		8B7C539320624FAA00327E78 /* CFFillInOrderViewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7C539220624FAA00327E78 /* CFFillInOrderViewTableViewCell.m */; };
@@ -367,6 +368,8 @@
 		8B74F90E20749E6600000203 /* CFPhotoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFPhotoViewController.m; sourceTree = "<group>"; };
 		8B793423207F35BA004BCDFF /* CFPreviewPhotoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPreviewPhotoViewController.h; sourceTree = "<group>"; };
 		8B793424207F35BA004BCDFF /* CFPreviewPhotoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFPreviewPhotoViewController.m; sourceTree = "<group>"; };
+		8B7BBB9020A13C870033182B /* CFChooseTypeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFChooseTypeViewController.h; sourceTree = "<group>"; };
+		8B7BBB9120A13C870033182B /* CFChooseTypeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFChooseTypeViewController.m; sourceTree = "<group>"; };
 		8B7C538B206222E000327E78 /* CFFillInOrderViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFFillInOrderViewController.h; sourceTree = "<group>"; };
 		8B7C538C206222E000327E78 /* CFFillInOrderViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFFillInOrderViewController.m; sourceTree = "<group>"; };
 		8B7C538E2062440F00327E78 /* CFFillOrderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFFillOrderView.h; sourceTree = "<group>"; };
@@ -1002,6 +1005,8 @@
 				8B7EDB9D2029A5F8006ECEDC /* CFAgency-Retreat */,
 				8B5F2F182027F05500BF04B0 /* CFAgencyManagerViewController.h */,
 				8B5F2F192027F05500BF04B0 /* CFAgencyManagerViewController.m */,
+				8B7BBB9020A13C870033182B /* CFChooseTypeViewController.h */,
+				8B7BBB9120A13C870033182B /* CFChooseTypeViewController.m */,
 			);
 			path = "Long-Controller";
 			sourceTree = "<group>";
@@ -1805,6 +1810,7 @@
 				8BE7459E206E434F00D620AF /* MANaviPolyline.m in Sources */,
 				8BE745AB206E444D00D620AF /* ErrorInfoUtility.m in Sources */,
 				8B7F7F7620158EE5007F5E10 /* CFRelieveIMEIViewController.m in Sources */,
+				8B7BBB9220A13C870033182B /* CFChooseTypeViewController.m in Sources */,
 				8B6EDBA32019ABC70082DEF0 /* CFAgencyMachineDetailInfoViewController.m in Sources */,
 				D723EB2C20045A4E00F71389 /* PickView.m in Sources */,
 				8B81DEE12022960800CE2022 /* MBManager.m in Sources */,

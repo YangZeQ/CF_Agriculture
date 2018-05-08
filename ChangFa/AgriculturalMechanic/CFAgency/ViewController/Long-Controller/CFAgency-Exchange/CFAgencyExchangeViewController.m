@@ -97,52 +97,93 @@
     _sign = 1;
 }
 - (void)createRetreatView{
-    [self scanViewWithText:@"农机信息" Place:nil ScanText:@"农机扫码" ScanImage:@"scanCompany" ViewFrame:CGRectMake(0, navHeight, self.view.frame.size.width, 338 * screenHeight) ScanButtonFrame:CGRectMake(self.view.frame.size.width / 2 - 49 * screenWidth, 130 * screenHeight, 98 * screenWidth, 98 * screenHeight) ScanType:@"scanMachineBarCode"];
+//    [self scanViewWithText:@"农机信息" Place:nil ScanText:@"农机扫码" ScanImage:@"scanCompany" ViewFrame:CGRectMake(0, navHeight, self.view.frame.size.width, 338 * screenHeight) ScanButtonFrame:CGRectMake(self.view.frame.size.width / 2 - 49 * screenWidth, 130 * screenHeight, 98 * screenWidth, 98 * screenHeight) ScanType:@"scanMachineBarCode"];
+
+    UIView *machineView = [[UIView alloc]initWithFrame:CGRectMake(30 * screenWidth, navHeight + 20 * screenHeight, CF_WIDTH - 60 * screenWidth, 220 * screenHeight)];
+    machineView.backgroundColor = [UIColor whiteColor];
+    machineView.layer.cornerRadius = 20 * screenWidth;
+    [self.view addSubview:machineView];
+    UIImageView *machineImage = [[UIImageView alloc]initWithFrame:CGRectMake(20 * screenWidth, 20 * screenHeight, 180 * screenWidth, 180 * screenHeight)];
+    switch ([_machineModel.carType integerValue]) {
+        case 1:
+            machineImage.image = [UIImage imageNamed:@"Agency_Tractors"];
+            break;
+        case 2:
+            machineImage.image = [UIImage imageNamed:@"Agency_Harvester"];
+            break;
+        case 3:
+            machineImage.image = [UIImage imageNamed:@"Agency_RiceTransplanter"];
+            break;
+        case 4:
+            machineImage.image = [UIImage imageNamed:@"Agency_Dryer"];
+            break;
+        default:
+            break;
+    }
+    [machineView addSubview:machineImage];
+    UILabel *machineNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineImage.frame.size.width + machineImage.frame.origin.x + 20 * screenWidth, 50 * screenHeight, machineView.frame.size.width - 240 * screenWidth, 26 * screenHeight)];
+    machineNameLabel.text = [NSString stringWithFormat:@"名称：%@", _machineModel.productName];
+    machineNameLabel.font = CFFONT14;
+    [machineView addSubview:machineNameLabel];
+    UILabel *machineTypeLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineNameLabel.frame.size.height + machineNameLabel.frame.origin.y + 26 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
+    machineTypeLabel.text = [NSString stringWithFormat:@"型号：%@", _machineModel.productModel];
+    machineTypeLabel.font = CFFONT14;
+    [machineView addSubview:machineTypeLabel];
+    UILabel *machineNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineTypeLabel.frame.size.height + machineTypeLabel.frame.origin.y + 26 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
+    machineNumberLabel.text = [NSString stringWithFormat:@"车架号：%@", _machineModel.productBarCode];
+    machineNumberLabel.font = CFFONT14;
+    machineNumberLabel.textColor = [UIColor grayColor];
+    [machineView addSubview:machineNumberLabel];
     
     _retreatReasonView = [[UIView alloc]initWithFrame:CGRectMake(0, _machineNumberView.frame.size.height + _machineNumberView.frame.origin.y + 20 * screenHeight, self.view.frame.size.width, 288 * screenHeight)];
     _retreatReasonView.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:_retreatReasonView];
+//    [self.view addSubview:_retreatReasonView];
     
-    UILabel *exchangeAgency = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, self.view.frame.size.width - 60 * screenWidth, 88 * screenHeight)];
-    exchangeAgency.text = @"调拨的经销商";
+    UILabel *exchangeAgency = [[UILabel alloc]initWithFrame:CGRectMake(60 * screenWidth, machineView.frame.size.height + machineView.frame.origin.y + 60 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 28 * screenHeight)];
+    exchangeAgency.text = @"选择经销商";
+    exchangeAgency.font = CFFONT14;
     [_retreatReasonView addSubview:exchangeAgency];
     UILabel *lineLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 87 * screenHeight, exchangeAgency.frame.size.width, screenHeight)];
     lineLabel.backgroundColor = BackgroundColor;
-    [exchangeAgency addSubview:lineLabel];
+//    [exchangeAgency addSubview:lineLabel];
     
     _placeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _placeButton.frame = CGRectMake(0, exchangeAgency.frame.size.height + exchangeAgency.frame.origin.y + 50 * screenHeight, self.view.frame.size.width, 50 * screenHeight);
+    _placeButton.frame = CGRectMake(machineView.frame.origin.x, exchangeAgency.frame.size.height + exchangeAgency.frame.origin.y + 30 * screenHeight, CF_WIDTH - 60 * screenWidth, 120 * screenHeight);
     _placeButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     _placeButton.contentEdgeInsets = UIEdgeInsetsMake(0, 30 * screenWidth, 0, 0);
     [_placeButton setTitle:@"请选择经销商所在地" forState:UIControlStateNormal];
+    _placeButton.layer.cornerRadius = 20 * screenWidth;
+    [_placeButton setBackgroundColor:[UIColor whiteColor]];
     _placeButton.titleLabel.font = CFFONT16;
     [_placeButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [_placeButton addTarget:self action:@selector(selectedAgencyPlace) forControlEvents:UIControlEventTouchUpInside];
-    [_retreatReasonView addSubview:_placeButton];
+    [self.view addSubview:_placeButton];
     UIButton *selectPlace = [UIButton buttonWithType:UIButtonTypeCustom];
     selectPlace.frame = CGRectMake(self.view.frame.size.width - 60 * screenWidth, 10 * screenHeight, 20 * screenWidth, 30 * screenHeight);
     [selectPlace setBackgroundImage:[UIImage imageNamed:@"xiugai"] forState:UIControlStateNormal];
     [selectPlace addTarget:self action:@selector(selectedAgencyPlace) forControlEvents:UIControlEventTouchUpInside];
-    [_placeButton addSubview:selectPlace];
+//    [_placeButton addSubview:selectPlace];
     
     _agencyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _agencyButton.frame = CGRectMake(0, _placeButton.frame.size.height + _placeButton.frame.origin.y + 30 * screenHeight, _placeButton.frame.size.width, _placeButton.frame.size.height);
+    _agencyButton.frame = CGRectMake(machineView.frame.origin.x, _placeButton.frame.size.height + _placeButton.frame.origin.y + 20 * screenHeight, _placeButton.frame.size.width, _placeButton.frame.size.height);
     _agencyButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     _agencyButton.contentEdgeInsets = UIEdgeInsetsMake(0, 30 * screenWidth, 0, 0);
     [_agencyButton setTitle:@"请选择经销商" forState:UIControlStateNormal];
+    _agencyButton.layer.cornerRadius = 20 * screenWidth;
+    [_agencyButton setBackgroundColor:[UIColor whiteColor]];
     _agencyButton.titleLabel.font = CFFONT16;
     [_agencyButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [_agencyButton addTarget:self action:@selector(selectedAgency) forControlEvents:UIControlEventTouchUpInside];
-    [_retreatReasonView addSubview:_agencyButton];
+    [self.view addSubview:_agencyButton];
     UIButton *selectAgency = [UIButton buttonWithType:UIButtonTypeCustom];
     selectAgency.frame = CGRectMake(self.view.frame.size.width - 60 * screenWidth, 10 * screenHeight, 20 * screenWidth, 30 * screenHeight);
     [selectAgency setBackgroundImage:[UIImage imageNamed:@"xiugai"] forState:UIControlStateNormal];
     [selectAgency addTarget:self action:@selector(selectedAgency) forControlEvents:UIControlEventTouchUpInside];
-    [_agencyButton addSubview:selectAgency];
+//    [_agencyButton addSubview:selectAgency];
     self.agencyView.hidden = YES;
     
     UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    submitButton.frame = CGRectMake(30 * screenWidth, self.view.frame.size.height - 130 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
+    submitButton.frame = CGRectMake(30 * screenWidth, _agencyButton.frame.origin.y + _agencyButton.frame.size.height + 394 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
     submitButton.layer.cornerRadius = 20 * screenWidth;
     [submitButton setTitle:@"提交" forState:UIControlStateNormal];
     [submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -175,7 +216,7 @@
         [self.placeButton setTitle:_areaPickView.selectedInfo forState:UIControlStateNormal];
         [self.placeButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [self.agencyButton setTitle:@"选择经销商" forState:UIControlStateNormal];
-        [self.agencyButton setTitleColor:BackgroundColor forState:UIControlStateNormal];
+        [self.agencyButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     } else {
         [self.agencyButton setTitle:_agencyPickView.selectedInfo forState:UIControlStateNormal];
         [self.agencyButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];

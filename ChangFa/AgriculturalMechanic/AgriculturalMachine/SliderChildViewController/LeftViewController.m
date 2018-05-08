@@ -131,7 +131,58 @@
         version.titleLabel.textColor = [UIColor grayColor];
         version.backgroundColor = [UIColor whiteColor];
         [self.view addSubview:version];
-    } else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 6 || [[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 6) {
+    } else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 2) {
+        CFMisteViewButton *CompleteOrder = [[CFMisteViewButton alloc]initWithFrame:CGRectMake(0, headerView.frame.size.height + 30 * screenHeight, [UIScreen mainScreen].bounds.size.width, 120 * screenHeight)];
+        CompleteOrder.imageName = @"CF_CompleteOrder";
+        CompleteOrder.titleName = @"已完成派工单";
+        CompleteOrder.titleLabel.font = CFFONT14;
+        CompleteOrder.titleLabel.textColor = [UIColor grayColor];
+        CompleteOrder.backgroundColor = [UIColor whiteColor];
+        [CompleteOrder.misteViewButton addTarget:self action:@selector(completeOrderButtonClick) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:CompleteOrder];
+        
+        CFMisteViewButton *ExpenseSettlement = [[CFMisteViewButton alloc]initWithFrame:CGRectMake(0, CompleteOrder.frame.size.height + CompleteOrder.frame.origin.y + 2 * screenHeight, [UIScreen mainScreen].bounds.size.width, 120 * screenHeight)];
+        ExpenseSettlement.imageName = @"CF_ExpenseSettlement";
+        ExpenseSettlement.titleName = @"费用结算";
+        ExpenseSettlement.titleLabel.font = CFFONT14;
+        ExpenseSettlement.titleLabel.textColor = [UIColor grayColor];
+        ExpenseSettlement.backgroundColor = [UIColor whiteColor];
+        [ExpenseSettlement.misteViewButton addTarget:self action:@selector(expenseSettlementButtonClick) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:ExpenseSettlement];
+        
+        CFMisteViewButton *ApplyRecord = [[CFMisteViewButton alloc]initWithFrame:CGRectMake(0, ExpenseSettlement.frame.size.height + ExpenseSettlement.frame.origin.y + 2 * screenHeight, [UIScreen mainScreen].bounds.size.width, 120 * screenHeight)];
+        ApplyRecord.imageName = @"Agency_AppleRecord";
+        ApplyRecord.titleName = @"申请记录";
+        ApplyRecord.titleLabel.font = CFFONT14;
+        ApplyRecord.titleLabel.textColor = [UIColor grayColor];
+        ApplyRecord.backgroundColor = [UIColor whiteColor];
+        [ApplyRecord.misteViewButton addTarget:self action:@selector(expenseSettlementButtonClick) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:ApplyRecord];
+        
+        CFMisteViewButton *noteBook = [[CFMisteViewButton alloc]initWithFrame:CGRectMake(0, ApplyRecord.frame.size.height + ApplyRecord.frame.origin.y + 30 * screenHeight, [UIScreen mainScreen].bounds.size.width, 120 * screenHeight)];
+        noteBook.imageName = @"noteBook";
+        noteBook.titleName = @"产品手册";
+        noteBook.titleLabel.font = CFFONT14;
+        noteBook.titleLabel.textColor = [UIColor grayColor];
+        noteBook.backgroundColor = [UIColor whiteColor];
+        [self.view addSubview:noteBook];
+        
+        CFMisteViewButton *policy = [[CFMisteViewButton alloc]initWithFrame:CGRectMake(0, noteBook.frame.size.height + noteBook.frame.origin.y + 2 * screenHeight, [UIScreen mainScreen].bounds.size.width, 120 * screenHeight)];
+        policy.imageName = @"policy";
+        policy.titleName = @"公司政策";
+        policy.titleLabel.font = CFFONT14;
+        policy.titleLabel.textColor = [UIColor grayColor];
+        policy.backgroundColor = [UIColor whiteColor];
+        [self.view addSubview:policy];
+        
+        CFMisteViewButton *version = [[CFMisteViewButton alloc]initWithFrame:CGRectMake(0, policy.frame.size.height + policy.frame.origin.y + 30 * screenHeight, [UIScreen mainScreen].bounds.size.width, 120 * screenHeight)];
+        version.imageName = @"version";
+        version.titleName = @"版本检测";
+        version.titleLabel.font = CFFONT14;
+        version.titleLabel.textColor = [UIColor grayColor];
+        version.backgroundColor = [UIColor whiteColor];
+        [self.view addSubview:version];
+    } else if ([[NSString stringWithFormat:@"%@", [userDefault objectForKey:@"UserRoleType"]] integerValue] == 6) {
         CFMisteViewButton *CompleteOrder = [[CFMisteViewButton alloc]initWithFrame:CGRectMake(0, headerView.frame.size.height + 30 * screenHeight, [UIScreen mainScreen].bounds.size.width, 120 * screenHeight)];
         CompleteOrder.imageName = @"CF_CompleteOrder";
         CompleteOrder.titleName = @"已完成派工单";

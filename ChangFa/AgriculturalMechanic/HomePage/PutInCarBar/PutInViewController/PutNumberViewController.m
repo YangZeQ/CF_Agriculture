@@ -16,7 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationLable.text = @"输入车辆编码";
+    self.navigationLable.text = @"输入车架号";
     [self.leftButton setImage:[UIImage imageNamed:@"fanhuiwhite"] forState:UIControlStateNormal];
     [self.leftButton addTarget:self action:@selector(leftButtonClick) forControlEvents:UIControlEventTouchUpInside];
     self.view.backgroundColor = BackgroundColor;
@@ -28,7 +28,7 @@
     putInView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:putInView];
     self.numberTextField = [[UITextField alloc]initWithFrame:CGRectMake(50 * screenWidth, 0, self.view.frame.size.width - 50 * screenWidth, putInView.frame.size.height)];
-    self.numberTextField.placeholder = @"请输入";
+    self.numberTextField.placeholder = @"请输入车架号";
     [putInView addSubview:self.numberTextField];
     
     UIButton *bandButton = [UIButton buttonWithType:UIButtonTypeCustom];

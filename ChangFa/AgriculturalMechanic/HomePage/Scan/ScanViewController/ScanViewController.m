@@ -24,6 +24,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+//    if ([_scanType integerValue] == 0) {
+//        self.navigationController.navigationBar.hidden = YES;
+//    }
     [self initConfing];
     // Do any additional setup after loading the view.
 }
@@ -35,7 +38,7 @@
     // 解析输入的数据
     self.metadataOutput = [[AVCaptureMetadataOutput alloc]init];
     [self.metadataOutput setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
-    self.metadataOutput.rectOfInterest = CGRectMake(([UIScreen mainScreen].bounds.size.height / 2 - 270 * screenHeight) / [UIScreen mainScreen].bounds.size.height, 115 * screenWidth / [UIScreen mainScreen].bounds.size.width, 520 * screenHeight / [UIScreen mainScreen].bounds.size.height, 520 * screenWidth / [UIScreen mainScreen].bounds.size.width);
+    self.metadataOutput.rectOfInterest = CGRectMake(330 * screenHeight / [UIScreen mainScreen].bounds.size.height, 120 * screenWidth / [UIScreen mainScreen].bounds.size.width, 510 * screenHeight / [UIScreen mainScreen].bounds.size.height, 510 * screenWidth / [UIScreen mainScreen].bounds.size.width);
     // 会话
     self.session = [[AVCaptureSession alloc] init];
     if ([self.session canAddInput:self.deviceInput]){
@@ -174,6 +177,11 @@
         NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
         if ([[dict objectForKey:@"code"] integerValue] == 200) {
             MachineModel *model = [MachineModel machineModelWithDictionary:[responseObject objectForKey:@"body"]];
+//            if ([self.scanType integerValue] == 0) {
+//                [self.delegate scanGetInformation:model];
+//                [self.navigationController popViewControllerAnimated:YES];
+//                return ;
+//            }
             if ([self.scanType isEqualToString:@"sell"] && ([model.carState integerValue] != 2 && [model.carState integerValue] != 4)) {
                 
             } else {

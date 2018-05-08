@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "RootTabbarViewController.h"
-
 @protocol homePageDelegate
 
 @end
 @interface CFHomePageViewController : UIViewController
 @property (nonatomic, assign)float navigationViewHeight;
 @property (nonatomic, weak)id delegate;
+
 @end

@@ -62,9 +62,46 @@
     
 }
 - (void)createRetreatView{
-    [self scanViewWithText:@"农机信息" Place:nil ScanText:@"农机扫码" ScanImage:@"scanCompany" ViewFrame:CGRectMake(0, navHeight, self.view.frame.size.width, 338 * screenHeight) ScanButtonFrame:CGRectMake(self.view.frame.size.width / 2 - 49 * screenWidth, 130 * screenHeight, 98 * screenWidth, 98 * screenHeight) ScanType:@"scanMachineBarCode"];
+//    [self scanViewWithText:@"农机信息" Place:nil ScanText:@"农机扫码" ScanImage:@"scanCompany" ViewFrame:CGRectMake(0, navHeight, self.view.frame.size.width, 338 * screenHeight) ScanButtonFrame:CGRectMake(self.view.frame.size.width / 2 - 49 * screenWidth, 130 * screenHeight, 98 * screenWidth, 98 * screenHeight) ScanType:@"scanMachineBarCode"];
+
+    UIView *machineView = [[UIView alloc]initWithFrame:CGRectMake(30 * screenWidth, navHeight + 20 * screenHeight, CF_WIDTH - 60 * screenWidth, 220 * screenHeight)];
+    machineView.backgroundColor = [UIColor whiteColor];
+    machineView.layer.cornerRadius = 20 * screenWidth;
+    [self.view addSubview:machineView];
+    UIImageView *machineImage = [[UIImageView alloc]initWithFrame:CGRectMake(20 * screenWidth, 20 * screenHeight, 180 * screenWidth, 180 * screenHeight)];
+    switch ([_machineModel.carType integerValue]) {
+        case 1:
+            machineImage.image = [UIImage imageNamed:@"Agency_Tractors"];
+            break;
+        case 2:
+            machineImage.image = [UIImage imageNamed:@"Agency_Harvester"];
+            break;
+        case 3:
+            machineImage.image = [UIImage imageNamed:@"Agency_RiceTransplanter"];
+            break;
+        case 4:
+            machineImage.image = [UIImage imageNamed:@"Agency_Dryer"];
+            break;
+        default:
+            break;
+    }
+    [machineView addSubview:machineImage];
+    UILabel *machineNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineImage.frame.size.width + machineImage.frame.origin.x + 20 * screenWidth, 50 * screenHeight, machineView.frame.size.width - 240 * screenWidth, 26 * screenHeight)];
+    machineNameLabel.text = [NSString stringWithFormat:@"名称：%@", _machineModel.productName];
+    machineNameLabel.font = CFFONT14;
+    [machineView addSubview:machineNameLabel];
+    UILabel *machineTypeLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineNameLabel.frame.size.height + machineNameLabel.frame.origin.y + 26 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
+    machineTypeLabel.text = [NSString stringWithFormat:@"型号：%@", _machineModel.productModel];
+    machineTypeLabel.font = CFFONT14;
+    [machineView addSubview:machineTypeLabel];
+    UILabel *machineNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineTypeLabel.frame.size.height + machineTypeLabel.frame.origin.y + 26 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
+    machineNumberLabel.text = [NSString stringWithFormat:@"车架号：%@", _machineModel.productBarCode];
+    machineNumberLabel.font = CFFONT14;
+    machineNumberLabel.textColor = [UIColor grayColor];
+    [machineView addSubview:machineNumberLabel];
     
-    _retreatReasonView = [[UIView alloc]initWithFrame:CGRectMake(0, _machineNumberView.frame.size.height + _machineNumberView.frame.origin.y + 20 * screenHeight, self.view.frame.size.width, 588 * screenHeight)];
+    _retreatReasonView = [[UIView alloc]initWithFrame:CGRectMake(30 * screenWidth, machineView.frame.size.height + machineView.frame.origin.y + 30 * screenHeight, CF_WIDTH - 60 * screenWidth, 588 * screenHeight)];
+    _retreatReasonView.layer.cornerRadius = 20 * screenWidth;
     _retreatReasonView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:_retreatReasonView];
     
@@ -77,8 +114,9 @@
     [_retreatResonButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
     [_retreatResonButton addTarget:self action:@selector(chooseRetreatReason) forControlEvents:UIControlEventTouchUpInside];
     [_retreatReasonView addSubview:_retreatResonButton];
-    _reasonTextView = [[CFReasonTextView alloc]initWithFrame:CGRectMake(30 * screenWidth, _retreatResonButton.frame.size.height, self.view.frame.size.width - 60 * screenWidth, 500 * screenHeight)];
+    _reasonTextView = [[CFReasonTextView alloc]initWithFrame:CGRectMake(0, _retreatResonButton.frame.size.height, _retreatReasonView.frame.size.width, 500 * screenHeight)];
 //    _reasonTextView.delegate = self;
+    _reasonTextView.layer.cornerRadius = 20 * screenWidth;
     _reasonTextView.placeholder = @"原因描述：（必填，200字以内）";
     _reasonTextView.maxNumberOfLines = 10;
     _reasonTextView.font = [UIFont systemFontOfSize:18];
@@ -92,7 +130,7 @@
 //    [self setupPlaceHolder];
     
     UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    submitButton.frame = CGRectMake(30 * screenWidth, self.view.frame.size.height - 130 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
+    submitButton.frame = CGRectMake(30 * screenWidth, _retreatReasonView.frame.size.height + _retreatReasonView.frame.origin.y + 120 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
     submitButton.layer.cornerRadius = 20 * screenWidth;
     [submitButton setTitle:@"提交" forState:UIControlStateNormal];
     [submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];

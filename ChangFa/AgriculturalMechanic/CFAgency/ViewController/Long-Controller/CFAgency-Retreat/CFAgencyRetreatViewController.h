@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "MachineModel.h"
 @interface CFAgencyRetreatViewController : UIViewController
-
+@property (nonatomic, strong)MachineModel *machineModel;
 @end

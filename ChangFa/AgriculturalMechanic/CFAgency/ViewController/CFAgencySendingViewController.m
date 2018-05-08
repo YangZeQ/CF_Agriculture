@@ -82,14 +82,14 @@
     _allSelectedButton.contentEdgeInsets = UIEdgeInsetsMake(0, 61 * screenWidth, 0, 0);
     [self.view addSubview:_allSelectedButton];
     
-    _putinButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _putinButton.frame = CGRectMake(_allSelectedButton.frame.size.width, _allSelectedButton.frame.origin.y, self.view.frame.size.width - _allSelectedButton.frame.size.width, _allSelectedButton.frame.size.height);
-    _putinButton.frame = CGRectMake(0, _allSelectedButton.frame.origin.y, self.view.frame.size.width, _allSelectedButton.frame.size.height);
-    [_putinButton setTitle:@"入库" forState:UIControlStateNormal];
-    [_putinButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [_putinButton addTarget:self action:@selector(putInStorage) forControlEvents:UIControlEventTouchUpInside];
-    [_putinButton setBackgroundColor:[UIColor redColor]];
-    [self.view addSubview:_putinButton];
+//    _putinButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    _putinButton.frame = CGRectMake(_allSelectedButton.frame.size.width, _allSelectedButton.frame.origin.y, self.view.frame.size.width - _allSelectedButton.frame.size.width, _allSelectedButton.frame.size.height);
+//    _putinButton.frame = CGRectMake(0, _allSelectedButton.frame.origin.y, self.view.frame.size.width, _allSelectedButton.frame.size.height);
+//    [_putinButton setTitle:@"入库" forState:UIControlStateNormal];
+//    [_putinButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [_putinButton addTarget:self action:@selector(putInStorage) forControlEvents:UIControlEventTouchUpInside];
+//    [_putinButton setBackgroundColor:[UIColor redColor]];
+//    [self.view addSubview:_putinButton];
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return self.sendingMachineArray.count;

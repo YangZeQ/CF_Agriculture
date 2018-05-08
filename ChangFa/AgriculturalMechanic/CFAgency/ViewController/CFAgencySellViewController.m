@@ -38,12 +38,50 @@
     // Do any additional setup after loading the view.
 }
 - (void)createSellView{
-    [self scanViewWithText:@"农机信息" Place:@"" ScanText:@"农机扫码" ScanImage:@"scanCompany" ViewFrame:CGRectMake(0, navHeight, self.view.frame.size.width, 396 * screenHeight) ScanButtonFrame:CGRectMake(self.view.frame.size.width / 2 - 94 * screenWidth, 92 * screenHeight, 188 * screenWidth, 188 * screenHeight)];
+//    [self scanViewWithText:@"农机信息" Place:@"" ScanText:@"农机扫码" ScanImage:@"scanCompany" ViewFrame:CGRectMake(0, navHeight, self.view.frame.size.width, 396 * screenHeight) ScanButtonFrame:CGRectMake(self.view.frame.size.width / 2 - 94 * screenWidth, 92 * screenHeight, 188 * screenWidth, 188 * screenHeight)];
+
+    UIView *machineView = [[UIView alloc]initWithFrame:CGRectMake(30 * screenWidth, navHeight + 20 * screenHeight, CF_WIDTH - 60 * screenWidth, 220 * screenHeight)];
+    machineView.backgroundColor = [UIColor whiteColor];
+    machineView.layer.cornerRadius = 20 * screenWidth;
+    [self.view addSubview:machineView];
+    UIImageView *machineImage = [[UIImageView alloc]initWithFrame:CGRectMake(20 * screenWidth, 20 * screenHeight, 180 * screenWidth, 180 * screenHeight)];
+    switch ([_machineModel.carType integerValue]) {
+        case 1:
+            machineImage.image = [UIImage imageNamed:@"Agency_Tractors"];
+            break;
+        case 2:
+            machineImage.image = [UIImage imageNamed:@"Agency_Harvester"];
+            break;
+        case 3:
+            machineImage.image = [UIImage imageNamed:@"Agency_RiceTransplanter"];
+            break;
+        case 4:
+            machineImage.image = [UIImage imageNamed:@"Agency_Dryer"];
+            break;
+        default:
+            break;
+    }
+    [machineView addSubview:machineImage];
+    UILabel *machineNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineImage.frame.size.width + machineImage.frame.origin.x + 20 * screenWidth, 50 * screenHeight, machineView.frame.size.width - 240 * screenWidth, 26 * screenHeight)];
+    machineNameLabel.text = [NSString stringWithFormat:@"名称：%@", _machineModel.productName];
+    machineNameLabel.font = CFFONT14;
+    [machineView addSubview:machineNameLabel];
+    UILabel *machineTypeLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineNameLabel.frame.size.height + machineNameLabel.frame.origin.y + 26 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
+    machineTypeLabel.text = [NSString stringWithFormat:@"型号：%@", _machineModel.productModel];
+    machineTypeLabel.font = CFFONT14;
+    [machineView addSubview:machineTypeLabel];
+    UILabel *machineNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineTypeLabel.frame.size.height + machineTypeLabel.frame.origin.y + 26 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
+    machineNumberLabel.text = [NSString stringWithFormat:@"车架号：%@", _machineModel.productBarCode];
+    machineNumberLabel.font = CFFONT14;
+    machineNumberLabel.textColor = [UIColor grayColor];
+    [machineView addSubview:machineNumberLabel];
+    
     [self createUserInfoView];
     
     UIButton *sellButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    sellButton.frame = CGRectMake(0, self.view.frame.size.height - 100 * screenHeight, self.view.frame.size.width, 100 * screenHeight);
+    sellButton.frame = CGRectMake(30 * screenWidth, self.view.frame.size.height - 195 * screenHeight, CF_WIDTH - 60 * screenWidth, 88 * screenHeight);
     [sellButton setTitle:@"出售" forState:UIControlStateNormal];
+    sellButton.layer.cornerRadius = 20 * screenWidth;
     [sellButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [sellButton setBackgroundColor:ChangfaColor];
     [sellButton addTarget:self action:@selector(sellButtonClick) forControlEvents:UIControlEventTouchUpInside];
@@ -183,32 +221,44 @@
     [_machineNumberView addSubview:scanLabel];
 }
 - (void)createUserInfoView{
-    UIView *userInfo = [[UIView alloc]initWithFrame:CGRectMake(0, _machineNumberView.frame.size.height + _machineNumberView.frame.origin.y + 30 * screenHeight, self.view.frame.size.width, 550 * screenHeight)];
+    UIView *userInfo = [[UIView alloc]initWithFrame:CGRectMake(30 * screenWidth, navHeight + 270 * screenHeight, CF_WIDTH - 60 * screenWidth, 480 * screenHeight)];
     userInfo.backgroundColor = [UIColor whiteColor];
+    userInfo.layer.cornerRadius = 20 * screenWidth;
     [self.view addSubview:userInfo];
+//
+//    UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60 * screenWidth, 30 * screenHeight, 500 * screenWidth, 50 * screenHeight)];
+//    titleLabel.text = @"用户信息";
+//    [userInfo addSubview:titleLabel];
+//
+//    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x, titleLabel.frame.size.height + titleLabel.frame.origin.y, self.view.frame.size.width - titleLabel.frame.origin.x * 2, 3 * screenHeight)];
+//    lineView.backgroundColor = BackgroundColor;
+//    [userInfo addSubview:lineView];
     
-    UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60 * screenWidth, 30 * screenHeight, 500 * screenWidth, 50 * screenHeight)];
-    titleLabel.text = @"用户信息";
-    [userInfo addSubview:titleLabel];
-    
-    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x, titleLabel.frame.size.height + titleLabel.frame.origin.y, self.view.frame.size.width - titleLabel.frame.origin.x * 2, 3 * screenHeight)];
-    lineView.backgroundColor = BackgroundColor;
-    [userInfo addSubview:lineView];
-    
-    _identifyText = [[CFRegisterTextFieldView alloc]initWithImageName:@"ID" Placeholder:@"请输入身份证号码" GetCode:NO SecretCode:NO Frame:CGRectMake(60 * screenWidth, titleLabel.frame.size.height + titleLabel.frame.origin.y + 30 * screenHeight, self.view.frame.size.width - 120 * screenWidth, 80 * screenHeight) ScaleWidth:screenWidth ScaleHeight:screenHeight];
+    _identifyText = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, 0, CF_WIDTH - 60 * screenWidth, 120 * screenHeight) LabelWidth:210 * screenWidth LabelName:@"身份证号" PlaceHolder:@"请输入用户身份证号码"];
     //限制弹出数字键盘
+    _identifyText.layer.cornerRadius = 20 * screenWidth;
     _identifyText.textField.keyboardType = UIKeyboardTypeNumberPad;
     //修改return按键样式
     _identifyText.textField.returnKeyType = UIReturnKeyDone;
     _identifyText.textField.delegate = self;
-    _nameText = [[CFRegisterTextFieldView alloc]initWithImageName:@"User" Placeholder:@"请输入姓名" GetCode:NO SecretCode:NO Frame:CGRectMake(_identifyText.frame.origin.x, _identifyText.frame.size.height + _identifyText.frame.origin.y + 30 * screenHeight, _identifyText.frame.size.width, _identifyText.frame.size.height) ScaleWidth:screenWidth ScaleHeight:screenHeight];
+    _nameText = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(_identifyText.frame.origin.x, _identifyText.frame.size.height + _identifyText.frame.origin.y, _identifyText.frame.size.width, _identifyText.frame.size.height) LabelWidth:210 * screenWidth LabelName:@"姓名" PlaceHolder:@"请输入用户姓名"];
     _nameText.textField.delegate = self;
-    _phoneText = [[CFRegisterTextFieldView alloc]initWithImageName:@"Phone" Placeholder:@"请输入电话号码" GetCode:NO SecretCode:NO Frame:CGRectMake(_identifyText.frame.origin.x, _nameText.frame.size.height + _nameText.frame.origin.y + 30 * screenHeight, _identifyText.frame.size.width, _identifyText.frame.size.height) ScaleWidth:screenWidth ScaleHeight:screenHeight];
+    _phoneText = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(_identifyText.frame.origin.x, _nameText.frame.size.height + _nameText.frame.origin.y, _identifyText.frame.size.width, _identifyText.frame.size.height) LabelWidth:210 * screenWidth LabelName:@"联系电话" PlaceHolder:@"请输入用户联系电话"];
     _phoneText.textField.keyboardType = UIKeyboardTypeNumberPad;
     _phoneText.textField.returnKeyType = UIReturnKeyDone;
     _phoneText.textField.delegate = self;
-    _addressText = [[CFRegisterTextFieldView alloc]initWithImageName:@"Address" Placeholder:@"请输入地址" GetCode:NO SecretCode:NO Frame:CGRectMake(_identifyText.frame.origin.x, _phoneText.frame.size.height + _phoneText.frame.origin.y + 30 * screenHeight, _identifyText.frame.size.width, _identifyText.frame.size.height) ScaleWidth:screenWidth ScaleHeight:screenHeight];
+    _addressText = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(_identifyText.frame.origin.x, _phoneText.frame.size.height + _phoneText.frame.origin.y, _identifyText.frame.size.width, _identifyText.frame.size.height) LabelWidth:210 * screenWidth LabelName:@"地址" PlaceHolder:@"请输入地址"];
+    _addressText.lineLabel.hidden = YES;
+    _addressText.layer.cornerRadius = 20 * screenWidth;
     _addressText.textField.delegate = self;
+    _identifyText.label.font = CFFONT14;
+    _identifyText.textField.font = CFFONT14;
+    _nameText.label.font = CFFONT14;
+    _nameText.textField.font = CFFONT14;
+    _phoneText.label.font = CFFONT14;
+    _phoneText.textField.font = CFFONT14;
+    _addressText.label.font = CFFONT14;
+    _addressText.textField.font = CFFONT14;
     [userInfo addSubview:_identifyText];
     [userInfo addSubview:_nameText];
     [userInfo addSubview:_phoneText];

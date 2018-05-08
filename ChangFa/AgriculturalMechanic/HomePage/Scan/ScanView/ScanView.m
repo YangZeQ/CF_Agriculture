@@ -57,23 +57,21 @@
     [_backBtn addTarget:self action:@selector(backButtonDid) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_backBtn];
     
-    UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(115 * screenWidth, self.bounds.size.height * 0.5 - 320 * screenHeight, 520 * screenWidth, 30 * screenHeight)];
-    
+    UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(115 * screenWidth, 330 * screenHeight, 510 * screenWidth, 30 * screenHeight)];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.font = CFFONT14;
     titleLabel.textColor = [UIColor whiteColor];
     [self addSubview:titleLabel];
     
     _imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"saomiaokuang"]];
-    _imageView.frame = CGRectMake(titleLabel.frame.origin.x, titleLabel.frame.origin.y + titleLabel.frame.size.height + 20 * screenHeight, titleLabel.frame.size.width, 520 * screenHeight);
+    _imageView.frame = CGRectMake(titleLabel.frame.origin.x, titleLabel.frame.origin.y + titleLabel.frame.size.height + 20 * screenHeight, titleLabel.frame.size.width, 510 * screenHeight);
     [self addSubview:_imageView];
     
     _lineImageView = [[UIImageView alloc] initWithFrame:CGRectMake(30 * screenWidth, 15 * screenHeight, 460 * screenWidth, 3 * screenHeight)];
     _lineImageView.image = [UIImage imageNamed:@"pickline"];
     [_imageView addSubview:_lineImageView];
     
-    UILabel *lastLabel = [[UILabel alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x, _imageView.frame.size.height + _imageView.frame.origin.y + 10 * screenHeight, titleLabel.frame.size.width, titleLabel.frame.size.height)];
-    
+    UILabel *lastLabel = [[UILabel alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x, _imageView.frame.size.height + _imageView.frame.origin.y + 200 * screenHeight, titleLabel.frame.size.width, titleLabel.frame.size.height)];
     lastLabel.textAlignment = NSTextAlignmentCenter;
     lastLabel.font = CFFONT14;
     lastLabel.textColor = [UIColor whiteColor];
@@ -91,14 +89,16 @@
     scanButton.titleLabel.font = CFFONT16;
     
 //    [scanButton addTarget:self action:@selector(buttonClickChangeColor:) forControlEvents:UIControlEventTouchDown];
-    [self addSubview:scanButton];
+//    [self addSubview:scanButton];
     UIButton *putInButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    putInButton.frame = CGRectMake(self.bounds.size.width - 260 * screenWidth, scanButton.frame.origin.y, scanButton.frame.size.width, scanButton.frame.size.height);
-    [putInButton.layer setBorderColor:ChangfaColor.CGColor];
-    [putInButton.layer setBorderWidth:1];
+    putInButton.frame = CGRectMake((CF_WIDTH - 240 * screenWidth) / 2, lastLabel.frame.size.height + lastLabel.frame.origin.y + 50 * screenHeight, 240 * screenWidth, 58 * screenHeight);
+//    [putInButton.layer setBorderColor:ChangfaColor.CGColor];
+//    [putInButton.layer setBorderWidth:1];
     putInButton.layer.cornerRadius = 5 * screenWidth;
     [putInButton.layer setMasksToBounds:YES];
-    [putInButton setTitleColor:ChangfaColor forState:UIControlStateNormal];
+    [putInButton setBackgroundColor:ChangfaColor];
+    [putInButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [putInButton setTitleColor:ChangfaColor forState:UIControlStateNormal];
     putInButton.titleLabel.font = CFFONT16;
     
     [putInButton addTarget:self action:@selector(buttonClickChangeColor:) forControlEvents:UIControlEventTouchDown];
@@ -109,7 +109,7 @@
     titleLabel.text = @"将二维码/条码放入框内，即可自动扫描";
     lastLabel.text = @"未扫到二维码/条码？点击输入";
     [scanButton setTitle:@"扫描" forState:UIControlStateNormal];
-    [putInButton setTitle:@"输入" forState:UIControlStateNormal];
+    [putInButton setTitle:@"手动输入" forState:UIControlStateNormal];
     
     _timer = [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(animation) userInfo:nil repeats:YES];
 }
