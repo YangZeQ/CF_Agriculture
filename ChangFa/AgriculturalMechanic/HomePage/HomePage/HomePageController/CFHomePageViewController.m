@@ -155,6 +155,7 @@
     
     UILabel *scanLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, scanButton.frame.size.height + scanButton.frame.origin.y + 30 * screenHeight, self.view.frame.size.width, 50 * screenHeight)];
     scanLabel.text = @"农机扫码";
+    scanLabel.textColor = BlackTextColor;
     scanLabel.textAlignment = NSTextAlignmentCenter;
     [scanMachineView addSubview:scanLabel];
 }
@@ -181,6 +182,7 @@
     [agencyView addSubview:scanButton];
     UILabel *scanLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, scanButton.frame.size.height + scanButton.frame.origin.y + 30 * screenHeight, CF_WIDTH / 3, 50 * screenHeight)];
     scanLabel.text = @"扫一扫";
+    scanLabel.textColor = BlackTextColor;
     scanLabel.textAlignment = NSTextAlignmentCenter;
     [agencyView addSubview:scanLabel];
     
@@ -191,6 +193,7 @@
     [agencyView addSubview:orderButton];
     UILabel *orderLabel = [[UILabel alloc]initWithFrame:CGRectMake(CF_WIDTH / 3, scanLabel.frame.origin.y, scanLabel.frame.size.width, scanLabel.frame.size.height)];
     orderLabel.text = @"派工单";
+    orderLabel.textColor = BlackTextColor;
     orderLabel.textAlignment = NSTextAlignmentCenter;
     [agencyView addSubview:orderLabel];
     
@@ -201,6 +204,7 @@
     [agencyView addSubview:statusButton];
     UILabel *statusLabel = [[UILabel alloc]initWithFrame:CGRectMake(CF_WIDTH / 3 * 2, scanLabel.frame.origin.y, scanLabel.frame.size.width, scanLabel.frame.size.height)];
     statusLabel.text = @"库存信息";
+    statusLabel.textColor = BlackTextColor;
     statusLabel.textAlignment = NSTextAlignmentCenter;
     [agencyView addSubview:statusLabel];
 }
@@ -264,7 +268,7 @@
     UILabel *agencyLabel = [[UILabel alloc]initWithFrame:CGRectMake((CF_WIDTH - 200 * screenWidth) / 2, agencyButton.frame.size.height + agencyButton.frame.origin.y + 30 * screenHeight, 200 * screenWidth, 50 * screenHeight)];
     agencyLabel.text =@"我的经销商";
     agencyLabel.font = CFFONT15;
-    agencyLabel.textColor = [UIColor grayColor];
+    agencyLabel.textColor = BlackTextColor;
     agencyLabel.textAlignment = NSTextAlignmentCenter;
     [salesPersonBackView addSubview:agencyLabel];
 

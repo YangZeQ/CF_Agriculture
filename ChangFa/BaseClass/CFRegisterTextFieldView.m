@@ -133,6 +133,7 @@
     _label = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, width, self.frame.size.height)];
     _label.text = labelName;
     _label.font = CFFONT15;
+    _label.textColor = BlackTextColor;
     [self addSubview:_label];
     
     _textField = [[UITextField alloc]initWithFrame:CGRectMake(_label.frame.size.width + _label.frame.origin.x, _label.frame.origin.y, self.frame.size.width - 60 * screenWidth - _label.frame.size.width, _label.frame.size.height)];

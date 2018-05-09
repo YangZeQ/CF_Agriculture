@@ -57,10 +57,12 @@
     UILabel *machineNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineImage.frame.size.width + machineImage.frame.origin.x + 20 * screenWidth, 50 * screenHeight, machineView.frame.size.width - 240 * screenWidth, 26 * screenHeight)];
     machineNameLabel.text = [NSString stringWithFormat:@"名称：%@", _machineModel.productName];
     machineNameLabel.font = CFFONT14;
+    machineNameLabel.textColor = BlackTextColor;
     [machineView addSubview:machineNameLabel];
     UILabel *machineTypeLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineNameLabel.frame.size.height + machineNameLabel.frame.origin.y + 26 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
     machineTypeLabel.text = [NSString stringWithFormat:@"型号：%@", _machineModel.productModel];
     machineTypeLabel.font = CFFONT14;
+    machineTypeLabel.textColor = BlackTextColor;
     [machineView addSubview:machineTypeLabel];
     UILabel *machineNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineNameLabel.frame.origin.x, machineTypeLabel.frame.size.height + machineTypeLabel.frame.origin.y + 26 * screenHeight, machineNameLabel.frame.size.width, machineNameLabel.frame.size.height)];
     machineNumberLabel.text = [NSString stringWithFormat:@"车架号：%@", _machineModel.productBarCode];
@@ -71,6 +73,7 @@
     UILabel *chooseLabel = [[UILabel alloc]initWithFrame:CGRectMake(66 * screenWidth, machineView.frame.origin.y + machineView.frame.size.height + 60 * screenHeight, CF_WIDTH - 132 * screenWidth, 26 * screenHeight)];
     chooseLabel.text = @"请选择";
     chooseLabel.font = CFFONT14;
+    chooseLabel.textColor = BlackTextColor;
     [self.view addSubview:chooseLabel];
     
     if ([_machineModel.carState integerValue] == 2 || [_machineModel.carState integerValue] == 4) {

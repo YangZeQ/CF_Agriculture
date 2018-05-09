@@ -37,6 +37,7 @@
     viewImage.image = [UIImage imageNamed:viewImg];
     UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(viewImage.frame.size.width + viewImage.frame.origin.x + 32 * screenWidth, 36 * screenHeight, self.frame.size.width - viewImage.frame.size.width - 124 * screenWidth,  34 * screenHeight)];
     titleLabel.text = title;
+    titleLabel.textColor = BlackTextColor;
     UILabel *textLabel = [[UILabel alloc]initWithFrame:CGRectMake(titleLabel.frame.origin.x, titleLabel.frame.size.height + titleLabel.frame.origin.y + 28 * screenHeight, titleLabel.frame.size.width, titleLabel.frame.size.height)];
     textLabel.text = text;
     textLabel.textColor = [UIColor grayColor];
