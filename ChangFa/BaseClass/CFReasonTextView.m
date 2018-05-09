@@ -23,6 +23,7 @@
  *  文字最大高度
  */
 @property (nonatomic, assign) NSInteger maxTextH;
+
 @end
 
 @implementation CFReasonTextView
@@ -43,7 +44,8 @@
         _placeholderView.showsHorizontalScrollIndicator = NO;
         _placeholderView.showsVerticalScrollIndicator = NO;
         _placeholderView.userInteractionEnabled = NO;
-        _placeholderView.font =  self.font;
+//        _placeholderView.font = self.font;
+        _placeholderView.font = CFFONT14;
         _placeholderView.textColor = [UIColor lightGrayColor];
         _placeholderView.backgroundColor = [UIColor clearColor];
         [self addSubview:placeholderView];
@@ -103,13 +105,14 @@
     if (self = [super initWithFrame:frame]) {
         
         [self setup];
+        
     }
     return self;
 }
 
 - (void)setup
 {
-    
+    self.placeholderView.hidden = NO;
     self.scrollEnabled = NO;
     self.scrollsToTop = NO;
     self.showsHorizontalScrollIndicator = NO;
@@ -117,7 +120,13 @@
 //    self.layer.borderWidth = 1;
 //    self.layer.borderColor = [UIColor lightGrayColor].CGColor;
     //实时监听textView值的改变
+    self.textNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(self.frame.size.width - 100 * screenWidth, self.frame.size.height - 40 * screenHeight, 100 * screenWidth, 20 * screenHeight)];
+    self.textNumberLabel.textAlignment = NSTextAlignmentRight;
+    self.textNumberLabel.textColor = BlackTextColor;
+    self.textNumberLabel.font = CFFONT12;
+    [self addSubview:self.textNumberLabel];
     
+    self.font = CFFONT14;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:self];
 }
 - (void)textDidChange
@@ -144,7 +153,6 @@
         }
     }
 }
-
 
 - (void)dealloc
 {

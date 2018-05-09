@@ -11,6 +11,7 @@
 @protocol homePageDelegate
 
 @end
+
 @interface CFHomePageViewController : UIViewController
 @property (nonatomic, assign)float navigationViewHeight;
 @property (nonatomic, weak)id delegate;

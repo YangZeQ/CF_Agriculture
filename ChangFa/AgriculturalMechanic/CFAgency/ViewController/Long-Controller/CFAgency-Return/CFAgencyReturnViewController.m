@@ -12,6 +12,7 @@
 #import "CFPickView.h"
 #import "CFReasonTextView.h"
 #import "MachineModel.h"
+#define MAX_LIMIT_NUMS 200
 @interface CFAgencyReturnViewController ()<scanViewControllerDelegate, UITextViewDelegate>
 @property (nonatomic, strong)UIView *machineNumberView;
 @property (nonatomic, strong)UILabel *machineNumber;
@@ -105,21 +106,28 @@
     _retreatReasonView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:_retreatReasonView];
     
-    UILabel *retreatReasonLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, self.view.frame.size.width / 3 - 30 * screenWidth, 88 * screenHeight)];
+    UILabel *retreatReasonLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, (_retreatReasonView.frame.size.width - 60 * screenWidth) / 3, 88 * screenHeight)];
     retreatReasonLabel.text = @"返厂原因";
+    retreatReasonLabel.textColor = BlackTextColor;
+    retreatReasonLabel.font = CFFONT14;
     [_retreatReasonView addSubview:retreatReasonLabel];
     _retreatResonButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _retreatResonButton.frame = CGRectMake(retreatReasonLabel.frame.size.width + retreatReasonLabel.frame.origin.x, 0, self.view.frame.size.width / 3, retreatReasonLabel.frame.size.height);
+    _retreatResonButton.frame = CGRectMake(retreatReasonLabel.frame.size.width + retreatReasonLabel.frame.origin.x, 0, retreatReasonLabel.frame.size.width, retreatReasonLabel.frame.size.height);
+    _retreatResonButton.titleLabel.font = CFFONT14;
     [_retreatResonButton setTitle:@"选择原因" forState:UIControlStateNormal];
     [_retreatResonButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
     [_retreatResonButton addTarget:self action:@selector(chooseRetreatReason) forControlEvents:UIControlEventTouchUpInside];
     [_retreatReasonView addSubview:_retreatResonButton];
-    _reasonTextView = [[CFReasonTextView alloc]initWithFrame:CGRectMake(0, _retreatResonButton.frame.size.height, _retreatReasonView.frame.size.width, 500 * screenHeight)];
+    UILabel *lineLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, retreatReasonLabel.frame.size.height - 2 * screenHeight, _retreatReasonView.frame.size.width - 60 * screenWidth, 2 * screenHeight)];
+    lineLabel.backgroundColor = BackgroundColor;
+    [_retreatReasonView addSubview:lineLabel];
+    _reasonTextView = [[CFReasonTextView alloc]initWithFrame:CGRectMake(30 * screenWidth, _retreatResonButton.frame.size.height, _retreatReasonView.frame.size.width - 60 * screenWidth, 500 * screenHeight)];
 //    _reasonTextView.delegate = self;
     _reasonTextView.layer.cornerRadius = 20 * screenWidth;
-    _reasonTextView.placeholder = @"原因描述：（必填，200字以内）";
+    _reasonTextView.placeholder = [NSString stringWithFormat:@"原因描述：（必填，%d字以内）", MAX_LIMIT_NUMS];
     _reasonTextView.maxNumberOfLines = 10;
-    _reasonTextView.font = [UIFont systemFontOfSize:18];
+    _reasonTextView.delegate = self;
+    self.reasonTextView.textNumberLabel.text = [NSString stringWithFormat:@"0/%d", MAX_LIMIT_NUMS];
     [_retreatReasonView addSubview:_reasonTextView];
     [_reasonTextView textValueDidChanged:^(NSString *text, CGFloat textHeight) {
         CGRect frame = _reasonTextView.frame;
@@ -297,19 +305,7 @@
 - (void)leftButtonClick{
     [self.navigationController popViewControllerAnimated:YES];
 }
--(void)textViewDidChange:(UITextView *)textView{
-    //    static CGFloat maxHeight = 500 * screenHeight;
-    self.placeHolder.hidden = YES;
-    CGFloat maxHeight = 500 * screenHeight;
-    CGRect frame = textView.frame;
-    CGSize constraintSize = CGSizeMake(frame.size.width, MAXFLOAT);
-    CGSize size = [textView sizeThatFits:constraintSize];
-    if (size.height<=maxHeight) {
-        size.height=maxHeight;
-    }
-    //    _reasonTextView.scrollEnabled = NO;    // 不允许滚动
-    _reasonTextView.frame = CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, size.height);
-}
+
 - (void)textViewDidEndEditing:(UITextView *)textView{
     if (textView.text.length < 1) {
         self.placeHolder.hidden = NO;
@@ -377,6 +373,121 @@
     } Failure:^(NSURLSessionDataTask *task, NSError *error) {
         
     }];
+}
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range
+ replacementText:(NSString *)text
+{
+    UITextRange *selectedRange = [textView markedTextRange];
+    //获取高亮部分
+    UITextPosition *pos = [textView positionFromPosition:selectedRange.start offset:0];
+    //获取高亮部分内容
+    //NSString * selectedtext = [textView textInRange:selectedRange];
+    
+    //如果有高亮且当前字数开始位置小于最大限制时允许输入
+    if (selectedRange && pos) {
+        NSInteger startOffset = [textView offsetFromPosition:textView.beginningOfDocument toPosition:selectedRange.start];
+        NSInteger endOffset = [textView offsetFromPosition:textView.beginningOfDocument toPosition:selectedRange.end];
+        NSRange offsetRange = NSMakeRange(startOffset, endOffset - startOffset);
+        
+        if (offsetRange.location < MAX_LIMIT_NUMS) {
+            return YES;
+        }
+        else
+        {
+            return NO;
+        }
+    }
+    
+    
+    NSString *comcatstr = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    
+    NSInteger caninputlen = MAX_LIMIT_NUMS - comcatstr.length;
+    
+    if (caninputlen >= 0)
+    {
+        return YES;
+    }
+    else
+    {
+        NSInteger len = text.length + caninputlen;
+        //防止当text.length + caninputlen < 0时，使得rg.length为一个非法最大正数出错
+        NSRange rg = {0,MAX(len,0)};
+        
+        if (rg.length > 0)
+        {
+            NSString *s = @"";
+            //判断是否只普通的字符或asc码(对于中文和表情返回NO)
+            BOOL asc = [text canBeConvertedToEncoding:NSASCIIStringEncoding];
+            if (asc) {
+                s = [text substringWithRange:rg];//因为是ascii码直接取就可以了不会错
+            }
+            else
+            {
+                __block NSInteger idx = 0;
+                __block NSString  *trimString = @"";//截取出的字串
+                //使用字符串遍历，这个方法能准确知道每个emoji是占一个unicode还是两个
+                [text enumerateSubstringsInRange:NSMakeRange(0, [text length])
+                                         options:NSStringEnumerationByComposedCharacterSequences
+                                      usingBlock: ^(NSString* substring, NSRange substringRange, NSRange enclosingRange, BOOL* stop) {
+                                          
+                                          if (idx >= rg.length) {
+                                              *stop = YES; //取出所需要就break，提高效率
+                                              return ;
+                                          }
+                                          
+                                          trimString = [trimString stringByAppendingString:substring];
+                                          
+                                          idx++;
+                                      }];
+                
+                s = trimString;
+            }
+            //rang是指从当前光标处进行替换处理(注意如果执行此句后面返回的是YES会触发didchange事件)
+            [textView setText:[textView.text stringByReplacingCharactersInRange:range withString:s]];
+            //既然是超出部分截取了，哪一定是最大限制了。
+            self.reasonTextView.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%ld", (long)MAX_LIMIT_NUMS, (long)MAX_LIMIT_NUMS];
+        }
+        return NO;
+    }
+    
+}
+
+- (void)textViewDidChange:(UITextView *)textView
+{
+    //    static CGFloat maxHeight = 500 * screenHeight;
+    self.placeHolder.hidden = YES;
+    CGFloat maxHeight = 500 * screenHeight;
+    CGRect frame = textView.frame;
+    CGSize constraintSize = CGSizeMake(frame.size.width, MAXFLOAT);
+    CGSize size = [textView sizeThatFits:constraintSize];
+    if (size.height<=maxHeight) {
+        size.height=maxHeight;
+    }
+    //    _reasonTextView.scrollEnabled = NO;    // 不允许滚动
+    _reasonTextView.frame = CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, size.height);
+    
+    UITextRange *selectedRange = [textView markedTextRange];
+    //获取高亮部分
+    UITextPosition *pos = [textView positionFromPosition:selectedRange.start offset:0];
+    
+    //如果在变化中是高亮部分在变，就不要计算字符了
+    if (selectedRange && pos) {
+        return;
+    }
+    
+    NSString  *nsTextContent = textView.text;
+    NSInteger existTextNum = nsTextContent.length;
+    
+    if (existTextNum > MAX_LIMIT_NUMS)
+    {
+        //截取到最大位置的字符
+        NSString *s = [nsTextContent substringToIndex:MAX_LIMIT_NUMS];
+        
+        [textView setText:s];
+    }
+    
+    //不让显示负数 口口日
+    self.reasonTextView.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d",MAX(0, existTextNum),MAX_LIMIT_NUMS];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

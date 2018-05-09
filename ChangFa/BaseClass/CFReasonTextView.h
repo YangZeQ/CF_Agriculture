@@ -29,6 +29,7 @@ typedef void(^CF_textHeightChangedBlock)(NSString *text,CGFloat textHeight);
  */
 @property (nonatomic, assign) NSUInteger maxNumberOfLines;
 
+@property (nonatomic, strong)UILabel *textNumberLabel;
 /**
  *  文字高度改变block → 文字高度改变会自动调用
  *  block参数(text) → 文字内容

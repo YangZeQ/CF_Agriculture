@@ -31,6 +31,7 @@
 #define ChangfaColor [UIColor colorWithRed:58 / 255.0 green:180 / 255.0 blue:139 / 255.0 alpha:1.0]
 #define BackgroundColor [UIColor colorWithRed:232 / 255.0 green:235 / 255.0 blue:234 / 255.0 alpha:1]
 #define UserBackgroundColor [UIColor colorWithRed:244 / 255.0 green:247 / 255.0 blue:247 / 255.0 alpha:1]
+#define BlackTextColor [UIColor colorWithRed:107 / 255.0 green:107 / 255.0 blue:107 / 255.0 alpha:1]
 #define navHeight (self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height)
 #define CF_WIDTH [UIScreen mainScreen].bounds.size.width
 #define CF_HEIGHT [UIScreen mainScreen].bounds.size.height

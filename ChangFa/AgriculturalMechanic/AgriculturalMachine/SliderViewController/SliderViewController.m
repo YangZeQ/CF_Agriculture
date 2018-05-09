@@ -85,7 +85,6 @@
         [leftButton addTarget:self action:@selector(leftButtonClick) forControlEvents:UIControlEventTouchUpInside];
         [mainVC.view addSubview:leftButton];
     }
-    
     [self.mainVC.view addSubview:self.vagueView];
     self.vagueView.hidden = YES;
     return self;
