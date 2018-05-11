@@ -369,6 +369,7 @@
     
     // 农机轮播图
     _machineScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(0, additionLabel.frame.size.height + additionLabel.frame.origin.y + 8 * screenHeight, CF_WIDTH, 300 * screenHeight) delegate:self placeholderImage:[UIImage imageNamed:@"Home_Machine_Placeholder"]];
+    _machineScrollView.backgroundColor = [UIColor whiteColor];
     _machineScrollView.currentPageDotImage = [UIImage imageNamed:@"yuandian"];
     _machineScrollView.pageDotImage = [UIImage imageNamed:@"yuanhuan"];
     _machineScrollView.pageControlBottomOffset = -42 * screenHeight;

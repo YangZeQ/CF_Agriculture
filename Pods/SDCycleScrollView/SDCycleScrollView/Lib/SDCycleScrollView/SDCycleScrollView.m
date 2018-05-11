@@ -591,6 +591,7 @@ NSString * const ID = @"SDCycleScrollViewCell";
     }
     
     if (_isAddMachineView) {
+        self.placeholderImage = [UIImage imageNamed:@""];
         [cell.imageView addSubview:self.machineModelArray[itemIndex]];
     }
     

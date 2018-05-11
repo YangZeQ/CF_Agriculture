@@ -159,7 +159,7 @@
     UILabel *reasonLabel = [[UILabel alloc]initWithFrame:CGRectMake(repairsMachineLabel.frame.origin.x, _repairsStation.frame.size.height + _repairsStation.frame.origin.y + 36 * screenHeight, repairsMachineLabel.frame.size.width, repairsMachineLabel.frame.size.height)];
     reasonLabel.text = @"输入故障描述";
     reasonLabel.font = CFFONT15;
-    reasonLabel.textColor = [UIColor darkGrayColor];
+    reasonLabel.textColor = BlackTextColor;
     [_repairsScrollView addSubview:reasonLabel];
     
     UIView *reasonBackgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, reasonLabel.frame.size.height + reasonLabel.frame.origin.y + 10 * screenHeight, self.view.frame.size.width, 380 * screenHeight)];
@@ -186,7 +186,7 @@
     UILabel *photoLabel = [[UILabel alloc]initWithFrame:CGRectMake(repairsMachineLabel.frame.origin.x, reasonBackgroundView.frame.size.height + reasonBackgroundView.frame.origin.y + 36 * screenHeight, repairsMachineLabel.frame.size.width, repairsMachineLabel.frame.size.height)];
     photoLabel.text = @"上传故障照片";
     photoLabel.font = CFFONT15;
-    photoLabel.textColor = [UIColor darkGrayColor];
+    photoLabel.textColor = BlackTextColor;
     [_repairsScrollView addSubview:photoLabel];
     _photoNumberLabel = [[UILabel alloc]initWithFrame:CGRectMake(CF_WIDTH / 2, photoLabel.frame.origin.y, (CF_WIDTH - 60 * screenWidth) / 2, photoLabel.frame.size.height)];
     _photoNumberLabel.text = [NSString stringWithFormat:@"0/%d", MAX_LIMIT_PHOTONUMBER];
@@ -231,6 +231,7 @@
     _machineNumber.frame = CGRectMake(30 * screenWidth, 20 * screenHeight, 400 * screenWidth, 40 * screenHeight);
     _machineNumber.text = text;
     _machineNumber.font = CFFONT15;
+    _machineNumber.textColor = BlackTextColor;
     _machineNumber.textAlignment = NSTextAlignmentLeft;
 //    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(putInMachineNumber)];
     _machineNumber.userInteractionEnabled = YES;
@@ -418,10 +419,12 @@
     UILabel *nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(machineImage.frame.size.width + machineImage.frame.origin.x + 30 * screenWidth, 37 * screenHeight, self.view.frame.size.width - 260 * screenWidth, 30 * screenHeight)];
     nameLabel.text = [@"名称：" stringByAppendingString:[NSString stringWithFormat:@"%@",model.productName]];
     nameLabel.font = CFFONT14;
+    nameLabel.textColor = BlackTextColor;
     [_machineView addSubview:nameLabel];
     UILabel *typeLabel = [[UILabel alloc]initWithFrame:CGRectMake(nameLabel.frame.origin.x, nameLabel.frame.size.height + nameLabel.frame.origin.y + 30 * screenHeight, nameLabel.frame.size.width, nameLabel.frame.size.height)];
     typeLabel.text = [@"型号：" stringByAppendingString:[NSString stringWithFormat:@"%@",model.productModel]];
     typeLabel.font = CFFONT14;
+    typeLabel.textColor = BlackTextColor;
     [_machineView addSubview:typeLabel];
     UILabel *numberLabel = [[UILabel alloc]initWithFrame:CGRectMake(nameLabel.frame.origin.x, typeLabel.frame.size.height + typeLabel.frame.origin.y + 30 * screenHeight, nameLabel.frame.size.width, nameLabel.frame.size.height)];
     numberLabel.text = [@"备注："stringByAppendingString:[NSString stringWithFormat:@"%@",model.note]];
@@ -435,11 +438,13 @@
     NSString *dateString = [formatter stringFromDate: date];
     buyTimeLabel.text = [@"购买时间："stringByAppendingString:[NSString stringWithFormat:@"%@",dateString]];
     buyTimeLabel.font = CFFONT13;
+    buyTimeLabel.textColor = BlackTextColor;
     [_machineView addSubview:buyTimeLabel];
     UILabel *expireTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(buyTimeLabel.frame.origin.x, buyTimeLabel.frame.size.height + buyTimeLabel.frame.origin.y + 10 * screenHeight, buyTimeLabel.frame.size.width, nameLabel.frame.size.height)];
     NSString *expireString = [dateString stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:[NSString stringWithFormat:@"%ld", [[dateString substringWithRange:NSMakeRange(0, 4)] integerValue] + 2]];
     expireTimeLabel.text = [@"三  包  期："stringByAppendingString:[NSString stringWithFormat:@"%@",expireString]];
     expireTimeLabel.font = CFFONT13;
+    expireTimeLabel.textColor = BlackTextColor;
     [_machineView addSubview:expireTimeLabel];
 }
 #pragma mark -collectionViewDelegate/DataSource
