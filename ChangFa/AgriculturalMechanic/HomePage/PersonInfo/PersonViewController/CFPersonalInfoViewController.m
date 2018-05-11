@@ -35,7 +35,6 @@
     _lineView = [self getLineViewInNavigationBar:self.navigationController.navigationBar];
     
     self.view.backgroundColor = UserBackgroundColor;
-    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
     self.navigationItem.title = @"个人信息";
     [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], NSForegroundColorAttributeName, nil]];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"Navigation_Back"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftButtonClick)];
@@ -162,7 +161,7 @@
     
     _lineView.hidden = NO;
     self.navigationController.navigationBar.translucent = NO;
-    self.navigationController.navigationBar.barTintColor = [UIColor blackColor];
+//    self.navigationController.navigationBar.barTintColor = [UIColor blackColor];
 }
 //找到导航栏最下面黑线视图
 - (UIImageView *)getLineViewInNavigationBar:(UIView *)view

@@ -133,7 +133,7 @@
     _label = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, width, self.frame.size.height)];
     _label.text = labelName;
     _label.font = CFFONT15;
-    _label.textColor = BlackTextColor;
+//    _label.textColor = BlackTextColor;
     [self addSubview:_label];
     
     _textField = [[UITextField alloc]initWithFrame:CGRectMake(_label.frame.size.width + _label.frame.origin.x, _label.frame.origin.y, self.frame.size.width - 60 * screenWidth - _label.frame.size.width, _label.frame.size.height)];
@@ -155,14 +155,14 @@
     UILabel *placeLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, self.frame.size.width, self.frame.size.height)];
     placeLabel.text = labelName;
     placeLabel.font = CFFONT15;
-    placeLabel.textColor = BlackTextColor;
+//    placeLabel.textColor = BlackTextColor;
     [self addSubview:placeLabel];
     UIImageView *editImage = [[UIImageView alloc]initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width - 45 * screenWidth, 34 * screenHeight , 15 * screenWidth, 30 * screenHeight)];
     editImage.image = [UIImage imageNamed:buttonImage];
     [self addSubview:editImage];
     _selecteButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _selecteButton.titleLabel.font = CFFONT15;
-    _selecteButton.titleLabel.textColor = BlackTextColor;
+//    _selecteButton.titleLabel.textColor = BlackTextColor;
     _selecteButton.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
     _selecteButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     _selecteButton.contentEdgeInsets = UIEdgeInsetsMake(0, width, 0, 0);

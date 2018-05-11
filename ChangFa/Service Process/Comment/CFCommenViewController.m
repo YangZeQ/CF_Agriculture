@@ -40,8 +40,11 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = BackgroundColor;
     self.navigationItem.title = @"评论";
+    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
     [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, nil]];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"fanhuiwhite"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftButtonClick)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"Navigation_Back"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftButtonClick)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"发布" style:UIBarButtonItemStyleDone target:self action:@selector(uploadImagesArray)];
+    [self.navigationItem.rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:ChangfaColor, NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
     [self createCommentView];
 }
 - (void)createCommentView{
@@ -110,14 +113,6 @@
     [_commentPhotoCollection registerClass:[AddMachineCollectionViewCell class] forCellWithReuseIdentifier:@"addRepairsPhotoCellId"];
     [commentView addSubview:_commentPhotoCollection];
     
-    UIButton *releaseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    releaseButton.frame = CGRectMake(30 * screenWidth, self.view.frame.size.height - 160 * screenHeight, self.view.frame.size.width - 60 * screenWidth, 100 * screenHeight);
-    [releaseButton setBackgroundColor:ChangfaColor];
-    [releaseButton setTitle:@"发布" forState:UIControlStateNormal];
-    [releaseButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    releaseButton.layer.cornerRadius = 20 * screenWidth;
-    [releaseButton addTarget:self action:@selector(uploadImagesArray) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:releaseButton];
 }
 #pragma mark -collectionViewDelegate/DataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{

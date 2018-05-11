@@ -20,10 +20,11 @@
 #import "CFAgencySellViewController.h"
 #import "CFSalesPersonMyAgencyViewController.h"
 #import "CFChooseTypeViewController.h"
-//#import "CFAgencyManagerViewController.h"
 #import "SDCycleScrollView.h"
 #import "CFAddMachineViewController.h"
 #import "ScanViewController.h"
+#import "CFRepairsViewController.h"
+#import "CFRepairsRecordViewController.h"
 
 #import "CFCommenViewController.h"
 
@@ -387,15 +388,33 @@
     for (int i = 0; i < functionImageArray.count; i++) {
         UIImageView *functionImage = [[UIImageView alloc]initWithFrame:CGRectMake(CF_WIDTH / 4 * i + (CF_WIDTH / 4 - 50 *screenWidth) / 2, 35 * screenHeight, 60 * screenWidth, 60 * screenHeight)];
         functionImage.image = [UIImage imageNamed:functionImageArray[i]];
+        functionImage.userInteractionEnabled = YES;
         [functionView addSubview:functionImage];
         
         UILabel *functionLabel = [[UILabel alloc]initWithFrame:CGRectMake(CF_WIDTH / 4 * i, functionImage.frame.size.height + functionImage.frame.origin.y +  30 * screenHeight, CF_WIDTH / 4, 50 * screenHeight)];
         functionLabel.text = functionTitleArray[i];
         functionLabel.font = CFFONT14;
         functionLabel.textAlignment = NSTextAlignmentCenter;
+        functionLabel.userInteractionEnabled = YES;
         [functionView addSubview:functionLabel];
+        
+        UIButton *functionButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        functionButton.frame = CGRectMake(CF_WIDTH / 4 * i, 0, CF_WIDTH / 4, functionView.frame.size.height);
+        functionButton.tag = 1001 + i;
+        [functionButton addTarget:self action:@selector(functionButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [functionView addSubview:functionButton];
     }
     
+}
+- (void)functionButtonClick:(UIButton *)sender
+{
+    if (sender.tag == 1001) {
+        CFRepairsViewController *repairs = [[CFRepairsViewController alloc]init];
+        [self.navigationController pushViewController:repairs animated:YES];
+    } else if (sender.tag == 1002) {
+        CFRepairsRecordViewController *repairsRecord = [[CFRepairsRecordViewController alloc]init];
+        [self.navigationController pushViewController:repairsRecord animated:YES];
+    }
 }
 #pragma mark -SDCycleScrollView Delegate实现
 - (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index
@@ -697,10 +716,10 @@
     CFAddMachineViewController *addMachine = [[CFAddMachineViewController alloc]init];
     [self.navigationController pushViewController:addMachine animated:YES];
 }
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    NSLog(@"it's ok");
-}
+//- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+//{
+//    NSLog(@"it's ok");
+//}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
