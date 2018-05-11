@@ -21,9 +21,43 @@
 @property (nonatomic, strong)UILabel *briefLabel;
 @property (nonatomic, strong)UILabel *integralLabel;
 @property (nonatomic, strong)UIButton *signButton;
+
+@property (nonatomic, strong)UIView *vagueView;
 @end
 
 @implementation CFPersonalCenterViewController
+
+- (UIView *)vagueView
+{
+    if (_vagueView == nil) {
+        _vagueView = [[UIView alloc]initWithFrame:[UIScreen mainScreen].bounds];
+        _vagueView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
+        _vagueView.hidden = YES;
+        [self.view addSubview:_vagueView];
+        
+        UIView *whiteView = [[UIView alloc]initWithFrame:CGRectMake(30 * screenWidth, 405 * screenHeight, CF_WIDTH - 60 * screenWidth, 700 * screenHeight)];
+        whiteView.backgroundColor = [UIColor whiteColor];
+        whiteView.layer.cornerRadius = 20 * screenWidth;
+        [_vagueView addSubview:whiteView];
+        
+        //1. 实例化二维码滤镜
+        CIFilter *filter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
+        // 2. 恢复滤镜的默认属性
+        [filter setDefaults];
+        // 3. 将字符串转换成NSData
+        NSString *urlStr = @"imeiTest";
+        NSData *data = [urlStr dataUsingEncoding:NSUTF8StringEncoding];
+        // 4. 通过KVO设置滤镜inputMessage数据
+        [filter setValue:data forKey:@"inputMessage"];
+        // 5. 获得滤镜输出的图像
+        CIImage *outputImage = [filter outputImage];
+        // 6. 将CIImage转换成UIImage，并显示于imageView上 (此时获取到的二维码比较模糊,所以需要用下面的createNonInterpolatedUIImageFormCIImage方法重绘二维码)
+        self.QRcodeContentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(106 * screenWidth, 111 * screenHeight, CF_WIDTH - 272 * screenWidth, 478 * screenHeight)];
+        self.QRcodeContentImageView.image = [self createNonInterpolatedUIImageFormCIImage:outputImage withSize:170];//重绘二维码,使其显示清晰
+        [whiteView addSubview:self.QRcodeContentImageView];
+    }
+    return _vagueView;
+}
 
 - (void)viewDidLoad
 {
@@ -184,21 +218,7 @@
 
 - (void)imeiButtonClick
 {
-    //1. 实例化二维码滤镜
-    CIFilter *filter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
-    // 2. 恢复滤镜的默认属性
-    [filter setDefaults];
-    // 3. 将字符串转换成NSData
-    NSString *urlStr = @"imeiTest";
-    NSData *data = [urlStr dataUsingEncoding:NSUTF8StringEncoding];
-    // 4. 通过KVO设置滤镜inputMessage数据
-    [filter setValue:data forKey:@"inputMessage"];
-    // 5. 获得滤镜输出的图像
-    CIImage *outputImage = [filter outputImage];
-    // 6. 将CIImage转换成UIImage，并显示于imageView上 (此时获取到的二维码比较模糊,所以需要用下面的createNonInterpolatedUIImageFormCIImage方法重绘二维码)
-    self.QRcodeContentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(30 * screenWidth, 398 * screenHeight, 690 * screenWidth, 690 * screenHeight)];
-    self.QRcodeContentImageView.image = [self createNonInterpolatedUIImageFormCIImage:outputImage withSize:170];//重绘二维码,使其显示清晰
-    [self.view addSubview:self.QRcodeContentImageView];
+    self.vagueView.hidden = NO;
 }
 - (void)headerImageButtonClick
 {
@@ -221,10 +241,6 @@
     [_signButton setBackgroundImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
     _signButton.layer.cornerRadius = _signButton.frame.size.height / 2;
     _signButton.userInteractionEnabled = NO;
-}
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    self.QRcodeContentImageView.hidden = YES;
 }
 /**
  * 根据CIImage生成指定大小的UIImage
@@ -251,6 +267,11 @@
     CGContextRelease(bitmapRef);
     CGImageRelease(bitmapImage);
     return [UIImage imageWithCGImage:scaledImage];
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    self.vagueView.hidden = YES;
 }
 - (void)didReceiveMemoryWarning
 {

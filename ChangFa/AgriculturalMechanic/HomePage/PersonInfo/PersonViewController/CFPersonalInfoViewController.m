@@ -75,10 +75,12 @@
     [cameraButton addTarget:self action:@selector(headerImageButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [headerView addSubview:cameraButton];
     
-    CFRegisterTextFieldView *nameTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, 250 * screenWidth + navHeight, CF_WIDTH, 130 * screenHeight) LabelWidth:170 * screenWidth LabelName:@"姓名" PlaceHolder:@""];
+    CFRegisterTextFieldView *nameTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, 250 * screenWidth + navHeight, CF_WIDTH, 130 * screenHeight) LabelWidth:170 * screenWidth LabelName:@"昵称" PlaceHolder:@""];
+    nameTextField.label.textColor = [UIColor blackColor];
     nameTextField.textField.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"UserName"];
     [self.view addSubview:nameTextField];
     CFRegisterTextFieldView *briefTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, nameTextField.frame.size.height + nameTextField.frame.origin.y, CF_WIDTH, 130 * screenHeight) LabelWidth:170 * screenWidth LabelName:@"简介" PlaceHolder:@"个人简介"];
+    briefTextField.label.textColor = [UIColor blackColor];
     [self.view addSubview:briefTextField];
     CFRegisterTextFieldView *sexTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(0, briefTextField.frame.size.height + briefTextField.frame.origin.y, CF_WIDTH, 130 * screenHeight) LabelText:@"性别" LabelWidth:170 * screenWidth OriginX1:203 * screenWidth OriginX2:477 * screenWidth];
     [self.view addSubview:sexTextField];
