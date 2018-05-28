@@ -597,16 +597,6 @@ numberOfRowsInComponent:(NSInteger)component{
                                          City:c.cityName
                                          Area:c.areas[selectArea]];
     }
-    } else if (_viewStyle == 1) {
-        if ([_delegate respondsToSelector:@selector(sureBtnClickReturnSex:)]) {
-            NSInteger selectSex = [self.addressPickerView selectedRowInComponent:0];
-//           [self.delegate sureBtnClickReturnSex:_infoArray[selectSex]];
-        }
-    } else if (_viewStyle == 2) {
-        if ([_delegate respondsToSelector:@selector(sureBtnClickReturnIdentify:)]) {
-            NSInteger selectIdentify = [self.addressPickerView selectedRowInComponent:0];
-//            [self.delegate sureBtnClickReturnIdentify:_infoArray[selectIdentify]];
-        }
     }
 }
 
