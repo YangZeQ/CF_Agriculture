@@ -20,21 +20,35 @@
 #import "MJRefresh.h"
 #import "UIImageView+WebCache.h"
 
+//是否iPhoneX YES:iPhoneX屏幕 NO:传统屏幕
+#define kIs_iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+//是否iPhoneX 1:iPhoneX屏幕 0:传统屏幕
+#define kIs_iPhoneX_test ({\
+int tmp = 0;\
+if ([UIScreen instancesRespondToSelector:@selector(currentMode)]) {\
+if (CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size)) {\
+tmp = 1;\
+}else{\
+tmp = 0;\
+}\
+}else{\
+tmp = 0;\
+}\
+tmp ;\
+})
+
 #define Height self.view.frame.size.height / 667
 #define Width self.view.frame.size.width / 375
-#define screenHeight [UIScreen mainScreen].bounds.size.height / 1334
+#define screenHeight (kIs_iPhoneX_test ? [UIScreen mainScreen].bounds.size.width / 750 : [UIScreen mainScreen].bounds.size.height / 1334)
 #define screenWidth [UIScreen mainScreen].bounds.size.width / 750
-//#define screenHeight [UIScreen mainScreen].bounds.size.height / 1334
-//#define screenWidth [UIScreen mainScreen].bounds.size.width / 750
-#define selfWidith self.view.frame.size.width
-#define selfHeight self.view.frame.size.height
+#define CF_WIDTH [UIScreen mainScreen].bounds.size.width
+#define CF_HEIGHT [UIScreen mainScreen].bounds.size.height
 #define ChangfaColor [UIColor colorWithRed:58 / 255.0 green:180 / 255.0 blue:139 / 255.0 alpha:1.0]
 #define BackgroundColor [UIColor colorWithRed:232 / 255.0 green:235 / 255.0 blue:234 / 255.0 alpha:1]
 #define UserBackgroundColor [UIColor colorWithRed:244 / 255.0 green:247 / 255.0 blue:247 / 255.0 alpha:1]
 #define BlackTextColor [UIColor colorWithRed:107 / 255.0 green:107 / 255.0 blue:107 / 255.0 alpha:1]
 #define navHeight (self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height)
-#define CF_WIDTH [UIScreen mainScreen].bounds.size.width
-#define CF_HEIGHT [UIScreen mainScreen].bounds.size.height
+
 ////判断设备类型
 //#define iPhone4 ([UIScreen mainScreen].bounds.size.height == 480)
 //#define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
@@ -56,7 +70,7 @@
 
 // 线上接口
 #define onlineUrl @"http://47.96.20.14:8085/api/v1/"
-#define onlineJavaUrl @"http://47.96.20.14:8088/changfa_system/"
+#define onlineJavaUrl @"http://192.168.2.4:8080/changfa_system/"
 #define CF_Amap @"9a565181533f74f5cc5c4902391b8f7b"
 #define CF_Bugly @"1abc035ec9"
 // Include any system framework and library headers here that should be included in all compilation units.
