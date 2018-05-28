@@ -11,9 +11,7 @@
 #import "CFRegisterTextFieldView.h"
 #import "CFFillInOrderViewTableViewCell.h"
 #import "CFFillInOrderModel.h"
-
 #import "AFHTTPSessionManager.h"
-#import "CFFMDBManager.h"
 #define MAX_LIMIT_NUMS 150
 @interface CFShowFillInfoViewController ()<UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong)CFFillInOrderModel *fillModel;

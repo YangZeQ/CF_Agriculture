@@ -8,7 +8,6 @@
 
 #import "CFFillInOrderViewTableViewCell.h"
 #import "AddMachineCollectionViewCell.h"
-#import "CFUpdataImageModel.h"
 #import "CFPreviewPhotoViewController.h"
 
 #define MAX_LIMIT_NUMS 150

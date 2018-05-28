@@ -6,7 +6,7 @@
 //  Copyright © 2018年 dev. All rights reserved.
 //
 
-#import "CFRefillOrderViewController.h"
+#import "CFFillInOrderViewController.h"
 #import "CFPreviewPhotoViewController.h"
 #import "CFRegisterTextFieldView.h"
 #import "CFFillInOrderViewTableViewCell.h"
@@ -15,31 +15,28 @@
 #import "AFHTTPSessionManager.h"
 #import <Photos/Photos.h>
 #import "CTAssetsPickerController/CTAssetsPickerController.h"
-#import "CFFMDBManager.h"
 #define MAX_LIMIT_NUMS 150
 #define MAX_LIMIT_PHOTONUMBER 9
 typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger infoType);
-@interface CFRefillOrderViewController ()<UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CTAssetsPickerControllerDelegate, UITextFieldDelegate>
+@interface CFFillInOrderViewController ()<UITableViewDelegate, UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CTAssetsPickerControllerDelegate, UITextFieldDelegate>
 @property (nonatomic, strong)CFFillInOrderModel *fillModel;
 @property (nonatomic, strong)UIScrollView *fillScrollView;
-@property (nonatomic, strong)UIView *titleView;
-@property (nonatomic, strong)UILabel *titleLabel;
 @property (nonatomic, strong)UITableView *orderTableView;
 @property (nonatomic, strong)UIButton *submitButton;
 
 @property (nonatomic, strong)NSArray *infoArray;
+@property (nonatomic, strong)NSMutableArray *editSignArray;
 @property (nonatomic, assign)NSInteger selectedIndex; // 点击cell下标
 @property (nonatomic, strong)NSMutableArray *signArray; // 存储cell的选定标识
-@property (nonatomic, strong)NSMutableArray *editSignArray;  // 判断是否被编辑
 @property (nonatomic, strong)NSArray *styleArray;
 
 @property (nonatomic, strong)UIView *vagueView;
 @property (nonatomic, strong)UIButton *firstStyleButton; //
 @property (nonatomic, strong)UIButton *secondStyleButton;
 
-@property (nonatomic, strong)NSMutableArray *reasonArray;   // 不通过时，存储reason标识
 @property (nonatomic, strong)NSMutableArray *imageArray;
 @property (nonatomic, strong)NSMutableArray *photoArray;
+@property (nonatomic, strong)NSMutableArray *uploadImageArray;
 @property (nonatomic, strong)NSMutableArray *faultPhotoArray;
 @property (nonatomic, strong)NSMutableArray *personPhotoArray;
 @property (nonatomic, strong)NSMutableArray *faultPhotoPathArray;
@@ -59,7 +56,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
 @property (nonatomic, copy)reloadCollectionItemBlock reloadCollectionItemBlock;
 @end
 
-@implementation CFRefillOrderViewController
+@implementation CFFillInOrderViewController
 
 - (NSArray *)infoArray
 {
@@ -74,13 +71,6 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
         _signArray = [NSMutableArray arrayWithObjects:@0, @0, @0, @0, @0, @0, @0, @0, nil];
     }
     return _signArray;
-}
-- (NSMutableArray *)editSignArray
-{
-    if (_editSignArray == nil) {
-        _editSignArray = [NSMutableArray arrayWithObjects:@0, @0, @0, @0, @0, @0, @0, @0, nil];
-    }
-    return _editSignArray;
 }
 - (NSArray *)styleArray
 {
@@ -99,13 +89,6 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     }
     return _vagueView;
 }
-- (NSMutableArray *)reasonArray
-{
-    if (_reasonArray == nil) {
-        _reasonArray = [NSMutableArray array];
-    }
-    return _reasonArray;
-}
 - (NSMutableArray *)imageArray
 {
     if (_imageArray == nil) {
@@ -119,6 +102,12 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
         _photoArray = [NSMutableArray array];
     }
     return _photoArray;
+}
+- (NSMutableArray *)uploadImageArray{
+    if (_uploadImageArray == nil) {
+        _uploadImageArray = [NSMutableArray array];
+    }
+    return _uploadImageArray;
 }
 - (NSMutableArray *)faultPhotoArray
 {
@@ -163,12 +152,25 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     _imagePicker.allowsEditing=YES;
     [self createFillInOrderView];
     [self getFillInOrderWithReapirId:self.repairId];
+    
+    //增加监听，当键盘出现或改变时收出消息
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
 
+    //增加监听，当键退出时收出消息
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
     // Do any additional setup after loading the view.
 }
 - (void)createFillInOrderView
 {
     self.selectedIndex = 0;
+    self.useTime = @"";
+    self.driveDistance = @"";
     [self.signArray replaceObjectAtIndex:self.selectedIndex withObject:@1];
     
     _fillScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
@@ -176,19 +178,6 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     _fillScrollView.backgroundColor = BackgroundColor;
     _fillScrollView.delegate = self;
     [self.view addSubview:_fillScrollView];
-    
-    _titleView = [[UIView alloc]initWithFrame:CGRectMake(0, navHeight, CF_WIDTH, 60 * screenWidth)];
-    _titleView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
-    [self.view addSubview:_titleView];
-    _titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, CF_WIDTH - 100 * screenWidth, 60 * screenHeight)];
-    _titleLabel.text = @"";
-    _titleLabel.font = CFFONT11;
-    [_titleView addSubview:_titleLabel];
-    UIButton *titleButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    titleButton.frame = CGRectMake(_titleLabel.frame.size.width + _titleLabel.frame.origin.x, 10 * screenHeight, 40 * screenWidth, 40 * screenHeight);
-    [titleButton setImage:[UIImage imageNamed:@"CF_HideMessage"] forState:UIControlStateNormal];
-    [titleButton addTarget:self action:@selector(titleButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    [_titleView addSubview:titleButton];
     
     UILabel *repairStyleLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 20 * screenHeight, CF_WIDTH - 60 * screenWidth, 120 * screenHeight)];
     repairStyleLabel.backgroundColor = [UIColor whiteColor];
@@ -203,7 +192,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     repairTitleLabel.font = CFFONT14;
     [repairStyleLabel addSubview:repairTitleLabel];
     
-    _orderTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, repairStyleLabel.frame.size.height + repairStyleLabel.frame.origin.y, CF_WIDTH, (120 +  20) * self.signArray.count * screenHeight + 292 * screenHeight)];
+    _orderTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, repairStyleLabel.frame.size.height + repairStyleLabel.frame.origin.y, CF_WIDTH, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight)];
     _orderTableView.delegate = self;
     _orderTableView.dataSource = self;
     _orderTableView.showsVerticalScrollIndicator = NO;
@@ -213,8 +202,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     
     _submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _submitButton.frame = CGRectMake(0, CF_HEIGHT - 100 * screenHeight, CF_WIDTH, 100 * screenHeight);
-    //    _submitButton.layer.cornerRadius = 20 * Width;
-    [_submitButton setTitle:@"提交" forState:UIControlStateNormal];
+    [_submitButton setTitle:@"下一步" forState:UIControlStateNormal];
     [_submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_submitButton setBackgroundColor:ChangfaColor];
     [_submitButton addTarget:self action:@selector(submitButtonClick) forControlEvents:UIControlEventTouchUpInside];
@@ -296,18 +284,19 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
                 preview.selectedIndex = sender;
                 preview.headerHeight = navHeight;
                 [self presentViewController:preview animated:YES completion:^{
-                    
+            
                 }];
             };
         }
     } else {
         cell.styleStatus = 0;
-    }
+    }    
     cell.nameLabel.text = _infoArray[indexPath.section];
     switch (indexPath.section) {
         case 0:
             if (self.fillModel.faultFileInfo.count > 0 || self.faultFileIds.length > 0) {
                 cell.photoArray = self.faultPhotoArray;
+                cell.nameLabel.textColor = ChangfaColor;
                 cell.statusLabel.hidden = NO;
                 if (self.faultPhotoArray.count >= MAX_LIMIT_PHOTONUMBER) {
                     cell.cellType = 2;
@@ -319,6 +308,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
         case 1:
             if (self.fillModel.personFileInfo.count > 0 || self.personFileIds.length > 0) {
                 cell.photoArray = self.personPhotoArray;
+                cell.nameLabel.textColor = ChangfaColor;
                 cell.statusLabel.hidden = NO;
                 if (self.personPhotoArray.count >= MAX_LIMIT_PHOTONUMBER) {
                     cell.cellType = 2;
@@ -331,119 +321,113 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
             if (self.useTime.length > 0) {
                 cell.hourTextField.textField.text = self.useTime;
                 cell.hourTextField.textField.placeholder = @"";
-                cell.statusLabel.hidden = NO;
             }
             if (self.driveDistance.length > 0) {
                 cell.mileageTextField.textField.text = self.driveDistance;
                 cell.mileageTextField.textField.placeholder = @"";
+            }
+            if (self.useTime.length > 0 && self.driveDistance.length > 0) {
+                cell.nameLabel.textColor = ChangfaColor;
                 cell.statusLabel.hidden = NO;
+            } else {
+                cell.nameLabel.textColor = [UIColor blackColor];
+                cell.statusLabel.hidden = YES;
             }
             break;
         case 3:
-//            if (self.fillModel.machineInstruction.length > 0) {
-//                cell.reasonView.text = self.fillModel.machineInstruction;
-//                cell.reasonView.placeholder = @"";
-//                cell.statusLabel.hidden = NO;
-//            }
-//            if (self.machineInstruction.length > 0) {
-                cell.reasonView.text = self.machineInstruction;
-                cell.reasonView.placeholder = @"";
-                cell.statusLabel.hidden = NO;
+            if (self.fillModel.machineInstruction.length > 0 || self.machineInstruction.length > 0) {
+//                if (self.fillModel.machineInstruction.length > 0) {
+//                    cell.reasonView.text = self.fillModel.machineInstruction;
+//                } else {
                 cell.reasonView.text = self.machineInstruction;
                 cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.machineInstruction.length, MAX_LIMIT_NUMS];
-//            }
+//                }
+                cell.reasonView.placeholder = @"";
+                cell.nameLabel.textColor =ChangfaColor;
+                cell.statusLabel.hidden = NO;
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
+            }
             break;
         case 4:
-//            if (self.fillModel.faultInstruction.length > 0) {
-//                cell.reasonView.text = self.fillModel.faultInstruction;
-//                cell.reasonView.placeholder = @"";
-//                cell.statusLabel.hidden = NO;
-//            }
-//            if (self.faultInstruction.length > 0) {
-                cell.reasonView.text = self.faultInstruction;
-                cell.reasonView.placeholder = @"";
-                cell.statusLabel.hidden = NO;
+            if (self.fillModel.faultInstruction.length > 0 || self.faultInstruction.length > 0) {
+//                if (self.fillModel.faultInstruction.length > 0) {
+//                    cell.reasonView.text = self.fillModel.faultInstruction;
+//                } else {
+//                    cell.reasonView.text = self.faultInstruction;
+//                }
                 cell.reasonView.text = self.faultInstruction;
                 cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.faultInstruction.length, MAX_LIMIT_NUMS];
-//            }
+                cell.reasonView.placeholder = @"";
+                cell.nameLabel.textColor =ChangfaColor;
+                cell.statusLabel.hidden = NO;
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
+            }
             break;
         case 5:
-//            if (self.fillModel.customerOpinion.length > 0) {
-//                cell.reasonView.text = self.fillModel.customerOpinion;
-//                cell.reasonView.placeholder = @"";
-//                cell.statusLabel.hidden = NO;
-//            }
-//            if (self.customerOpinion.length > 0) {
-                cell.reasonView.text = self.customerOpinion;
-                cell.reasonView.placeholder = @"";
-                cell.statusLabel.hidden = NO;
+            if (self.fillModel.customerOpinion.length > 0 || self.customerOpinion.length > 0) {
+//                if (self.fillModel.customerOpinion.length > 0) {
+//                    cell.reasonView.text = self.fillModel.customerOpinion;
+//                } else {
+//                    cell.reasonView.text = self.customerOpinion;
+//                }
                 cell.reasonView.text = self.customerOpinion;
                 cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.customerOpinion.length, MAX_LIMIT_NUMS];
-//            }
+                cell.reasonView.placeholder = @"";
+                cell.nameLabel.textColor =ChangfaColor;
+                cell.statusLabel.hidden = NO;
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
+            }
             break;
         case 6:
-//            if (self.fillModel.handleOpinion.length > 0) {
-//                cell.reasonView.text = self.fillModel.handleOpinion;
-//                cell.reasonView.placeholder = @"";
-//                cell.statusLabel.hidden = NO;
-//            }
-//            if (self.handleOpinion.length > 0) {
-                cell.reasonView.text = self.handleOpinion;
-                cell.reasonView.placeholder = @"";
-                cell.statusLabel.hidden = NO;
+            if (self.fillModel.handleOpinion.length > 0 || self.handleOpinion.length > 0) {
+//                if (self.fillModel.handleOpinion.length > 0) {
+//                    cell.reasonView.text = self.fillModel.handleOpinion;
+//                } else {
+//                    cell.reasonView.text = self.handleOpinion;
+//                }
                 cell.reasonView.text = self.handleOpinion;
                 cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.handleOpinion.length, MAX_LIMIT_NUMS];
-//            }
+                cell.reasonView.placeholder = @"";
+                cell.nameLabel.textColor =ChangfaColor;
+                cell.statusLabel.hidden = NO;
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
+            }
             break;
         case 7:
-//            if (self.fillModel.remarks.length > 0) {
-//                cell.reasonView.text = self.fillModel.remarks;
-//                cell.reasonView.placeholder = @"";
-//                cell.statusLabel.hidden = NO;
-//            }
-//            if (self.remarks.length > 0) {
-//                cell.reasonView.text = self.remarks;
+            if (self.fillModel.remarks.length > 0 || self.remarks.length > 0) {
+//                if (self.fillModel.remarks.length > 0) {
+//                    cell.reasonView.text = self.fillModel.remarks;
+//                } else {
+//                    cell.reasonView.text = self.remarks;
+//                }
+                cell.reasonView.text = self.remarks;
+                cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.remarks.length, MAX_LIMIT_NUMS];
                 cell.reasonView.placeholder = @"";
+                cell.nameLabel.textColor =ChangfaColor;
                 cell.statusLabel.hidden = NO;
-//            }
-            cell.reasonView.text = self.remarks;
-            cell.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", self.remarks.length, MAX_LIMIT_NUMS];
+            } else {
+                cell.statusLabel.hidden = YES;
+                cell.reasonView.text = @"";
+                cell.reasonPlaceholder = @"点击填写内容";
+            }
             cell.starImage.hidden = YES;
             break;
         default:
             break;
     }
-    cell.cellType = 0;
-    if (indexPath.section >1) {
-        cell.reasonView.editable = NO;
-    }
-    if (indexPath.section == 2) {
-        cell.hourTextField.textField.userInteractionEnabled = NO;
-        cell.mileageTextField.textField.userInteractionEnabled = NO;
-    }
-    for (NSString *str in self.reasonArray) {
-        if (([str integerValue] - 17) < 2 && indexPath.section == ([str integerValue] - 17)) {
-            if ([self.editSignArray[indexPath.section] integerValue] == 1) {
-                cell.nameLabel.textColor = ChangfaColor;
-            } else {
-                cell.nameLabel.textColor = [UIColor redColor];
-                cell.statusLabel.text = @"审核不通过，请重新填写";
-            }
-            cell.statusLabel.hidden = NO;
-            cell.statusLabel.font = CFFONT13;
-            cell.cellType = 1;
-        } else if (([str integerValue] - 17) > 1 && indexPath.section == ([str integerValue] - 16)) {
-            if ([self.editSignArray[indexPath.section] integerValue] == 1) {
-                cell.nameLabel.textColor = ChangfaColor;
-            } else {
-                cell.nameLabel.textColor = [UIColor redColor];
-                cell.statusLabel.text = @"审核不通过，请重新填写";
-            }
-            cell.statusLabel.hidden = NO;
-            cell.statusLabel.font = CFFONT13;
-            cell.reasonView.editable = YES;
-        }
-    }
+    cell.backgroundColor = [UIColor cyanColor];
     return cell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -468,6 +452,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self.view endEditing:YES];
     for (int i = 0; i < self.signArray.count; i++) {
         [self.signArray replaceObjectAtIndex:i withObject:@0];
     }
@@ -502,6 +487,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     if (self.selectedIndex == 0) {
         [self.faultPhotoArray removeObjectAtIndex:sender];
         NSMutableArray *fileIdsArray = [NSMutableArray arrayWithArray:[self.faultFileIds componentsSeparatedByString:@","]];
+        NSLog(@"%@", self.faultFileIds);
         [fileIdsArray removeObjectAtIndex:sender];
         self.faultFileIds = @"";
         for (NSString *str in fileIdsArray) {
@@ -530,12 +516,12 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
 }
 - (void)firstStyleButtonClick
 {
-        if (self.photoArray.count == 9) {
-            [MBManager showBriefAlert:@"最多上传9张图片" time:1.5];
-            return;
-        }
-        _imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
-        [self presentViewController:_imagePicker animated:YES completion:nil];
+    if (self.photoArray.count == 9) {
+        [MBManager showBriefAlert:@"最多上传9张图片" time:1.5];
+        return;
+    }
+    _imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+    [self presentViewController:_imagePicker animated:YES completion:nil];
 }
 - (void)secondStyleButtonClick
 {
@@ -564,7 +550,6 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
 {
     self.vagueView.hidden = YES;
 }
-
 - (void)submitButtonClick
 {
     [self submitOrderInfoWithPhoto:NO];
@@ -576,15 +561,13 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
         
     }];
     UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self.navigationController popViewControllerAnimated:YES];
+       [self.navigationController popViewControllerAnimated:YES];
     }];
     [sureAction setValue:[UIColor redColor] forKey:@"titleTextColor"];
     [alert addAction:cancelAction];
     [alert addAction:sureAction];
     [self presentViewController:alert animated:YES completion:^{
-        
     }];
-    
 }
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(nullable NSDictionary<NSString *,id> *)editingInfo
 {
@@ -604,42 +587,40 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     switch (cellIndex) {
         case 3:
             self.machineInstruction = textInfo;
-            [self.editSignArray replaceObjectAtIndex:3 withObject:@1];
             break;
         case 4:
             self.faultInstruction = textInfo;
-            [self.editSignArray replaceObjectAtIndex:4 withObject:@1];
             break;
         case 5:
             self.customerOpinion = textInfo;
-            [self.editSignArray replaceObjectAtIndex:5 withObject:@1];
             break;
         case 6:
             self.handleOpinion = textInfo;
-            [self.editSignArray replaceObjectAtIndex:6 withObject:@1];
             break;
         case 7:
             self.remarks = textInfo;
-            [self.editSignArray replaceObjectAtIndex:7 withObject:@1];
             break;
         case 1001:
             self.useTime = textInfo;
             break;
         case 1002:
             self.driveDistance = textInfo;
+            break;
         default:
             break;
     }
 }
 - (void)changeScrollViewOriginYWithStatus:(NSInteger)status
 {
+    return;
     if (status == 0) {
         [UIView animateWithDuration:0.5 animations:^{
             _fillScrollView.frame =CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
         }];
     } else {
         [UIView animateWithDuration:0.5 animations:^{
-            _fillScrollView.frame =CGRectMake(0, -300 * screenHeight, self.view.frame.size.width, self.view.frame.size.height);
+//            _fillScrollView.frame =CGRectMake(0, , self.view.frame.size.width, self.view.frame.size.height);
+            _fillScrollView.contentOffset = CGPointMake(0, (140 * screenHeight * (_selectedIndex + 1) + 292 * screenHeight));
         }];
     }
 }
@@ -672,9 +653,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
         PHAsset *asset = assets[i];
         CGSize size = CGSizeMake(asset.pixelWidth / scale, asset.pixelHeight / scale);
         // 获取图片
-        //        [self.photoArray removeAllObjects];
         [[PHImageManager defaultManager] requestImageForAsset:asset targetSize:size contentMode:PHImageContentModeDefault options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-            //            [self.photoArray addObject:result];
             if (self.selectedIndex == 0) {
                 [self.faultPhotoArray addObject:result];
             } else {
@@ -729,10 +708,8 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     for (UIImage* image in self.photoArray) {
         [result addObject:[NSNull null]];
     }
-    
-    
     dispatch_group_t group = dispatch_group_create();
-    
+    [self.uploadImageArray removeAllObjects];
     for (NSInteger i = 0; i < self.photoArray.count; i++) {
         
         dispatch_group_enter(group);
@@ -744,6 +721,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
             } else {
                 NSLog(@"uploadimages%@", response);
                 NSLog(@"第 %d 张图片上传成功: %@", (int)i + 1, responseObject);
+                [_uploadImageArray addObject:[NSString stringWithFormat:@"%ld", i]];
                 @synchronized (result) { // NSMutableArray 是线程不安全的，所以加个同步锁
                     result[i] = responseObject;
                 }
@@ -753,9 +731,9 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
         [uploadTask resume];
     }
     
+    
     [self dismissViewControllerAnimated:YES completion:nil];
     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
-        
         NSLog(@"上传完成!");
         self.fileIds = @"";
         NSInteger ids = 0;
@@ -768,19 +746,12 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
             }
             ids++;
         }
-        CFUpdataInfoModel *model = [[CFUpdataInfoModel alloc]init];
-        model.imageTypeID = [NSString stringWithFormat:@"%ld", self.selectedIndex];
-        model.repairID = [NSString stringWithFormat:@"%@", self.repairId];
-        model.fileIds = self.fileIds;
-        [[CFFMDBManager shareManager] updateInfo:model];
         switch (self.selectedIndex) {
             case 0:
                 self.faultFileIds = self.fileIds;
-                [self.editSignArray replaceObjectAtIndex:0 withObject:@1];
                 break;
             case 1:
                 self.personFileIds = self.fileIds;
-                [self.editSignArray replaceObjectAtIndex:1 withObject:@1];
                 break;
             default:
                 break;
@@ -805,14 +776,6 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
             [self fillInOrderInfo];
         } else {
             [MBManager hideAlert];
-            //            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
-            //            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            //
-            //            }];
-            //            [alert addAction:alertAction];
-            //            [self presentViewController:alert animated:YES completion:^{
-            //
-            //            }];
         }
     } Failure:^(NSURLSessionDataTask *task, NSError *error) {
         [MBManager showBriefAlert:@"加载失败" time:1.0];
@@ -854,9 +817,8 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     if (self.remarks.length < 1) {
         self.remarks = @"";
     }
-    NSString *disIdStr = [NSString stringWithFormat:@"%d", [self.disId intValue]];
     NSDictionary *param = @{
-                            @"disId":disIdStr,
+                            @"disId":self.disId,
                             @"disNum":self.disNum,
                             @"faultFileIds":self.faultFileIds,
                             @"personFileIds":self.personFileIds,
@@ -869,52 +831,135 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
                             @"handleOpinion":self.handleOpinion,
                             @"remarks":self.remarks,
                             };
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:param];
-    if ([self.editSignArray[0] integerValue] == 0) {
-        [dict removeObjectForKey:@"faultFileIds"];
-    }
-    if ([self.editSignArray[1] integerValue] == 0) {
-        [dict removeObjectForKey:@"personFileIds"];
-    }
-    if ([self.editSignArray[3] integerValue] == 0) {
-        [dict removeObjectForKey:@"machineInstruction"];
-    }
-    if ([self.editSignArray[4] integerValue] == 0) {
-        [dict removeObjectForKey:@"faultInstruction"];
-    }
-    if ([self.editSignArray[5] integerValue] == 0) {
-        [dict removeObjectForKey:@"customerOpinion"];
-    }
-    if ([self.editSignArray[6] integerValue] == 0) {
-        [dict removeObjectForKey:@"handleOpinion"];
-    }
-    if ([self.editSignArray[7] integerValue] == 0) {
-        [dict removeObjectForKey:@"remarks"];
-    }
-    [CFAFNetWorkingMethod requestDataWithJavaUrl:@"repair/createRepair" Loading:1 Params:dict Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+    [CFAFNetWorkingMethod requestDataWithJavaUrl:@"repair/createRepair" Loading:0 Params:param Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"%@", responseObject);
         [MBManager hideAlert];
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
-            if (!sender) {
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"提交成功" preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    [self.navigationController popViewControllerAnimated:YES];
-                }];
-                [alert addAction:alertAction];
-                [self presentViewController:alert animated:YES completion:^{
-                    
-                }];
-            } else {
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"上传成功" preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    
-                }];
-                [alert addAction:alertAction];
-                [self presentViewController:alert animated:YES completion:^{
-                    
-                }];
+            CGRect viewFrame = _orderTableView.frame;
+            _editSignArray = [NSMutableArray arrayWithObjects:@1, @1, @1, @1, @1, @1, @1, @1, nil];
+            if (self.faultFileIds.length < 1) {
+                if (_selectedIndex != 1) {
+                    for (int i = 0; i < self.signArray.count; i++) {
+                        [self.signArray replaceObjectAtIndex:i withObject:@0];
+                    }
+                    [self.signArray replaceObjectAtIndex:0 withObject:@1];
+                    _selectedIndex = 0;
+                }
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+                
+            } else if (self.personFileIds.length < 1) {
+                if (_selectedIndex != 0) {
+                    for (int i = 0; i < self.signArray.count; i++) {
+                        [self.signArray replaceObjectAtIndex:i withObject:@0];
+                    }
+                    [self.signArray replaceObjectAtIndex:1 withObject:@1];
+                    _selectedIndex = 1;
+                }
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
             }
-            
+          else  if (self.useTime.length < 1 || self.driveDistance.length < 1) {
+              if (_selectedIndex != 0 && _selectedIndex != 1) {
+                  for (int i = 0; i < self.signArray.count; i++) {
+                      [self.signArray replaceObjectAtIndex:i withObject:@0];
+                  }
+                  [self.signArray replaceObjectAtIndex:2 withObject:@1];
+              }
+                self.selectedIndex = 2;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 196 * screenHeight);
+            }
+           else if (self.machineInstruction.length < 1) {
+               if (_selectedIndex != 0 && _selectedIndex != 1) {
+                   for (int i = 0; i < self.signArray.count; i++) {
+                       [self.signArray replaceObjectAtIndex:i withObject:@0];
+                   }
+                   [self.signArray replaceObjectAtIndex:3 withObject:@1];
+               }
+                self.selectedIndex = 3;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+           else if (self.faultInstruction.length < 1) {
+               if (_selectedIndex != 0 && _selectedIndex != 1) {
+                   for (int i = 0; i < self.signArray.count; i++) {
+                       [self.signArray replaceObjectAtIndex:i withObject:@0];
+                   }
+                   [self.signArray replaceObjectAtIndex:4 withObject:@1];
+               }
+                self.selectedIndex = 4;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+           else if (self.customerOpinion.length < 1) {
+            if (_selectedIndex != 0 && _selectedIndex != 1) {
+                    for (int i = 0; i < self.signArray.count; i++) {
+                        [self.signArray replaceObjectAtIndex:i withObject:@0];
+                    }
+                    [self.signArray replaceObjectAtIndex:5 withObject:@1];
+            }
+                self.selectedIndex = 5;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+           else if (self.handleOpinion.length < 1) {
+               if (_selectedIndex != 0 && _selectedIndex != 1) {
+                   for (int i = 0; i < self.signArray.count; i++) {
+                       [self.signArray replaceObjectAtIndex:i withObject:@0];
+                   }
+                   [self.signArray replaceObjectAtIndex:6 withObject:@1];
+               }
+               self.selectedIndex = 6;
+                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+           else if (self.remarks.length < 1) {
+               if (_selectedIndex != 0 && _selectedIndex != 1) {
+                   for (int i = 0; i < self.signArray.count; i++) {
+                       [self.signArray replaceObjectAtIndex:i withObject:@0];
+                   }
+                   [self.signArray replaceObjectAtIndex:7 withObject:@0];
+               }
+                self.selectedIndex = 7;
+//                _orderTableView.frame = CGRectMake(viewFrame.origin.x, viewFrame.origin.y, viewFrame.size.width, (120 +  20) * self.infoArray.count * screenHeight + 292 * screenHeight);
+            }
+            if (self.faultFileIds.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:0 withObject:@0];
+            }
+            if (self.personFileIds.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:1 withObject:@0];
+            }
+            if (self.useTime.length < 1 || self.driveDistance.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:2 withObject:@0];
+            }
+            if (self.machineInstruction.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:3 withObject:@0];
+            }
+            if (self.faultInstruction.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:4 withObject:@0];
+            }
+            if (self.customerOpinion.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:5 withObject:@0];
+            }
+            if (self.handleOpinion.length < 1) {
+                [self.editSignArray replaceObjectAtIndex:6 withObject:@0];
+            }
+            [self.orderTableView reloadData];
+//            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"提交成功" preferredStyle:UIAlertControllerStyleAlert];
+//            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//
+//            }];
+//            [alert addAction:alertAction];
+//            [self presentViewController:alert animated:YES completion:^{
+//
+//            }];
+            NSInteger editNumber = 0;
+            for (id i in self.editSignArray) {
+                if ([i integerValue] == 0) {
+                    editNumber++;
+                }
+            }
+            if (editNumber == 1) {
+                [self.submitButton setTitle:@"提交" forState:UIControlStateNormal];
+            } else if (editNumber == 0) {
+                [self.navigationController popViewControllerAnimated:YES];
+            } else {
+                
+            }
         } else {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[[responseObject objectForKey:@"head"]objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -932,6 +977,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
 - (void)fillInOrderInfo
 {
     NSMutableArray *tempArray = [NSMutableArray array];
+    
     for (NSDictionary *dic in self.fillModel.faultFileInfo) {
         if (self.faultFileIds.length == 0) {
             self.faultFileIds = [dic objectForKey:@"fileId"];
@@ -957,6 +1003,7 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
         }
         [self.personPhotoArray addObject:[dic objectForKey:@"filePath"]];
     }
+
     for (NSString *str in self.personPhotoArray) {
         UIImage *image = [self getImageFromURL:str];
         if (image == nil) {
@@ -976,29 +1023,6 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     self.customerOpinion = self.fillModel.customerOpinion;
     self.handleOpinion = self.fillModel.handleOpinion;
     self.remarks = self.fillModel.remarks;
-    self.reasonArray = [NSMutableArray arrayWithArray:[self.fillModel.reason componentsSeparatedByString:@","]];
-    switch ([self.reasonArray[0] integerValue]) {
-        case 17:
-            _titleLabel.text = @"故障图片与实际情况不符，请重新上传真实故障图片。";
-            break;
-        case 18:
-            _titleLabel.text = @"人机合影图片与实际情况不符，请重新上传真实人机合影图片。";
-            break;
-        case 19:
-            _titleLabel.text = @"车辆用途说明不准确，请重新上传准确车辆用途说明。";
-            break;
-        case 20:
-            _titleLabel.text = @"车辆故障说明不准确，请重新上传准确车辆故障说明。";
-            break;
-        case 21:
-            _titleLabel.text = @"客户意见不符合实际情况，请重新上传客户意见。";
-            break;
-        case 22:
-            _titleLabel.text = @"处理意见不符合实际情况，请重新上传处理意见。";
-            break;
-        default:
-            break;
-    }
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.orderTableView reloadData];
     });
@@ -1011,7 +1035,6 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     [_firstStyleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [_secondStyleButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 }
-
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
     [self.view endEditing:YES];
@@ -1021,10 +1044,6 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     [self.view endEditing:YES];
     self.vagueView.hidden = YES;
 }
-- (void)titleButtonClick
-{
-    self.titleView.hidden = YES;
-}
 /**通过URL地址从网上获取图片*/
 - (UIImage*)getImageFromURL:(NSString*)fileURL
 {
@@ -1033,22 +1052,47 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     NSData *data = [NSData dataWithContentsOfURL:url];
     image = [UIImage imageWithData:data];
     return image;
-    
 }
+//当键盘出现或改变时调用
+- (void)keyboardWillShow:(NSNotification *)aNotification
+{
+    //获取键盘的高度
+    NSDictionary *userInfo = [aNotification userInfo];
+    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+    CGRect keyboardRect = [aValue CGRectValue];
+    int height = keyboardRect.size.height;
+    [UIView animateWithDuration:0.5 animations:^{
+        if (_selectedIndex < 7) {
+            _fillScrollView.contentOffset = CGPointMake(0, height);
+        } else {
+            _fillScrollView.frame =CGRectMake(0, -height, self.view.frame.size.width, self.view.frame.size.height);
+        }
+//
+        
+    }];
+}
+
+//当键退出时调用
+- (void)keyboardWillHide:(NSNotification *)aNotification
+{
+    [UIView animateWithDuration:0.5 animations:^{
+        _fillScrollView.frame =CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    }];
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
 /*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
 
 @end
-
