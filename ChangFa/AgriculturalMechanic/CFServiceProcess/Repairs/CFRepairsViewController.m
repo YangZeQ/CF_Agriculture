@@ -652,6 +652,7 @@
         NSLog(@"上传完成!");
         self.fileIds = @"";
         NSInteger ids = 0;
+        NSLog(@"%ld", [result count]);
         for (id response in result) {
             NSLog(@"tupian%@", response);
             if (ids == 0) {
