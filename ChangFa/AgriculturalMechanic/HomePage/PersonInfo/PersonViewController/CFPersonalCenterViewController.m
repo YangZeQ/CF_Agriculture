@@ -75,7 +75,7 @@
     [self.view addSubview:personalHeaderImage];
     
     UIButton *imeiButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    imeiButton.frame = CGRectMake(CF_WIDTH - 68 * screenWidth, 64 * screenHeight, 38 * screenWidth, 38 * screenHeight);
+    imeiButton.frame = CGRectMake(CF_WIDTH - 68 * screenWidth, 64 * screenHeight + 20, 38 * screenWidth, 38 * screenHeight);
     [imeiButton setBackgroundImage:[UIImage imageNamed:@"Personal_IMEIBtn"] forState:UIControlStateNormal];
     [imeiButton addTarget:self action:@selector(imeiButtonClick) forControlEvents:UIControlEventTouchUpInside];
     [personalHeaderImage addSubview:imeiButton];

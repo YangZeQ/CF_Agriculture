@@ -24,7 +24,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    NSLog(@"iphone X %f  %f", kIs_iPhoneX_test, [UIScreen mainScreen].bounds.size.height / 1334);
     self.view.backgroundColor = [UIColor whiteColor];
     [self paintView];
     self.navigationController.navigationBar.barTintColor = ChangfaColor;
@@ -49,7 +49,7 @@
     [self.view addSubview:imageChang];
     // 账号、密码
 //    _accountText = [[UITextField alloc]initWithFrame:CGRectMake(56 * Width, 450 * Height, selfWidith - 56 * 2 * Width, 100 * Height)];
-    _accountText = [[CFLoginTextField alloc]initWithFrame:CGRectMake(56 * screenWidth, 550 * screenHeight, selfWidith - 56 * 2 * screenWidth, 100 * screenHeight)];
+    _accountText = [[CFLoginTextField alloc]initWithFrame:CGRectMake(56 * screenWidth, 550 * screenHeight, CF_WIDTH - 56 * 2 * screenWidth, 100 * screenHeight)];
     UIView *accountLine = [[UIView alloc]initWithFrame:CGRectMake(0, _accountText.frame.size.height - 2 * screenHeight, _accountText.frame.size.width, 2 * screenHeight)];
     accountLine.backgroundColor = [UIColor grayColor];
     [_accountText addSubview:accountLine];
@@ -200,13 +200,13 @@
 - (void)landingView{
 
     NSDictionary *dic = @{
-                           @"userName":self.accountText.text,
-                           @"userpwd":self.secretText.text,
+                           @"account":self.accountText.text,
+                           @"password":self.secretText.text,
                            @"loginType":@0,
                            @"accessToken":@"",
-                           @"openId":@"",
+                           @"code":@"",
                            };
-    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/userLogin" Params:dic Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+    [CFAFNetWorkingMethod requestDataWithUrl:@"user/appLogin" Params:dic Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"%@", responseObject);
         NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
         

@@ -282,30 +282,15 @@
 // 农机手
 - (void)createMachineWorkerView
 {
-    UILabel *myMachineLabel = [[UILabel alloc]initWithFrame:CGRectMake(38 * screenWidth, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 30 * screenHeight, selfWidith - 30 * screenWidth, 50 * screenHeight)];
+    UILabel *myMachineLabel = [[UILabel alloc]initWithFrame:CGRectMake(38 * screenWidth, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 30 * screenHeight, CF_WIDTH - 30 * screenWidth, 50 * screenHeight)];
     myMachineLabel.text = @"我的农机";
     myMachineLabel.textColor = [UIColor grayColor];
     myMachineLabel.font = CFFONT14;
     [self.view addSubview:myMachineLabel];
     
-//    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-//    _machineCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, myMachineLabel.frame.origin.y + myMachineLabel.frame.size.height, self.view.frame.size.width, 414 * screenHeight) collectionViewLayout:layout];
-//    _machineCollection.backgroundColor = [UIColor whiteColor];
-//    layout.sectionInset = UIEdgeInsetsMake(0 * screenHeight, 0 * screenWidth, 0 * screenHeight, 0 * screenWidth);
-//    layout.itemSize = CGSizeMake(334 * screenWidth, 414 * screenHeight);
-//    layout.minimumLineSpacing = 10 * screenWidth;
-//    layout.minimumInteritemSpacing = 0;
-//    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-//    _machineCollection.showsHorizontalScrollIndicator = NO;
-//    _machineCollection.delegate = self;
-//    _machineCollection.dataSource = self;
-//    [_machineCollection registerClass:[MyMachineCollectionViewCell class] forCellWithReuseIdentifier:@"machineCellId"];
-//    [_machineCollection registerClass:[AddMachineCollectionViewCell class] forCellWithReuseIdentifier:@"addMachineCellId"];
-//    [self.view addSubview:_machineCollection];
-//    [self getMyMachineInformation];
-//    return;
     _rightButton.hidden = YES;
     self.view.backgroundColor = UserBackgroundColor;
+    
     
     _navigationView.backgroundColor = [UIColor whiteColor];
     _navigationLabel.text = @"丁酉年腊月初六";
@@ -332,6 +317,15 @@
     _temperatureRangeLabel.font = CFFONT9;
     _temperatureRangeLabel.textAlignment = NSTextAlignmentRight;
     [_navigationView addSubview:_temperatureRangeLabel];
+    
+    if (kIs_iPhoneX_test) {
+        _navigationLabel.frame = CGRectMake(0, 20 + 20, _navigationView.frame.size.width, 44);
+        locationImage.frame = CGRectMake(30 * screenWidth, 34 + 20, 24 * screenWidth, 32 * screenHeight);
+        _locationLabel.frame = CGRectMake(73 * screenWidth, 34 + 20, 60 * screenWidth, 28 * screenHeight);
+        _weatherImage.frame = CGRectMake(600 * screenWidth, 33 + 20, 44 * screenWidth, 44 * screenHeight);
+        _temperatureLabel.frame = CGRectMake(688 * screenWidth, 28 + 20, 40 * screenWidth, 40 * screenHeight);
+        _temperatureRangeLabel.frame = CGRectMake(672 * screenWidth, 51 + 20, 56 * screenWidth, 17 * screenHeight);
+    }
     // 我的农机
 
     

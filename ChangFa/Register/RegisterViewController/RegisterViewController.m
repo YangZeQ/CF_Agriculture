@@ -36,7 +36,7 @@
 #pragma mark -创建视图
 - (void)creatView{
     // 手机号
-    _phoneNumberView = [[CFRegisterTextFieldView alloc] initWithImageName:@"Phone" Placeholder:@"请输入手机号" GetCode:NO SecretCode:NO Frame:CGRectMake(56 * screenWidth, 64 + 44 * screenHeight, self.view.frame.size.width - 2 * 56 * screenWidth, 100 * screenHeight) ScaleWidth:screenWidth ScaleHeight:screenHeight];
+    _phoneNumberView = [[CFRegisterTextFieldView alloc] initWithImageName:@"Phone" Placeholder:@"请输入手机号" GetCode:NO SecretCode:NO Frame:CGRectMake(56 * screenWidth, navHeight + 44 * screenHeight, self.view.frame.size.width - 2 * 56 * screenWidth, 100 * screenHeight) ScaleWidth:screenWidth ScaleHeight:screenHeight];
     _phoneNumberView.textField.delegate = self;
     //限制弹出数字键盘
     _phoneNumberView.textField.keyboardType = UIKeyboardTypeNumberPad;
@@ -95,7 +95,7 @@
     if (![CFClassMethod methodToJudgeTheMobile:self.phoneNumberView.textField.text]) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"请输入正确的手机号码" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [self.navigationController popViewControllerAnimated:YES];
+            
         }];
         [alert addAction:alertAction];
         [self presentViewController:alert animated:YES completion:^{
@@ -105,17 +105,16 @@
     }
     
     NSDictionary *dict = @{
-                           @"phone":self.phoneNumberView.textField.text,
-                           @"sendType":@1
+                           @"mobile":self.phoneNumberView.textField.text,
                            };
 
-    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/sendVerificationCode" Params:dict Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+    [CFAFNetWorkingMethod requestDataWithJavaUrl:@"message/sendMs" Loading:1 Params:dict Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"sendSuccess%@", responseObject);
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
             [self openCountdown];
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"已发送，注意查收" preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [self.navigationController popViewControllerAnimated:YES];
+//                [self.navigationController popViewControllerAnimated:YES];
             }];
             [alert addAction:alertAction];
             [self presentViewController:alert animated:YES completion:^{
@@ -125,7 +124,7 @@
         } else {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[[responseObject objectForKey:@"head"] objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [self.navigationController popViewControllerAnimated:YES];
+//                [self.navigationController popViewControllerAnimated:YES];
             }];
             [alert addAction:alertAction];
             [self presentViewController:alert animated:YES completion:^{
@@ -155,9 +154,9 @@
     NSDictionary *dict = @{
                            @"userName":@"",
                            @"userCode":@"",
-                           @"phone":self.phoneNumberView.textField.text,
-                           @"userpwd":self.putSecretView.textField.text,
-                           @"verification":self.IdentifyView.textField.text,
+                           @"account":self.phoneNumberView.textField.text,
+                           @"password":self.putSecretView.textField.text,
+                           @"code":self.IdentifyView.textField.text,
                            @"imageUrl":@"",
                            @"registerType":@1,
                            @"companyName":@"",
@@ -165,7 +164,7 @@
                            @"language":@"cn",
                            @"version":@"1.0",
                            };
-    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/userRegister" Params:dict Method:@"psot" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+    [CFAFNetWorkingMethod requestDataWithUrl:@"user/appRegister" Params:dict Method:@"psot" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"注册成功" preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

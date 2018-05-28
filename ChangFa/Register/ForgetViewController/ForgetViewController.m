@@ -34,7 +34,7 @@
 #pragma mark -创建视图
 - (void)creatView{
     // 手机号
-    _phoneNumberView = [[CFRegisterTextFieldView alloc] initWithImageName:@"Phone" Placeholder:@"请输入手机号" GetCode:NO SecretCode:NO Frame:CGRectMake(56 * screenWidth, 64 + 44 * screenHeight, self.view.frame.size.width - 2 * 56 * screenWidth, 100 * screenHeight) ScaleWidth:screenWidth ScaleHeight:screenHeight];
+    _phoneNumberView = [[CFRegisterTextFieldView alloc] initWithImageName:@"Phone" Placeholder:@"请输入手机号" GetCode:NO SecretCode:NO Frame:CGRectMake(56 * screenWidth, navHeight + 44 * screenHeight, self.view.frame.size.width - 2 * 56 * screenWidth, 100 * screenHeight) ScaleWidth:screenWidth ScaleHeight:screenHeight];
     _phoneNumberView.textField.delegate = self;
     //限制弹出数字键盘
     _phoneNumberView.textField.keyboardType = UIKeyboardTypeNumberPad;
@@ -77,10 +77,9 @@
         return;
     }
     NSDictionary *dict = @{
-                           @"phone":self.phoneNumberView.textField.text,
-                           @"sendType":@2
+                           @"mobile":self.phoneNumberView.textField.text,
                            };
-    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/sendVerificationCode" Params:dict Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+    [CFAFNetWorkingMethod requestDataWithUrl:@"message/sendMs" Params:dict Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"sendSuccess%@", responseObject);
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
             [self openCountdown];
@@ -111,12 +110,12 @@
 }
 - (void)registerButtonClick{
     NSDictionary *dict = @{
-                           @"phone":self.phoneNumberView.textField.text,
-                           @"verification":self.IdentifyView.textField.text,
-                           @"newPwd":self.putSecretView.textField.text,
+                           @"account":self.phoneNumberView.textField.text,
+                           @"code":self.IdentifyView.textField.text,
+                           @"password":self.putSecretView.textField.text,
                            };
     
-    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/forgetPassword" Params:dict Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+    [CFAFNetWorkingMethod requestDataWithUrl:@"user/forgetPsd" Params:dict Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"修改成功" preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
