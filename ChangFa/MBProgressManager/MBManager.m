@@ -68,7 +68,7 @@ BOOL isShowGloomy;//是否显示深色背景
         hud.removeFromSuperViewOnHide = YES;
         [hud hide:NO afterDelay:showTime];
         if (isHerizontal) {
-            hud.transform = CGAffineTransformMakeRotation(M_PI_2);
+//            hud.transform = CGAffineTransformMakeRotation(M_PI_2);
         }
     });
 }
