@@ -615,7 +615,7 @@
 		8B5396BD200E023E00D0AF4D /* PersonInfo */ = {
 			isa = PBXGroup;
 			children = (
-				8BA9A828209451B400DE5B4A /* CF_Integral */,
+				8BA9A828209451B400DE5B4A /* CFIntegral */,
 				8B5396C0200E027F00D0AF4D /* PersonView */,
 				8B5396BF200E027200D0AF4D /* PersonModel */,
 				8B5396BE200E025000D0AF4D /* PersonViewController */,
@@ -1243,7 +1243,7 @@
 			path = CFWorkOrderInfo;
 			sourceTree = "<group>";
 		};
-		8BA9A828209451B400DE5B4A /* CF_Integral */ = {
+		8BA9A828209451B400DE5B4A /* CFIntegral */ = {
 			isa = PBXGroup;
 			children = (
 				8BA9A829209451EB00DE5B4A /* CFIntegralViewController.h */,
@@ -1251,7 +1251,7 @@
 				8BA9A82C209455FA00DE5B4A /* CFIntegralTableViewCell.h */,
 				8BA9A82D209455FA00DE5B4A /* CFIntegralTableViewCell.m */,
 			);
-			path = CF_Integral;
+			path = CFIntegral;
 			sourceTree = "<group>";
 		};
 		8BD18F2B202AD44E00FFB637 /* CFAgency-Return */ = {
