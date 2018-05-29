@@ -469,7 +469,8 @@
                 
                 NSData *data = [[params objectForKey:@"data"] dataUsingEncoding:NSUTF8StringEncoding];
                 NSLog(@" %@, %@", [params objectForKey:@"data"], data);
-                [formData appendPartWithFileData:data name:key fileName:[NSString stringWithFormat:@"%@.png",key] mimeType:@"image/png"];
+//                [formData appendPartWithFileData:data name:key fileName:[NSString stringWithFormat:@"%@.png",key] mimeType:@"image/png"];
+                [formData appendPartWithFileData:UIImageJPEGRepresentation([params objectForKey:@"image"], 1.0) name:@"file" fileName:@"avatar.png" mimeType:@"image/png"];
             }
         }
     } progress:^(NSProgress * _Nonnull uploadProgress) {

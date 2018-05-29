@@ -46,4 +46,5 @@ typedef NS_ENUM(NSUInteger, RequestType) {
                                            Image:(NSString *)image
                                          Success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
                                          Failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure;
+
 @end

@@ -14,14 +14,12 @@
 #import "ChangImageViewController.h"
 #import "UIImageView+WebCache.h"
 #import "CFPickView.h"
-@interface PersonViewController ()<AddressPickerViewDelegate, SexPickerViewDelegate, IdentifyPickerViewDelegate>
+@interface PersonViewController ()<AddressPickerViewDelegate>
 //@property (nonatomic, strong)UITableView *sexTableView;
 //@property (nonatomic, strong)UIView *pickView;
 //@property (nonatomic, strong)NSMutableArray *arrayInfo;
 @property (nonatomic ,strong)AddressPickerView * pickerView;
 @property (nonatomic, strong)UIView *backView;
-@property (nonatomic, strong)AddressPickerView *pickViewSex;//性别、身份
-@property (nonatomic, strong)AddressPickerView *pickViewID;
 
 @property (nonatomic, strong)UIButton *sexInfo;
 @property (nonatomic, strong)UIButton *identifyInfo;
@@ -282,8 +280,8 @@
         change.imageUrl = self.headImageUrl;
         [self.navigationController pushViewController:change animated:YES];
     } else if (sender.tag == 1002 || sender.tag == 1007) {
-        [self.pickViewSex show];
-        _backView.hidden = NO;
+//        [self.pickViewSex show];
+//        _backView.hidden = NO;
     } else if (sender.tag == 1003 || sender.tag == 1008) {
 //        [self.pickViewID show];
 //        _backView.hidden = NO;

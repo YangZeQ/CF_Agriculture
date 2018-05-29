@@ -142,6 +142,19 @@
         formatter.dateFormat = @"yyyyMMddHHmmss";
         NSString *imageName = [formatter stringFromDate:[NSDate date]];
         NSString *fileName = [NSString stringWithFormat:@"%@.png",imageName];
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:@"image", image, nil];
+    [CFAFNetWorkingMethod requestDataWithUrl:@"Common/uploadAvatarFile" Loading:1 Params:dict Method:@"post" Image:@"image" Success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"%@", responseObject);
+        NSLog(@"%@", [[responseObject objectForKey:@"head"] objectForKey:@"message"]);
+        if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
+            NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+            [userDefault setObject:[[responseObject objectForKey:@"body"] objectForKey:@"attachUrl"] forKey:@"UserHeadUrl"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ChangeHeadImage" object:nil userInfo:nil];
+        }
+    } Failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSLog(@"%@", error);
+    }];
+    return;
     // 获得网络管理者
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     

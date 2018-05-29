@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B0C29E420BCDF4F00834303 /* CFCommenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0C29DC20BCDF4F00834303 /* CFCommenViewController.m */; };
+		8B0C29E520BCDF4F00834303 /* CFCommentInfoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0C29DE20BCDF4F00834303 /* CFCommentInfoTableViewCell.m */; };
+		8B0C29E620BCDF4F00834303 /* CFCommentInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0C29E020BCDF4F00834303 /* CFCommentInfoViewController.m */; };
+		8B0C29E720BCDF4F00834303 /* CFCommentModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0C29E320BCDF4F00834303 /* CFCommentModel.m */; };
+		8B0C29EA20BCE0EE00834303 /* CFPreviewPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0C29E820BCE0ED00834303 /* CFPreviewPhotoViewController.m */; };
 		8B0D45142052A4DF0033C31F /* CFAttributeTouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0D45132052A4DF0033C31F /* CFAttributeTouchView.m */; };
 		8B1DE4ED20500657009D7D79 /* CFPickMachineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B1DE4EC20500657009D7D79 /* CFPickMachineView.m */; };
 		8B3E1DF7204D33FB002A2CCB /* CFAlarmNewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B3E1DF6204D33FB002A2CCB /* CFAlarmNewsViewController.m */; };
@@ -68,17 +73,12 @@
 		8B81DEEB202298D300CE2022 /* CFAFNetWorkingMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B81DEE8202298D300CE2022 /* CFAFNetWorkingMethod.m */; };
 		8B89F49C2023EF0C004705CB /* UICollectionViewCell+CFGlobalMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B89F49B2023EF0C004705CB /* UICollectionViewCell+CFGlobalMethod.m */; };
 		8B89F49F2023F007004705CB /* CFPickView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B89F49E2023F007004705CB /* CFPickView.m */; };
-		8B938CF620BBDCD5000B016D /* CFCommentInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938CEE20BBDCD5000B016D /* CFCommentInfoViewController.m */; };
-		8B938CF720BBDCD5000B016D /* CFCommentModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938CF120BBDCD5000B016D /* CFCommentModel.m */; };
-		8B938CF820BBDCD5000B016D /* CFCommenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938CF320BBDCD5000B016D /* CFCommenViewController.m */; };
-		8B938CF920BBDCD5000B016D /* CFCommentInfoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938CF420BBDCD5000B016D /* CFCommentInfoTableViewCell.m */; };
 		8B938D0920BBDD67000B016D /* CFRepairsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938CFE20BBDD67000B016D /* CFRepairsViewController.m */; };
 		8B938D0A20BBDD67000B016D /* CFRepairsDetailInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938D0020BBDD67000B016D /* CFRepairsDetailInfoViewController.m */; };
 		8B938D0B20BBDD67000B016D /* CFRepairsMachineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938D0320BBDD67000B016D /* CFRepairsMachineTableViewCell.m */; };
 		8B938D0C20BBDD67000B016D /* CFPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938D0620BBDD67000B016D /* CFPhotoViewController.m */; };
 		8B938D0D20BBDD67000B016D /* CFRepairsSelectedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938D0720BBDD67000B016D /* CFRepairsSelectedViewController.m */; };
 		8B938D0E20BBDD67000B016D /* CFRepairsPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938D0820BBDD67000B016D /* CFRepairsPhotoCell.m */; };
-		8B938D1220BBDD8A000B016D /* CFPreviewPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938D1020BBDD89000B016D /* CFPreviewPhotoViewController.m */; };
 		8B938D3E20BBDE4A000B016D /* CFRepairsRecordCourseTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938D3520BBDE49000B016D /* CFRepairsRecordCourseTableViewCell.m */; };
 		8B938D3F20BBDE4A000B016D /* CFRepairsRecordTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938D3820BBDE49000B016D /* CFRepairsRecordTableViewCell.m */; };
 		8B938D4020BBDE4A000B016D /* CFRepairsRecordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B938D3A20BBDE4A000B016D /* CFRepairsRecordModel.m */; };
@@ -198,6 +198,16 @@
 /* Begin PBXFileReference section */
 		183261FB62C5A4858C34C71C /* Pods_ChangFa.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChangFa.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FE29225E04769DEBACBCFDF /* Pods-ChangFa.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChangFa.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ChangFa/Pods-ChangFa.debug.xcconfig"; sourceTree = "<group>"; };
+		8B0C29DC20BCDF4F00834303 /* CFCommenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFCommenViewController.m; sourceTree = "<group>"; };
+		8B0C29DD20BCDF4F00834303 /* CFCommentInfoTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFCommentInfoTableViewCell.h; sourceTree = "<group>"; };
+		8B0C29DE20BCDF4F00834303 /* CFCommentInfoTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFCommentInfoTableViewCell.m; sourceTree = "<group>"; };
+		8B0C29DF20BCDF4F00834303 /* CFCommentInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFCommentInfoViewController.h; sourceTree = "<group>"; };
+		8B0C29E020BCDF4F00834303 /* CFCommentInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFCommentInfoViewController.m; sourceTree = "<group>"; };
+		8B0C29E120BCDF4F00834303 /* CFCommenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFCommenViewController.h; sourceTree = "<group>"; };
+		8B0C29E220BCDF4F00834303 /* CFCommentModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFCommentModel.h; sourceTree = "<group>"; };
+		8B0C29E320BCDF4F00834303 /* CFCommentModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFCommentModel.m; sourceTree = "<group>"; };
+		8B0C29E820BCE0ED00834303 /* CFPreviewPhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFPreviewPhotoViewController.m; sourceTree = "<group>"; };
+		8B0C29E920BCE0ED00834303 /* CFPreviewPhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFPreviewPhotoViewController.h; sourceTree = "<group>"; };
 		8B0D45122052A4DF0033C31F /* CFAttributeTouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAttributeTouchView.h; sourceTree = "<group>"; };
 		8B0D45132052A4DF0033C31F /* CFAttributeTouchView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFAttributeTouchView.m; sourceTree = "<group>"; };
 		8B1DE4EB20500657009D7D79 /* CFPickMachineView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPickMachineView.h; sourceTree = "<group>"; };
@@ -321,14 +331,6 @@
 		8B89F49B2023EF0C004705CB /* UICollectionViewCell+CFGlobalMethod.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UICollectionViewCell+CFGlobalMethod.m"; sourceTree = "<group>"; };
 		8B89F49D2023F007004705CB /* CFPickView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPickView.h; sourceTree = "<group>"; };
 		8B89F49E2023F007004705CB /* CFPickView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFPickView.m; sourceTree = "<group>"; };
-		8B938CEE20BBDCD5000B016D /* CFCommentInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CFCommentInfoViewController.m; path = ChangFa/AgriculturalMechanic/ServiceProcess/1/CFCommentInfoViewController.m; sourceTree = SOURCE_ROOT; };
-		8B938CEF20BBDCD5000B016D /* CFCommentInfoTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFCommentInfoTableViewCell.h; path = ChangFa/AgriculturalMechanic/ServiceProcess/1/CFCommentInfoTableViewCell.h; sourceTree = SOURCE_ROOT; };
-		8B938CF020BBDCD5000B016D /* CFCommenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFCommenViewController.h; path = ChangFa/AgriculturalMechanic/ServiceProcess/1/CFCommenViewController.h; sourceTree = SOURCE_ROOT; };
-		8B938CF120BBDCD5000B016D /* CFCommentModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CFCommentModel.m; path = ChangFa/AgriculturalMechanic/ServiceProcess/1/CFCommentModel.m; sourceTree = SOURCE_ROOT; };
-		8B938CF220BBDCD5000B016D /* CFCommentModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFCommentModel.h; path = ChangFa/AgriculturalMechanic/ServiceProcess/1/CFCommentModel.h; sourceTree = SOURCE_ROOT; };
-		8B938CF320BBDCD5000B016D /* CFCommenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CFCommenViewController.m; path = ChangFa/AgriculturalMechanic/ServiceProcess/1/CFCommenViewController.m; sourceTree = SOURCE_ROOT; };
-		8B938CF420BBDCD5000B016D /* CFCommentInfoTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CFCommentInfoTableViewCell.m; path = ChangFa/AgriculturalMechanic/ServiceProcess/1/CFCommentInfoTableViewCell.m; sourceTree = SOURCE_ROOT; };
-		8B938CF520BBDCD5000B016D /* CFCommentInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFCommentInfoViewController.h; path = ChangFa/AgriculturalMechanic/ServiceProcess/1/CFCommentInfoViewController.h; sourceTree = SOURCE_ROOT; };
 		8B938CFD20BBDD67000B016D /* CFRepairsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFRepairsViewController.h; sourceTree = "<group>"; };
 		8B938CFE20BBDD67000B016D /* CFRepairsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFRepairsViewController.m; sourceTree = "<group>"; };
 		8B938CFF20BBDD67000B016D /* CFRepairsSelectedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFRepairsSelectedViewController.h; sourceTree = "<group>"; };
@@ -341,8 +343,6 @@
 		8B938D0620BBDD67000B016D /* CFPhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFPhotoViewController.m; sourceTree = "<group>"; };
 		8B938D0720BBDD67000B016D /* CFRepairsSelectedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFRepairsSelectedViewController.m; sourceTree = "<group>"; };
 		8B938D0820BBDD67000B016D /* CFRepairsPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFRepairsPhotoCell.m; sourceTree = "<group>"; };
-		8B938D1020BBDD89000B016D /* CFPreviewPhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CFPreviewPhotoViewController.m; path = ChangFa/AgriculturalMechanic/1/CFPreviewPhotoViewController.m; sourceTree = SOURCE_ROOT; };
-		8B938D1120BBDD8A000B016D /* CFPreviewPhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFPreviewPhotoViewController.h; path = ChangFa/AgriculturalMechanic/1/CFPreviewPhotoViewController.h; sourceTree = SOURCE_ROOT; };
 		8B938D3420BBDE49000B016D /* CFRepairsRecordInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFRepairsRecordInfoViewController.h; sourceTree = "<group>"; };
 		8B938D3520BBDE49000B016D /* CFRepairsRecordCourseTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CFRepairsRecordCourseTableViewCell.m; sourceTree = "<group>"; };
 		8B938D3620BBDE49000B016D /* CFRepairsRecordTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFRepairsRecordTableViewCell.h; sourceTree = "<group>"; };
@@ -1064,14 +1064,14 @@
 		8B938CED20BBDCAF000B016D /* Comment */ = {
 			isa = PBXGroup;
 			children = (
-				8B938CEF20BBDCD5000B016D /* CFCommentInfoTableViewCell.h */,
-				8B938CF420BBDCD5000B016D /* CFCommentInfoTableViewCell.m */,
-				8B938CF520BBDCD5000B016D /* CFCommentInfoViewController.h */,
-				8B938CEE20BBDCD5000B016D /* CFCommentInfoViewController.m */,
-				8B938CF220BBDCD5000B016D /* CFCommentModel.h */,
-				8B938CF120BBDCD5000B016D /* CFCommentModel.m */,
-				8B938CF020BBDCD5000B016D /* CFCommenViewController.h */,
-				8B938CF320BBDCD5000B016D /* CFCommenViewController.m */,
+				8B0C29DD20BCDF4F00834303 /* CFCommentInfoTableViewCell.h */,
+				8B0C29DE20BCDF4F00834303 /* CFCommentInfoTableViewCell.m */,
+				8B0C29DF20BCDF4F00834303 /* CFCommentInfoViewController.h */,
+				8B0C29E020BCDF4F00834303 /* CFCommentInfoViewController.m */,
+				8B0C29E220BCDF4F00834303 /* CFCommentModel.h */,
+				8B0C29E320BCDF4F00834303 /* CFCommentModel.m */,
+				8B0C29E120BCDF4F00834303 /* CFCommenViewController.h */,
+				8B0C29DC20BCDF4F00834303 /* CFCommenViewController.m */,
 			);
 			path = Comment;
 			sourceTree = "<group>";
@@ -1098,8 +1098,8 @@
 		8B938D0F20BBDD74000B016D /* PreviewPhoto */ = {
 			isa = PBXGroup;
 			children = (
-				8B938D1120BBDD8A000B016D /* CFPreviewPhotoViewController.h */,
-				8B938D1020BBDD89000B016D /* CFPreviewPhotoViewController.m */,
+				8B0C29E920BCE0ED00834303 /* CFPreviewPhotoViewController.h */,
+				8B0C29E820BCE0ED00834303 /* CFPreviewPhotoViewController.m */,
 			);
 			path = PreviewPhoto;
 			sourceTree = "<group>";
@@ -1753,12 +1753,11 @@
 				8B938D4D20BBDE67000B016D /* CFRepairsStationViewController.m in Sources */,
 				8B57D3A120059A7D0069118E /* NewsModel.m in Sources */,
 				8B6EDBA0201983630082DEF0 /* CFAgencySellSuccessViewController.m in Sources */,
+				8B0C29E520BCDF4F00834303 /* CFCommentInfoTableViewCell.m in Sources */,
 				8B598900200EF06D00A35683 /* MachineInfoTableViewCell.m in Sources */,
 				D70FD8A71FF1FC94008CADFB /* RootTabbarViewController.m in Sources */,
 				8B81DEEB202298D300CE2022 /* CFAFNetWorkingMethod.m in Sources */,
 				8B89F49C2023EF0C004705CB /* UICollectionViewCell+CFGlobalMethod.m in Sources */,
-				8B938CF620BBDCD5000B016D /* CFCommentInfoViewController.m in Sources */,
-				8B938CF920BBDCD5000B016D /* CFCommentInfoTableViewCell.m in Sources */,
 				8B5396B8200DCE8B00D0AF4D /* PersonModel.m in Sources */,
 				8BA9A82E209455FA00DE5B4A /* CFIntegralTableViewCell.m in Sources */,
 				8B938D5420BBDF83000B016D /* CFExpenseSettlementViewController.m in Sources */,
@@ -1766,7 +1765,6 @@
 				8B5988FC200EE57200A35683 /* OutputMachineViewController.m in Sources */,
 				8B7EDBA02029A63B006ECEDC /* CFAgencyRetreatStatusViewController.m in Sources */,
 				8B938D7A20BBDFFC000B016D /* CFWordOrderInfoModel.m in Sources */,
-				8B938D1220BBDD8A000B016D /* CFPreviewPhotoViewController.m in Sources */,
 				8B598906200EF09800A35683 /* InfoTableViewCell.m in Sources */,
 				8BA9A8312094592300DE5B4A /* CFPersonalInfoViewController.m in Sources */,
 				8B938D4E20BBDE67000B016D /* CFRepairsStationInfoViewController.m in Sources */,
@@ -1803,8 +1801,11 @@
 				8BA9A8262094425C00DE5B4A /* CFPersonalCenterTableViewCell.m in Sources */,
 				D70FD8B11FF21DBB008CADFB /* RegisterViewController.m in Sources */,
 				D7222CD21FF5C15B0063929E /* CFHomePageViewController.m in Sources */,
+				8B0C29EA20BCE0EE00834303 /* CFPreviewPhotoViewController.m in Sources */,
 				D723EB2720044DCF00F71389 /* Province.m in Sources */,
 				D7222CE51FFB79060063929E /* CFMisteViewButton.m in Sources */,
+				8B0C29E620BCDF4F00834303 /* CFCommentInfoViewController.m in Sources */,
+				8B0C29E420BCDF4F00834303 /* CFCommenViewController.m in Sources */,
 				D70FD8AA1FF1FC9A008CADFB /* CFLoginViewController.m in Sources */,
 				8B3E1DFA204D38C9002A2CCB /* CFAlarmNewsTableViewCell.m in Sources */,
 				8B58FF212090013D00930A33 /* AdditionScanView.m in Sources */,
@@ -1844,7 +1845,6 @@
 				8B572E1A20170F3000DAC3E9 /* CFAgencySellViewController.m in Sources */,
 				8B938D3E20BBDE4A000B016D /* CFRepairsRecordCourseTableViewCell.m in Sources */,
 				8B572E23201725A000DAC3E9 /* CFAgencySoldViewController.m in Sources */,
-				8B938CF820BBDCD5000B016D /* CFCommenViewController.m in Sources */,
 				8B938D7B20BBDFFC000B016D /* CFWorkOrderModel.m in Sources */,
 				8B3E1DF7204D33FB002A2CCB /* CFAlarmNewsViewController.m in Sources */,
 				8B572E1720170A8A00DAC3E9 /* CFAgencyMachineStatusViewController.m in Sources */,
@@ -1854,8 +1854,8 @@
 				8B938D0D20BBDD67000B016D /* CFRepairsSelectedViewController.m in Sources */,
 				8B5732E9201D9E800098C0A4 /* ProvinceModel.m in Sources */,
 				D702F6521FF13BF5002A2B78 /* main.m in Sources */,
-				8B938CF720BBDCD5000B016D /* CFCommentModel.m in Sources */,
 				8B5C7D9A202158BE00E47E1A /* CFMBProgressHUD.m in Sources */,
+				8B0C29E720BCDF4F00834303 /* CFCommentModel.m in Sources */,
 				D7222CD51FF5C1720063929E /* MapViewController.m in Sources */,
 				8B938D6A20BBDFA1000B016D /* TestViewController.m in Sources */,
 				8B6304D82099A9D300B4DD6B /* CFMyMachineListViewController.m in Sources */,
