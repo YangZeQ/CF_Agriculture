@@ -19,7 +19,7 @@
 #import "MBManager.h"
 #import "MJRefresh.h"
 #import "UIImageView+WebCache.h"
-
+#import "UIView+SDAutoLayout.h"
 //是否iPhoneX YES:iPhoneX屏幕 NO:传统屏幕
 #define kIs_iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
 //是否iPhoneX 1:iPhoneX屏幕 0:传统屏幕
@@ -47,6 +47,7 @@ tmp ;\
 #define BackgroundColor [UIColor colorWithRed:232 / 255.0 green:235 / 255.0 blue:234 / 255.0 alpha:1]
 #define UserBackgroundColor [UIColor colorWithRed:244 / 255.0 green:247 / 255.0 blue:247 / 255.0 alpha:1]
 #define BlackTextColor [UIColor colorWithRed:107 / 255.0 green:107 / 255.0 blue:107 / 255.0 alpha:1]
+#define UIColorWithRGBA(r,g,b,a) [UIColor colorWithRed:(r) / 255.0 green:(g) / 255.0 blue:(b) / 255.0 alpha:(a)]
 #define navHeight (self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height)
 
 ////判断设备类型

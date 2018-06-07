@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0930"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '05C5D2BC03C7CA5A7013ABDAABD271C6'
-               BlueprintName = 'YYText'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'YYText.framework'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0CF2DF2EC7E5E99705E12D57BA390E69"
+               BlueprintName = "YYText"
+               ReferencedContainer = "container:Pods.xcodeproj"
+               BuildableName = "YYText.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

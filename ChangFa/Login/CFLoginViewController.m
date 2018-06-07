@@ -24,7 +24,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSLog(@"iphone X %f  %f", kIs_iPhoneX_test, [UIScreen mainScreen].bounds.size.height / 1334);
     self.view.backgroundColor = [UIColor whiteColor];
     [self paintView];
     self.navigationController.navigationBar.barTintColor = ChangfaColor;

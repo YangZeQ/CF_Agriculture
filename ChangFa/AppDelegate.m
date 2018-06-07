@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import <AMapFoundationKit/AMapFoundationKit.h>
 #import <Bugly/Bugly.h>
+#import "CFRepairOrderViewController.h"
 @interface AppDelegate ()<BuglyDelegate>
 
 @end
@@ -19,7 +20,8 @@
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
     CFLoginViewController *landViewC = [[CFLoginViewController alloc]init];
-    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:landViewC];
+    CFRepairOrderViewController *repair = [[CFRepairOrderViewController alloc]init];
+    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:repair];
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     [[AMapServices sharedServices] setEnableHTTPS:YES];
