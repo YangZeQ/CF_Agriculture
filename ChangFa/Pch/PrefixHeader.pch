@@ -63,6 +63,7 @@ tmp ;\
 #define CFFONT13 [UIFont systemFontOfSize:[self autoScaleW:13]]
 #define CFFONT12 [UIFont systemFontOfSize:[self autoScaleW:12]]
 #define CFFONT11 [UIFont systemFontOfSize:[self autoScaleW:11]]
+#define CFFONT10 [UIFont systemFontOfSize:[self autoScaleW:10]]
 #define CFFONT9 [UIFont systemFontOfSize:[self autoScaleW:9]]
 
 #define UserHeadUrl [userDefault objectForKey:@"UserHeadUrl"]
@@ -71,7 +72,7 @@ tmp ;\
 
 // 线上接口
 #define onlineUrl @"http://47.96.20.14:8085/api/v1/"
-#define onlineJavaUrl @"http://192.168.2.4:8080/changfa_system/"
+#define onlineJavaUrl @"http://192.168.0.102:8080/changfa_system/"
 #define CF_Amap @"9a565181533f74f5cc5c4902391b8f7b"
 #define CF_Bugly @"1abc035ec9"
 // Include any system framework and library headers here that should be included in all compilation units.

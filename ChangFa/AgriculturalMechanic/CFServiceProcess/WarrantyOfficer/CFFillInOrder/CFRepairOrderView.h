@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CFReasonTextView.h"
 
 typedef enum : NSUInteger {
     FillViewStylePhoto,// 合影
@@ -14,7 +15,10 @@ typedef enum : NSUInteger {
     FillViewStyleReason,//说明
     FillViewStyleParts,//零件
 } FillViewStyle;
-
+typedef enum : NSUInteger {
+    FaultTypePart,// 零件
+    FaultTypeCommon,// 普通
+} FaultType;
 typedef void(^chooseTypeBlock)(void);
 @interface CFRepairOrderView : UIView
 @property (nonatomic, assign)BOOL isSelected;
@@ -25,8 +29,11 @@ typedef void(^chooseTypeBlock)(void);
 @property (nonatomic, strong)UILabel *statuslabel;
 @property (nonatomic, strong)UIButton *selectedButton;
 @property (nonatomic, strong)UIView *partTypeView;
+@property (nonatomic, strong)CFReasonTextView *reasonView;
+@property (nonatomic, strong)UILabel *textNumberLabel;
 
 @property (nonatomic, copy)chooseTypeBlock chooseTypeBlock;
 
 - (instancetype)initWithViewStyle:(FillViewStyle)viewStyle;
+- (void)addMachineFaultViewWithType:(FaultType)type;
 @end

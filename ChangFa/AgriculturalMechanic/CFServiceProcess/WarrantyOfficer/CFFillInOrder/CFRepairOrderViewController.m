@@ -22,6 +22,33 @@
         _vagueView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
         _vagueView.hidden = YES;
         [[[UIApplication  sharedApplication] keyWindow] addSubview:_vagueView] ;
+        
+        UIButton *partFaultBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_vagueView addSubview:partFaultBtn];
+        partFaultBtn.sd_layout.topSpaceToView(_vagueView, 477).leftSpaceToView(_vagueView, 0).rightSpaceToView(_vagueView, 0).heightIs(60);
+        [partFaultBtn setBackgroundColor:[UIColor whiteColor]];
+        [partFaultBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
+        [partFaultBtn setTitleColor:UIColorWithRGBA(107, 107, 107, 1) forState:UIControlStateNormal];
+        partFaultBtn.titleLabel.font = CFFONT15;
+        [partFaultBtn addTarget:self action:@selector(partBtnClick) forControlEvents:UIControlEventTouchUpInside];
+        
+        UIButton *commonFaultBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_vagueView addSubview:commonFaultBtn];
+        commonFaultBtn.sd_layout.topSpaceToView(partFaultBtn, 1).leftSpaceToView(_vagueView, 0).rightSpaceToView(_vagueView, 0).heightIs(60);
+        [commonFaultBtn setBackgroundColor:[UIColor whiteColor]];
+        [commonFaultBtn setTitle:@"普通故障" forState:UIControlStateNormal];
+        [commonFaultBtn setTitleColor:UIColorWithRGBA(107, 107, 107, 1) forState:UIControlStateNormal];
+        commonFaultBtn.titleLabel.font = CFFONT15;
+        [commonFaultBtn addTarget:self action:@selector(commonBtnClick) forControlEvents:UIControlEventTouchUpInside];
+        
+        UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_vagueView addSubview:cancelBtn];
+        cancelBtn.sd_layout.topSpaceToView(commonFaultBtn, 10).leftSpaceToView(_vagueView, 0).rightSpaceToView(_vagueView, 0).heightIs(60);
+        [cancelBtn setBackgroundColor:[UIColor whiteColor]];
+        [cancelBtn setTitle:@"取消" forState:UIControlStateNormal];
+        [cancelBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [cancelBtn addTarget:self action:@selector(cancelBtnClick) forControlEvents:UIControlEventTouchUpInside];
+        cancelBtn.titleLabel.font = CFFONT15;
     }
     return _vagueView;
 }
@@ -46,6 +73,7 @@
     groupPhotoView.tag = 1001;
     groupPhotoView.selectedButton.tag = 2001;
     groupPhotoView.titleLabel.text = @"人机合影";
+    groupPhotoView.statuslabel.hidden = YES;
     [groupPhotoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     CFRepairOrderView *faultPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
@@ -55,6 +83,7 @@
     faultPhotoView.tag = 1002;
     faultPhotoView.selectedButton.tag = 2002;
     faultPhotoView.titleLabel.text = @"故障照片";
+    faultPhotoView.statuslabel.hidden = YES;
     [faultPhotoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     CFRepairOrderView *machineInfoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleInfo];
@@ -64,6 +93,7 @@
     machineInfoView.tag = 1003;
     machineInfoView.selectedButton.tag = 2003;
     machineInfoView.titleLabel.text = @"农机信息";
+    machineInfoView.statuslabel.hidden = YES;
     [machineInfoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     CFRepairOrderView *machineUseView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
@@ -73,6 +103,7 @@
     machineUseView.tag = 1004;
     machineUseView.selectedButton.tag = 2004;
     machineUseView.titleLabel.text = @"农机用途说明";
+    machineUseView.statuslabel.hidden = YES;
     [machineUseView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     _machineFaultView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleParts];
@@ -82,6 +113,7 @@
     _machineFaultView.tag = 1005;
     _machineFaultView.selectedButton.tag = 2005;
     _machineFaultView.titleLabel.text = @"农机故障说明";
+    _machineFaultView.statuslabel.hidden = YES;
     [_machineFaultView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     __block CFRepairOrderViewController *weakself = self;
     _machineFaultView.chooseTypeBlock = ^{
@@ -95,6 +127,7 @@
     userOpinionView.tag = 1006;
     userOpinionView.selectedButton.tag = 2006;
     userOpinionView.titleLabel.text = @"客户意见";
+    userOpinionView.statuslabel.hidden = YES;
     [userOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     CFRepairOrderView *handleOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
@@ -104,6 +137,7 @@
     handleOpinionView.tag = 1007;
     handleOpinionView.selectedButton.tag = 2007;
     handleOpinionView.titleLabel.text = @"处理意见";
+    handleOpinionView.statuslabel.hidden = YES;
     [handleOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     [_repairOrderScroll sd_addSubviews:@[groupPhotoView,faultPhotoView,machineInfoView,machineUseView,_machineFaultView,userOpinionView,handleOpinionView]];
@@ -120,7 +154,20 @@
         }
     }
 }
-
+- (void)partBtnClick
+{
+    [_machineFaultView addMachineFaultViewWithType:FaultTypePart];
+    self.vagueView.hidden = YES;
+}
+- (void)commonBtnClick
+{
+    [_machineFaultView addMachineFaultViewWithType:FaultTypeCommon];
+    self.vagueView.hidden = YES;
+}
+- (void)cancelBtnClick
+{
+    self.vagueView.hidden = YES;
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
