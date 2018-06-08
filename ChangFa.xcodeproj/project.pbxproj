@@ -55,6 +55,7 @@
 		8B5F2F27202828EF00BF04B0 /* CFAgencyReturnViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F2F26202828EF00BF04B0 /* CFAgencyReturnViewController.m */; };
 		8B6304D82099A9D300B4DD6B /* CFMyMachineListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6304D72099A9D300B4DD6B /* CFMyMachineListViewController.m */; };
 		8B6304DB2099B31500B4DD6B /* CFMyMachineListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6304DA2099B31500B4DD6B /* CFMyMachineListTableViewCell.m */; };
+		8B6C861020CA551D0059B37B /* CFFaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6C860F20CA551D0059B37B /* CFFaultView.m */; };
 		8B6EDBA0201983630082DEF0 /* CFAgencySellSuccessViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6EDB9F201983630082DEF0 /* CFAgencySellSuccessViewController.m */; };
 		8B6EDBA32019ABC70082DEF0 /* CFAgencyMachineDetailInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6EDBA22019ABC70082DEF0 /* CFAgencyMachineDetailInfoViewController.m */; };
 		8B6EDBA92019E6BC0082DEF0 /* CFSalesPersonMyAgencyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6EDBA82019E6BC0082DEF0 /* CFSalesPersonMyAgencyViewController.m */; };
@@ -297,6 +298,8 @@
 		8B6304D72099A9D300B4DD6B /* CFMyMachineListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFMyMachineListViewController.m; sourceTree = "<group>"; };
 		8B6304D92099B31500B4DD6B /* CFMyMachineListTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFMyMachineListTableViewCell.h; sourceTree = "<group>"; };
 		8B6304DA2099B31500B4DD6B /* CFMyMachineListTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFMyMachineListTableViewCell.m; sourceTree = "<group>"; };
+		8B6C860E20CA551D0059B37B /* CFFaultView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFFaultView.h; sourceTree = "<group>"; };
+		8B6C860F20CA551D0059B37B /* CFFaultView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFFaultView.m; sourceTree = "<group>"; };
 		8B6EDB9E201983630082DEF0 /* CFAgencySellSuccessViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAgencySellSuccessViewController.h; sourceTree = "<group>"; };
 		8B6EDB9F201983630082DEF0 /* CFAgencySellSuccessViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFAgencySellSuccessViewController.m; sourceTree = "<group>"; };
 		8B6EDBA12019ABC70082DEF0 /* CFAgencyMachineDetailInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAgencyMachineDetailInfoViewController.h; sourceTree = "<group>"; };
@@ -1184,6 +1187,8 @@
 				8B9C5F5220C782EE00CC7EC5 /* CFRepairOrderViewController.m */,
 				8B9C5F5420C782FD00CC7EC5 /* CFRepairOrderView.h */,
 				8B9C5F5520C782FD00CC7EC5 /* CFRepairOrderView.m */,
+				8B6C860E20CA551D0059B37B /* CFFaultView.h */,
+				8B6C860F20CA551D0059B37B /* CFFaultView.m */,
 			);
 			path = CFFillInOrder;
 			sourceTree = "<group>";
@@ -1797,6 +1802,7 @@
 				8B51BE9C2018466E00712327 /* CFAgencySendingTableViewCell.m in Sources */,
 				8B938D6720BBDFA1000B016D /* CFFillOrderView.m in Sources */,
 				8B938D0C20BBDD67000B016D /* CFPhotoViewController.m in Sources */,
+				8B6C861020CA551D0059B37B /* CFFaultView.m in Sources */,
 				8B5F2F21202828A400BF04B0 /* CFAgencyRetreatViewController.m in Sources */,
 				D723EB1520033A6D00F71389 /* MyMachineMapTableViewCell.m in Sources */,
 				8B572E202017256F00DAC3E9 /* CFAgencyPutInStorageViewController.m in Sources */,

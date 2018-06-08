@@ -8,50 +8,14 @@
 
 #import "CFRepairOrderViewController.h"
 #import "CFRepairOrderView.h"
+#import "CFFaultView.h"
 @interface CFRepairOrderViewController ()
-@property (nonatomic, strong)UIView *vagueView;
 @property (nonatomic, strong)UIScrollView *repairOrderScroll;
 @property (nonatomic, strong)CFRepairOrderView *machineFaultView;
 @end
 
 @implementation CFRepairOrderViewController
-- (UIView *)vagueView
-{
-    if (_vagueView == nil) {
-        _vagueView = [[UIView alloc]initWithFrame:[UIScreen mainScreen].bounds];
-        _vagueView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
-        _vagueView.hidden = YES;
-        [[[UIApplication  sharedApplication] keyWindow] addSubview:_vagueView] ;
-        
-        UIButton *partFaultBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_vagueView addSubview:partFaultBtn];
-        partFaultBtn.sd_layout.topSpaceToView(_vagueView, 477).leftSpaceToView(_vagueView, 0).rightSpaceToView(_vagueView, 0).heightIs(60);
-        [partFaultBtn setBackgroundColor:[UIColor whiteColor]];
-        [partFaultBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
-        [partFaultBtn setTitleColor:UIColorWithRGBA(107, 107, 107, 1) forState:UIControlStateNormal];
-        partFaultBtn.titleLabel.font = CFFONT15;
-        [partFaultBtn addTarget:self action:@selector(partBtnClick) forControlEvents:UIControlEventTouchUpInside];
-        
-        UIButton *commonFaultBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_vagueView addSubview:commonFaultBtn];
-        commonFaultBtn.sd_layout.topSpaceToView(partFaultBtn, 1).leftSpaceToView(_vagueView, 0).rightSpaceToView(_vagueView, 0).heightIs(60);
-        [commonFaultBtn setBackgroundColor:[UIColor whiteColor]];
-        [commonFaultBtn setTitle:@"普通故障" forState:UIControlStateNormal];
-        [commonFaultBtn setTitleColor:UIColorWithRGBA(107, 107, 107, 1) forState:UIControlStateNormal];
-        commonFaultBtn.titleLabel.font = CFFONT15;
-        [commonFaultBtn addTarget:self action:@selector(commonBtnClick) forControlEvents:UIControlEventTouchUpInside];
-        
-        UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_vagueView addSubview:cancelBtn];
-        cancelBtn.sd_layout.topSpaceToView(commonFaultBtn, 10).leftSpaceToView(_vagueView, 0).rightSpaceToView(_vagueView, 0).heightIs(60);
-        [cancelBtn setBackgroundColor:[UIColor whiteColor]];
-        [cancelBtn setTitle:@"取消" forState:UIControlStateNormal];
-        [cancelBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-        [cancelBtn addTarget:self action:@selector(cancelBtnClick) forControlEvents:UIControlEventTouchUpInside];
-        cancelBtn.titleLabel.font = CFFONT15;
-    }
-    return _vagueView;
-}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = BackgroundColor;
@@ -68,7 +32,7 @@
     
     CFRepairOrderView *groupPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
     [_repairOrderScroll addSubview:groupPhotoView];
-    groupPhotoView.sd_layout.leftSpaceToView(_repairOrderScroll, 20 * screenWidth).topSpaceToView(_repairOrderScroll, 20 * screenHeight).heightIs(120 * screenHeight).rightSpaceToView(_repairOrderScroll, 20 * screenWidth);
+    groupPhotoView.sd_layout.leftSpaceToView(_repairOrderScroll, 10).topSpaceToView(_repairOrderScroll, 10).heightIs(60).rightSpaceToView(_repairOrderScroll, 10);
     groupPhotoView.isSelected = NO;
     groupPhotoView.tag = 1001;
     groupPhotoView.selectedButton.tag = 2001;
@@ -78,7 +42,7 @@
     
     CFRepairOrderView *faultPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
     [_repairOrderScroll addSubview:faultPhotoView];
-    faultPhotoView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(groupPhotoView, 20 * screenHeight).heightIs(120 * screenHeight).rightEqualToView(groupPhotoView);
+    faultPhotoView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(groupPhotoView, 10).heightIs(60).rightEqualToView(groupPhotoView);
     faultPhotoView.isSelected = NO;
     faultPhotoView.tag = 1002;
     faultPhotoView.selectedButton.tag = 2002;
@@ -88,7 +52,7 @@
     
     CFRepairOrderView *machineInfoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleInfo];
     [_repairOrderScroll addSubview:machineInfoView];
-    machineInfoView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(faultPhotoView, 20 * screenHeight).heightIs(120 * screenHeight).rightEqualToView(groupPhotoView);
+    machineInfoView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(faultPhotoView, 10).heightIs(60).rightEqualToView(groupPhotoView);
     machineInfoView.isSelected = NO;
     machineInfoView.tag = 1003;
     machineInfoView.selectedButton.tag = 2003;
@@ -98,7 +62,7 @@
     
     CFRepairOrderView *machineUseView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
     [_repairOrderScroll addSubview:machineUseView];
-    machineUseView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(machineInfoView, 20 * screenHeight).heightIs(120 * screenHeight).rightEqualToView(groupPhotoView);
+    machineUseView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(machineInfoView, 10).heightIs(60).rightEqualToView(groupPhotoView);
     machineUseView.isSelected = NO;
     machineUseView.tag = 1004;
     machineUseView.selectedButton.tag = 2004;
@@ -108,21 +72,21 @@
     
     _machineFaultView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleParts];
     [_repairOrderScroll addSubview:_machineFaultView];
-    _machineFaultView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(machineUseView, 20 * screenHeight).heightIs(120 * screenHeight).rightEqualToView(groupPhotoView);
+    _machineFaultView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(machineUseView, 10).heightIs(60).rightEqualToView(groupPhotoView);
     _machineFaultView.isSelected = NO;
     _machineFaultView.tag = 1005;
     _machineFaultView.selectedButton.tag = 2005;
     _machineFaultView.titleLabel.text = @"农机故障说明";
     _machineFaultView.statuslabel.hidden = YES;
     [_machineFaultView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    __block CFRepairOrderViewController *weakself = self;
-    _machineFaultView.chooseTypeBlock = ^{
-        weakself.vagueView.hidden = NO;
-    };
+//    __block CFRepairOrderViewController *weakself = self;
+//    _machineFaultView.chooseTypeBlock = ^{
+//        weakself.vagueView.hidden = NO;
+//    };
     
     CFRepairOrderView *userOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
     [_repairOrderScroll addSubview:userOpinionView];
-    userOpinionView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(_machineFaultView, 20 * screenHeight).heightIs(120 * screenHeight).rightEqualToView(groupPhotoView);
+    userOpinionView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(_machineFaultView, 10).heightIs(60).rightEqualToView(groupPhotoView);
     userOpinionView.isSelected = NO;
     userOpinionView.tag = 1006;
     userOpinionView.selectedButton.tag = 2006;
@@ -132,7 +96,7 @@
     
     CFRepairOrderView *handleOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
     [_repairOrderScroll addSubview:handleOpinionView];
-    handleOpinionView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(userOpinionView, 20 * screenHeight).heightIs(120 * screenHeight).rightEqualToView(groupPhotoView);
+    handleOpinionView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(userOpinionView, 10).heightIs(60).rightEqualToView(groupPhotoView);
     handleOpinionView.isSelected = NO;
     handleOpinionView.tag = 1007;
     handleOpinionView.selectedButton.tag = 2007;
@@ -140,9 +104,19 @@
     handleOpinionView.statuslabel.hidden = YES;
     [handleOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    [_repairOrderScroll sd_addSubviews:@[groupPhotoView,faultPhotoView,machineInfoView,machineUseView,_machineFaultView,userOpinionView,handleOpinionView]];
+    UIButton *submitBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_repairOrderScroll addSubview:submitBtn];
+    submitBtn.sd_layout.leftEqualToView(groupPhotoView).rightEqualToView(groupPhotoView).topSpaceToView(handleOpinionView, 15).heightIs(44);
+    [submitBtn setTitle:@"提交" forState:UIControlStateNormal];
+    submitBtn.titleLabel.font = CFFONT15;
+    [submitBtn setBackgroundColor:ChangfaColor];
+    [submitBtn addTarget:self action:@selector(submitBtnClcik) forControlEvents:UIControlEventTouchUpInside];
+    submitBtn.layer.cornerRadius = 10 * screenWidth;
+    
+    
+    [_repairOrderScroll sd_addSubviews:@[groupPhotoView,faultPhotoView,machineInfoView,machineUseView,_machineFaultView,userOpinionView,handleOpinionView, submitBtn]];
     _repairOrderScroll.sd_layout.spaceToSuperView(UIEdgeInsetsZero);
-    [_repairOrderScroll setupAutoContentSizeWithBottomView:handleOpinionView bottomMargin:20 * screenHeight];
+    [_repairOrderScroll setupAutoContentSizeWithBottomView:submitBtn bottomMargin:20 * screenHeight];
 }
 - (void)selectedButtonClick:(UIButton *)sender
 {
@@ -154,19 +128,50 @@
         }
     }
 }
-- (void)partBtnClick
+
+- (void)submitBtnClcik
 {
-    [_machineFaultView addMachineFaultViewWithType:FaultTypePart];
-    self.vagueView.hidden = YES;
-}
-- (void)commonBtnClick
-{
-    [_machineFaultView addMachineFaultViewWithType:FaultTypeCommon];
-    self.vagueView.hidden = YES;
-}
-- (void)cancelBtnClick
-{
-    self.vagueView.hidden = YES;
+    for (CFFaultView *view in _machineFaultView.bodyView.subviews) {
+        NSLog(@"%@", _machineFaultView.bodyView.subviews);
+        if ([view isMemberOfClass:[CFFaultView class]] && view.type == 0) {
+            NSLog(@"typea%@", view.reasonView.text);
+        } else if ([view isMemberOfClass:[CFFaultView class]] && view.type == 1) {
+            NSLog(@"typeb%@", view.reasonView.text);
+        }
+    }
+    return;
+    NSDictionary *no1 = @{
+                          @"faultDes":@"123",
+                          @"partNo":@"CF003102",
+                          };
+    NSDictionary *no2 = @{
+                          @"faultDes":@"456",
+                          @"partNo":@"356802032218223",
+                          };
+    NSError *error = nil;
+    NSArray *arr = [NSArray arrayWithObjects:no1, no2, nil];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:arr options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSDictionary *param = @{
+                            @"disId":@"",
+                            @"disNum":@"",
+                            @"faultFileIds":@"",
+                            @"personFileIds":@"",
+                            @"token":@"",
+                            @"useTime":@"",
+                            @"driveDistance":@"",
+                            @"machineInstruction":@"",
+                            @"partFaultList":jsonString,
+                            @"faultList":@"",
+                            @"customerOpinion":@"",
+                            @"handleOpinion":@"",
+                            @"remarks":@"",
+                            };
+    [CFAFNetWorkingMethod requestDataWithJavaUrl:@"repair/createRepair" Loading:0 Params:param Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"%@", responseObject);
+    } Failure:^(NSURLSessionDataTask *task, NSError *error) {
+        
+    }];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
