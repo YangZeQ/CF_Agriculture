@@ -123,7 +123,7 @@
 #pragma mark - JavaRequest
 + (NSURLSessionDataTask *)requestDataWithJavaUrl:(NSString *)url
                                          Loading:(NSInteger)loading
-                                          Params:(NSDictionary *)params
+                                          Params:(id)params
                                           Method:(NSString *)method
                                            Image:(NSString *)image
                                          Success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
@@ -332,7 +332,7 @@
 #pragma mark - Java后台请求
 - (NSURLSessionDataTask *)RequestJavaUrl:(NSString *)url
                                  Loading:(NSInteger)loading
-                                  Params:(NSDictionary *)params
+                                  Params:(id)params
                                   Method:(NSString *)method
                                  success:(void(^)(NSURLSessionDataTask * task,id responseObject))success
                                  failure:(void(^)(NSURLSessionDataTask * task, NSError * error))failure

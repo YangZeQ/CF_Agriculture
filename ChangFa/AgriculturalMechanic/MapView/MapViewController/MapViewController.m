@@ -172,27 +172,6 @@
     _positionLabel.font = [UIFont systemFontOfSize:[self autoScaleW:14]];
     [_positionView addSubview:_positionLabel];
     
-//    self.personView = [[UIView alloc]initWithFrame:CGRectMake(0, imagePosition.frame.size.height + imagePosition.frame.origin.y + 10 * screenHeight, self.view.frame.size.width, 110 * screenHeight)];
-//    self.positionView.backgroundColor = [UIColor whiteColor];
-////    [self.positionView addSubview:_personView];
-//
-//    UILabel *SecondLineLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, screenHeight)];
-//    SecondLineLabel.backgroundColor = BackgroundColor;
-//    [_personView addSubview:SecondLineLabel];
-//
-//    _nameLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, 10 * screenHeight, 500 * screenWidth, 50 * screenHeight)];
-//    _nameLabel.text = @"农机手：";
-//    _nameLabel.font = [UIFont systemFontOfSize:[self autoScaleW:15]];
-//    _phoneLabel = [[UILabel alloc]initWithFrame:CGRectMake(_nameLabel.frame.origin.x, 7 * screenHeight + _nameLabel.frame.origin.y + _nameLabel.frame.size.height, _nameLabel.frame.size.width, _nameLabel.frame.size.height)];
-//    _phoneLabel.text = @"手机号：";
-//    _phoneLabel.font = [UIFont systemFontOfSize:[self autoScaleW:15]];
-//    UIButton *phoneButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    phoneButton.frame = CGRectMake(self.view.frame.size.width - 110 * screenWidth, 40 * screenHeight, 50 * screenWidth, 50 * screenHeight);
-//    [phoneButton setImage:[UIImage imageNamed:@"dianhua"] forState:UIControlStateNormal];
-//    [phoneButton addTarget:self action:@selector(callTheUser) forControlEvents:UIControlEventTouchUpInside];
-//    [_personView addSubview:_nameLabel];
-//    [_personView addSubview:_phoneLabel];
-//    [_personView addSubview:phoneButton];
 }
 
 - (void)showTheMapView{
@@ -275,10 +254,6 @@
                 MachineModel *model = [MachineModel machineModelWithDictionary:dictModel];
                 [self.positionArray addObject:model];
             }
-//            MachineModel *second = [[MachineModel alloc]init];
-//            second.lat = @"33.696143391928";
-//            second.lng = @"119.952612033421";
-//            [self.positionArray addObject:second];
             [self initAnnotations];
         } else if ([[dict objectForKey:@"code"] integerValue] == 300) {
             [_mapView removeOverlays:_mapView.overlays];
@@ -320,13 +295,8 @@
     [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/getCarDistance" Params:dict Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"%@", responseObject);
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
-//            if ([self.selected isEqualToString:@"myMachine"]) {
-                _positionView.frame = CGRectMake(0, 64, self.view.frame.size.width, 211 * screenHeight);
-                self.personView.hidden = YES;
-//            } else {
-//                _positionView.frame = CGRectMake(0, 64, self.view.frame.size.width, 341 * screenHeight);
-//                self.personView.hidden = NO;
-//            }
+            _positionView.frame = CGRectMake(0, 64, self.view.frame.size.width, 211 * screenHeight);
+            self.personView.hidden = YES;
             self.machineName.text = [@"农机：" stringByAppendingString:[NSString stringWithFormat:@"%@", [[responseObject objectForKey:@"body"] objectForKey:@"prouctName"]]];
             if ([[[responseObject objectForKey:@"body"] objectForKey:@"note"] length] < 1) {
                 self.machineRemark.text = [@"备注：" stringByAppendingString:@"无"];
@@ -358,7 +328,7 @@
 - (void)configLocationManager
 {
     self.locationManager = [[AMapLocationManager alloc] init];
-    
+    self.locationManager.locationTimeout = 5;
     [self.locationManager setDelegate:self];
     
     [self.locationManager setPausesLocationUpdatesAutomatically:YES];

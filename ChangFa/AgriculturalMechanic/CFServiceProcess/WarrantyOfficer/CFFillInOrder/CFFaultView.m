@@ -12,13 +12,51 @@
 #define MAX_LIMIT_NUMS 150
 
 typedef void(^textNumberBlock)(NSInteger number);
-typedef void(^changeViewBlock)(NSInteger type);
+
 @interface CFFaultView ()<UITextViewDelegate>
+@property (nonatomic, strong)UIView *vagueView;
+
 @property (nonatomic, copy)textNumberBlock textNumberBlock;
-@property (nonatomic, copy)changeViewBlock changeViewBlock;
+
 @end
 @implementation CFFaultView
-
+- (UIView *)vagueView
+{
+    if (_vagueView == nil) {
+        _vagueView = [[UIView alloc]initWithFrame:[UIScreen mainScreen].bounds];
+        _vagueView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
+        _vagueView.hidden = YES;
+        [[[UIApplication  sharedApplication] keyWindow] addSubview:_vagueView] ;
+        
+        UIButton *partFaultBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_vagueView addSubview:partFaultBtn];
+        partFaultBtn.sd_layout.topSpaceToView(_vagueView, 477 * 2 * screenHeight).leftSpaceToView(_vagueView, 0).rightSpaceToView(_vagueView, 0).heightIs(60);
+        [partFaultBtn setBackgroundColor:[UIColor whiteColor]];
+        [partFaultBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
+        [partFaultBtn setTitleColor:UIColorWithRGBA(107, 107, 107, 1) forState:UIControlStateNormal];
+        partFaultBtn.titleLabel.font = CFFONT15;
+        [partFaultBtn addTarget:self action:@selector(partBtnClick) forControlEvents:UIControlEventTouchUpInside];
+        
+        UIButton *commonFaultBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_vagueView addSubview:commonFaultBtn];
+        commonFaultBtn.sd_layout.topSpaceToView(partFaultBtn, 1).leftSpaceToView(_vagueView, 0).rightSpaceToView(_vagueView, 0).heightIs(60);
+        [commonFaultBtn setBackgroundColor:[UIColor whiteColor]];
+        [commonFaultBtn setTitle:@"普通故障" forState:UIControlStateNormal];
+        [commonFaultBtn setTitleColor:UIColorWithRGBA(107, 107, 107, 1) forState:UIControlStateNormal];
+        commonFaultBtn.titleLabel.font = CFFONT15;
+        [commonFaultBtn addTarget:self action:@selector(commonBtnClick) forControlEvents:UIControlEventTouchUpInside];
+        
+        UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_vagueView addSubview:cancelBtn];
+        cancelBtn.sd_layout.topSpaceToView(commonFaultBtn, 10).leftSpaceToView(_vagueView, 0).rightSpaceToView(_vagueView, 0).heightIs(60);
+        [cancelBtn setBackgroundColor:[UIColor whiteColor]];
+        [cancelBtn setTitle:@"取消" forState:UIControlStateNormal];
+        [cancelBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [cancelBtn addTarget:self action:@selector(cancelBtnClick) forControlEvents:UIControlEventTouchUpInside];
+        cancelBtn.titleLabel.font = CFFONT15;
+    }
+    return _vagueView;
+}
 - (instancetype)initWithType:(NSInteger)type
 {
     if ([super init]) {
@@ -72,21 +110,21 @@ typedef void(^changeViewBlock)(NSInteger type);
             partNameText.hidden = YES;
             scanBtn.hidden = YES;
             _reasonView.sd_layout.leftSpaceToView(self, 34).topSpaceToView(self, 60).rightSpaceToView(self, 34).heightIs(237);
+            _reasonView.placeholderView.sd_layout.leftSpaceToView(_reasonView, 0).topSpaceToView(_reasonView, 0).rightSpaceToView(_reasonView, 0).heightIs(_reasonView.height);
             break;
         case 0:
             [_titleBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
             partNameText.hidden = NO;
             scanBtn.hidden = NO;
             _reasonView.sd_layout.leftSpaceToView(self, 34).topSpaceToView(self, 120).rightSpaceToView(self, 34).heightIs(237);
+            _reasonView.placeholderView.sd_layout.leftSpaceToView(_reasonView, 0).topSpaceToView(_reasonView, 0).rightSpaceToView(_reasonView, 0).heightIs(_reasonView.height);
             break;
         default:
             break;
     }
     __block CFFaultView *weakSelf = self;
     self.changeViewBlock = ^(NSInteger type) {
-        if (weakSelf.type == type) {
-            
-        } else {
+        
             weakSelf.type = type;
             switch (type) {
                 case 1:
@@ -96,6 +134,7 @@ typedef void(^changeViewBlock)(NSInteger type);
                     weakSelf.reasonView.sd_layout.leftSpaceToView(weakSelf, 34).topSpaceToView(weakSelf, 60).rightSpaceToView(weakSelf, 34).heightIs(237);
 //                    weakSelf.bodyView.sd_layout.heightIs(weakSelf.bodyView.height - 60);
                     weakSelf.sd_layout.heightIs(298);
+                    weakSelf.sd_layout.yIs(358);
                     break;
                 case 0:
                     [weakSelf.titleBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
@@ -104,11 +143,12 @@ typedef void(^changeViewBlock)(NSInteger type);
                     weakSelf.reasonView.sd_layout.leftSpaceToView(weakSelf, 34).topSpaceToView(weakSelf, 120).rightSpaceToView(weakSelf, 34).heightIs(237);
 //                    weakSelf.bodyView.sd_layout.heightIs(weakSelf.bodyView.height + 60);
                     weakSelf.sd_layout.heightIs(358);
+                    weakSelf.sd_layout.yIs(418);
                     break;
                 default:
                     break;
             }
-        }
+        
     };
     __block UILabel *textNumberLabel = [[UILabel alloc]init];
     [_reasonView addSubview:textNumberLabel];
@@ -125,24 +165,27 @@ typedef void(^changeViewBlock)(NSInteger type);
 }
 - (void)titleBtnClick
 {
-    
+    self.vagueView.hidden = NO;
 }
 - (void)partBtnClick
 {
     self.vagueView.hidden = YES;
-    if (_isChangeView) {
-        self.changeViewBlock(FaultTypePart);
+    if (self.type == 0) {
+        
     } else {
-        [self addMachineFaultViewWithType:FaultTypePart];
+        self.changeViewBlock(0);
+        self.changeFrameBlock(0);
     }
 }
 - (void)commonBtnClick
 {
     self.vagueView.hidden = YES;
-    if (_isChangeView) {
-        self.changeViewBlock(FaultTypeCommon);
+
+    if (self.type == 1) {
+        
     } else {
-        [self addMachineFaultViewWithType:FaultTypeCommon];
+        self.changeViewBlock(1);
+        self.changeFrameBlock(1);
     }
 }
 - (void)cancelBtnClick

@@ -8,21 +8,27 @@
 
 #import "CFRepairOrderView.h"
 #import "CFFaultView.h"
+#import "CFRepairsPhotoCell.h"
+#import "AddMachineCollectionViewCell.h"
+
+#import "AFHTTPSessionManager.h"
+#import <Photos/Photos.h>
+#import "CTAssetsPickerController/CTAssetsPickerController.h"
 
 typedef void(^textNumberBlock)(NSInteger number);
 
-@interface CFRepairOrderView ()<UITextViewDelegate, UITextFieldDelegate>
+@interface CFRepairOrderView ()<UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegate, UICollectionViewDataSource, CTAssetsPickerControllerDelegate>
 @property (nonatomic, assign)FillViewStyle viewStyle;
-@property (nonatomic, assign)BOOL isChangeView;
 @property (nonatomic, assign)NSInteger viewTag;
-//@property (nonatomic, strong)UIView *headerVeiw;
+@property (nonatomic, strong)NSMutableArray *photoArray;
+
 @property (nonatomic, strong)UIView *vagueView;
 @property (nonatomic, strong)UIView *faultView;
-//@property (nonatomic, strong)UIImageView *statusImage;
-
+@property (nonatomic, strong)UICollectionView *photoCollectionView;
+@property (nonatomic, strong)CFRepairsPhotoCell *photoCell;
+@property (nonatomic, strong)AddMachineCollectionViewCell *addCell;
 
 @property (nonatomic, copy)textNumberBlock textNumberBlock;
-@property (nonatomic, copy)changeViewBlock changeViewBlock;
 @end
 
 @implementation CFRepairOrderView
@@ -70,6 +76,34 @@ typedef void(^textNumberBlock)(NSInteger number);
         _partInfoArray = [NSMutableArray array];
     }
     return _partInfoArray;
+}
+- (NSMutableArray *)photoArray
+{
+    if (_photoArray == nil) {
+        _photoArray = [NSMutableArray array];
+    }
+    return _photoArray;
+}
+- (CFRegisterTextFieldView *)hourTextField
+{
+    if (_hourTextField == nil) {
+        _hourTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(30 * screenWidth, 0, CF_WIDTH - 120 * screenWidth, 98 * screenHeight) LabelWidth:278 * screenWidth LabelName:@"农机工作小时(h)   ：" PlaceHolder:@"请输入农机工作小时"];
+        _hourTextField.textField.delegate = self;
+        _hourTextField.textField.tag = 1001;
+        _hourTextField.textField.keyboardType = UIKeyboardTypePhonePad;
+    }
+    return _hourTextField;
+}
+- (CFRegisterTextFieldView *)mileageTextField
+{
+    if (_mileageTextField == nil) {
+        _mileageTextField = [[CFRegisterTextFieldView alloc]initWithFrame:CGRectMake(30 * screenWidth, 98 * screenHeight, CF_WIDTH - 120 * screenWidth, _hourTextField.frame.size.height) LabelWidth:278 * screenWidth LabelName:@"农机行驶里程(km)：" PlaceHolder:@"请输入行驶里程"];
+        _mileageTextField.textField.delegate = self;
+        _mileageTextField.textField.tag = 1002;
+        _mileageTextField.textField.keyboardType = UIKeyboardTypePhonePad;
+        _mileageTextField.lineLabel.hidden = YES;
+    }
+    return _mileageTextField;
 }
 - (instancetype)initWithViewStyle:(FillViewStyle)viewStyle
 {
@@ -139,15 +173,68 @@ typedef void(^textNumberBlock)(NSInteger number);
 }
 - (void)createPhotoView
 {
-    _bodyView.sd_layout.heightIs(150 * screenHeight);
+    _bodyView.sd_layout.heightIs(300 * screenHeight);
+    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+    _photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(30 * screenWidth, 120 * screenHeight, CF_WIDTH - 100 * screenWidth, 200 * screenHeight) collectionViewLayout:layout];
+    _photoCollectionView.backgroundColor = [UIColor whiteColor];
+    layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    layout.itemSize = CGSizeMake(200 * screenWidth, 200 * screenHeight);
+    layout.minimumLineSpacing = 10 * screenWidth;
+    layout.minimumInteritemSpacing = 0 * screenWidth;
+    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    _photoCollectionView.showsHorizontalScrollIndicator = NO;
+    _photoCollectionView.delegate = self;
+    _photoCollectionView.dataSource = self;
+    [_photoCollectionView registerClass:[CFRepairsPhotoCell class] forCellWithReuseIdentifier:@"repairsPhotoCellId"];
+    [_photoCollectionView registerClass:[AddMachineCollectionViewCell class] forCellWithReuseIdentifier:@"addRepairsPhotoCellId"];
+    [_bodyView addSubview:_photoCollectionView];
+}
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 1;
+}
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return _photoArray.count + 1;
+}
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == 0) {
+        _addCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"addRepairsPhotoCellId" forIndexPath:indexPath];
+        _addCell.imageName= @"CF_Repairs_AddPhoto";
+        return _addCell;
+    }
+    _photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
+    _photoCell.deleteButton.hidden = NO;
+    _photoCell.deleteButton.tag = 1000 + indexPath.row - 1;
+    [_photoCell.deleteButton addTarget:self action:@selector(deletebuttonClick:) forControlEvents:UIControlEventTouchUpInside];
+    return _photoCell;
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    self.addImageBlock();
+}
+- (void)deletebuttonClick:(UIButton *)sender
+{
+    
 }
 - (void)createMachineInfoView
 {
-    _bodyView.sd_layout.heightIs(100 * screenHeight);
+    _bodyView.sd_layout.heightIs(200 * screenHeight);
+    [_bodyView addSubview:self.hourTextField];
+    [_bodyView addSubview:self.mileageTextField];
 }
 - (void)createResonView
 {
-    _bodyView.sd_layout.heightIs(224);
+    _bodyView.sd_layout.heightIs(448 * screenHeight);
+    _reasonView = [[CFReasonTextView alloc]init];
+    [_bodyView addSubview:_reasonView];
+    _reasonView.delegate = self;
+    _reasonView.editable = YES;
+    _reasonView.maxNumberOfLines = 10;
+    _reasonView.font = CFFONT13;
+    _reasonView.sd_layout.topSpaceToView(_bodyView, 0).leftSpaceToView(_bodyView, 32 * screenWidth).rightSpaceToView(_bodyView, 32 * screenWidth).heightIs(448 * screenHeight);
+    _reasonView.placeholderView.sd_layout.leftSpaceToView(_reasonView, 0).topSpaceToView(_reasonView, 0).rightSpaceToView(_reasonView, 0).heightIs(_reasonView.height);
 }
 - (void)createPartsView
 {
@@ -158,7 +245,7 @@ typedef void(^textNumberBlock)(NSInteger number);
     _partTypeView.sd_layout.leftSpaceToView(_bodyView, 0).heightIs(60).rightSpaceToView(_bodyView, 0).bottomSpaceToView(_bodyView, 0);
     UIButton *typeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [_partTypeView addSubview:typeBtn];
-    typeBtn.sd_layout.topSpaceToView(_partTypeView, 0).leftSpaceToView(_partTypeView, 0).rightSpaceToView(_partTypeView, 0).bottomSpaceToView(_partTypeView, 0);
+    typeBtn.sd_layout.heightIs(60).leftSpaceToView(_partTypeView, 0).rightSpaceToView(_partTypeView, 0).bottomSpaceToView(_partTypeView, 0);
     typeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     typeBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 34 * screenWidth, 0, 0);
     [typeBtn setTitle:@"选择类型" forState:UIControlStateNormal];
@@ -171,87 +258,54 @@ typedef void(^textNumberBlock)(NSInteger number);
     self.viewTag++;
     __block CFFaultView *faultView = [[CFFaultView alloc]initWithType:type];
     [_bodyView addSubview:faultView];
-    [faultView.titleBtn addTarget:self action:@selector(titleBtnClick) forControlEvents:UIControlEventTouchUpInside];
     faultView.tag = self.viewTag;
-//    __block UIButton *titleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [faultView addSubview:titleBtn];
-//    titleBtn.sd_layout.topSpaceToView(faultView, 0).leftSpaceToView(faultView, 34).heightIs(60).widthIs(100);
-//    [titleBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
-//    titleBtn.titleLabel.font = CFFONT14;
-//    [titleBtn setTitleColor:UIColorWithRGBA(107, 107, 107, 1) forState:UIControlStateNormal];
-//    [titleBtn addTarget:self action:@selector(titleBtnClick) forControlEvents:UIControlEventTouchUpInside];
-//
-//    __block UITextField *partNameText = [[UITextField alloc]init];
-//    [faultView addSubview:partNameText];
-//    partNameText.sd_layout.leftSpaceToView(faultView, 34).topSpaceToView(titleBtn, 0).heightIs(60).widthIs(250);
-//    partNameText.font = CFFONT14;
-//    partNameText.textColor = UIColorWithRGBA(107, 107, 107, 1);
-//    partNameText.placeholder = @"扫描故障零配件条码";
-//
-//    __block UIButton *scanBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [faultView addSubview:scanBtn];
-//    scanBtn.sd_layout.topSpaceToView(titleBtn, 20).rightSpaceToView(faultView, 25).heightIs(20).widthIs(20);
-//
-//    __block CFReasonTextView *reasonView = [[CFReasonTextView alloc]init];
-//    [faultView addSubview:reasonView];
-//    reasonView.placeholder = @"请简短描述农机故障原因" ;
-//    reasonView.delegate = self;
-//    reasonView.editable = YES;
-//    reasonView.maxNumberOfLines = 10;
-//    reasonView.font = CFFONT13;
-    
+
+    CFFaultView *fault = [self viewWithTag:self.viewTag - 1];
     switch (type) {
         case FaultTypeCommon:
-//            [titleBtn setTitle:@"普通故障" forState:UIControlStateNormal];;
-//            partNameText.hidden = YES;
-//            scanBtn.hidden = YES;
-//            reasonView.sd_layout.leftSpaceToView(faultView, 34).topSpaceToView(faultView, 60).rightSpaceToView(faultView, 34).heightIs(237);
             _bodyView.sd_layout.heightIs(_bodyView.height + 298);
-            NSLog(@"%f", _bodyView.height);
-            faultView.sd_layout.topSpaceToView(_bodyView, 0).topSpaceToView(_bodyView, _bodyView.height - 358).rightSpaceToView(_bodyView, 0).heightIs(298);
+            faultView.sd_layout.leftSpaceToView(_bodyView, 0).topSpaceToView(fault, 0).rightSpaceToView(_bodyView, 0).heightIs(298);
             break;
         case FaultTypePart:
-//            [titleBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
-//            partNameText.hidden = NO;
-//            scanBtn.hidden = NO;
-//            reasonView.sd_layout.leftSpaceToView(faultView, 34).topSpaceToView(faultView, 120).rightSpaceToView(faultView, 34).heightIs(237);
             _bodyView.sd_layout.heightIs(_bodyView.height + 358);
-            NSLog(@"%f", _bodyView.height);
-            faultView.sd_layout.topSpaceToView(_bodyView, 0).topSpaceToView(_bodyView, _bodyView.height - 418).rightSpaceToView(_bodyView, 0).heightIs(358);
+            faultView.sd_layout.leftSpaceToView(_bodyView, 0).topSpaceToView(fault, 0).rightSpaceToView(_bodyView, 0).heightIs(358);
             break;
         default:
             break;
     }
+    
     self.sd_layout.heightIs(60 + _bodyView.height);
     
+    __block CFRepairOrderView *weakSelf = self;
+    faultView.changeFrameBlock = ^(NSInteger type) {
+        switch (type) {
+            case 0:
+                _bodyView.sd_layout.heightIs(_bodyView.height + 60);
+                weakSelf.sd_layout.heightIs(weakSelf.height + 60);
+                break;
+            case 1:
+                _bodyView.sd_layout.heightIs(_bodyView.height - 60);
+                weakSelf.sd_layout.heightIs(weakSelf.height - 60);
+                break;
+            default:
+                break;
+        }
+    };
 }
+#pragma mark -选择故障类型
 - (void)typeBtnClick
 {
-//    self.chooseTypeBlock();
     self.vagueView.hidden = NO;
-}
-- (void)titleBtnClick
-{
-    self.vagueView.hidden = NO;
-    self.isChangeView = YES;
 }
 - (void)partBtnClick
 {
     self.vagueView.hidden = YES;
-    if (_isChangeView) {
-        self.changeViewBlock(FaultTypePart);
-    } else {
-        [self addMachineFaultViewWithType:FaultTypePart];
-    }
+    [self addMachineFaultViewWithType:FaultTypePart];
 }
 - (void)commonBtnClick
 {
     self.vagueView.hidden = YES;
-    if (_isChangeView) {
-        self.changeViewBlock(FaultTypeCommon);
-    } else {
-        [self addMachineFaultViewWithType:FaultTypeCommon];
-    }
+    [self addMachineFaultViewWithType:FaultTypeCommon];
 }
 - (void)cancelBtnClick
 {
@@ -262,28 +316,116 @@ typedef void(^textNumberBlock)(NSInteger number);
     _isSelected = isSelected;
     if (isSelected) {
         _bodyView.hidden = NO;
-        switch (_viewStyle) {
-            case FillViewStylePhoto:
-                self.sd_layout.heightIs(60 + _bodyView.height);
-                break;
-            case FillViewStyleInfo:
-                self.sd_layout.heightIs(60 + _bodyView.height);
-                break;
-            case FillViewStyleReason:
-                self.sd_layout.heightIs(60 + _bodyView.height);
-                break;
-            case FillViewStyleParts:
-                self.sd_layout.heightIs(60 + _bodyView.height);
-                break;
-            default:
-                break;
-        }
+        self.sd_layout.heightIs(60 + _bodyView.height);
     } else {
         self.sd_layout.heightIs(60);
         _bodyView.hidden = YES;
     }
 }
 
+#pragma mark - <CTAssetsPickerControllerDelegate>
+-(BOOL)assetsPickerController:(CTAssetsPickerController *)picker shouldSelectAsset:(PHAsset *)asset
+{
+    NSInteger max = 9;
+    if (picker.selectedAssets.count + self.photoArray.count >= max) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:[NSString stringWithFormat:@"最多选择%zd张图片", picker.selectedAssets.count] preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:nil]];
+        [picker presentViewController:alert animated:YES completion:nil];
+        // 这里不能使用self来modal别的控制器，因为此时self.view不在window上
+        return NO;
+    }
+    return YES;
+}
+- (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishPickingAssets:(NSArray *)assets
+{
+    // 关闭图片选择界面
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    // 基本配置
+    CGFloat scale = [UIScreen mainScreen].scale;
+    PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
+    options.resizeMode   = PHImageRequestOptionsResizeModeExact;
+    options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+    options.synchronous = YES;
+    options.networkAccessAllowed = YES;
+    // 遍历选择的所有图片
+    for (NSInteger i = 0; i < assets.count; i++) {
+        PHAsset *asset = assets[i];
+        CGSize size = CGSizeMake(asset.pixelWidth / scale, asset.pixelHeight / scale);
+        // 获取图片
+        [[PHImageManager defaultManager] requestImageForAsset:asset targetSize:size contentMode:PHImageContentModeDefault options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                [self.photoArray addObject:result];
+        }];
+    }
+    
+    [self uploadImagesArray];
+}
+#pragma mark-多图片上传
+- (NSURLSessionUploadTask*)uploadTaskWithImage:(UIImage*)image completion:(void (^)(NSURLResponse *response, id responseObject, NSError *error))completionBlock
+{
+    // 构造 NSURLRequest
+    NSError* error = NULL;
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *params = @{@"file":@"",
+                             @"userId":[userDefaults objectForKey:@"UserUid"],
+//                             @"dispatchId":self.dispatchId,
+                             @"token":[userDefaults objectForKey:@"UserToken"],
+//                             @"type":[NSString stringWithFormat:@"%lu", (_selectedIndex + 1)],
+                             };
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:@"http://192.168.31.68:8080/changfa_system/file/manyFileUpload.do?" parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
+        [formData appendPartWithFileData:imageData name:@"file" fileName:@"avatar.png" mimeType:@"multipart/form-data"];
+    } error:&error];
+    
+    // 可在此处配置验证信息
+    
+    // 将 NSURLRequest 与 completionBlock 包装为 NSURLSessionUploadTask
+    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    NSURLSessionUploadTask *uploadTask = [manager uploadTaskWithStreamedRequest:request progress:^(NSProgress * _Nonnull uploadProgress) {
+    } completionHandler:completionBlock];
+    return uploadTask;
+}
+- (void)uploadImagesArray
+{
+    self.vagueView.hidden = YES;
+    [MBManager showWaitingWithTitle:@"上传图片中"];
+    // 准备保存结果的数组，元素个数与上传的图片个数相同，先用 NSNull 占位
+    NSMutableArray* result = [NSMutableArray array];
+    for (UIImage* image in self.photoArray) {
+        [result addObject:[NSNull null]];
+    }
+    dispatch_group_t group = dispatch_group_create();
+    for (NSInteger i = 0; i < self.photoArray.count; i++) {
+        
+        dispatch_group_enter(group);
+        
+        NSURLSessionUploadTask* uploadTask = [self uploadTaskWithImage:self.photoArray[i] completion:^(NSURLResponse *response, NSDictionary* responseObject, NSError *error) {
+            if (error) {
+                NSLog(@"第 %d 张图片上传失败: %@", (int)i + 1, error);
+                dispatch_group_leave(group);
+            } else {
+                NSLog(@"uploadimages%@", response);
+                NSLog(@"第 %d 张图片上传成功: %@", (int)i + 1, responseObject);
+                @synchronized (result) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                    result[i] = responseObject;
+                }
+                dispatch_group_leave(group);
+            }
+        }];
+        [uploadTask resume];
+    }
+    
+    
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        NSLog(@"上传完成!");
+        NSInteger ids = 0;
+        for (id response in result) {
+            NSLog(@"tupian%@", response);
+           
+            ids++;
+        }
+
+    });
+}
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code

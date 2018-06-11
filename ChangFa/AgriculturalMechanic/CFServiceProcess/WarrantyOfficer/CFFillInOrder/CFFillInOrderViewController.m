@@ -148,8 +148,8 @@ typedef void(^reloadCollectionItemBlock)(NSMutableArray *photoArray, NSInteger i
     //设置代理
     _imagePicker.delegate=self;
     //可编辑
-    
     _imagePicker.allowsEditing=YES;
+    
     [self createFillInOrderView];
     [self getFillInOrderWithReapirId:self.repairId];
     

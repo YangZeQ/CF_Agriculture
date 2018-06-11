@@ -19,7 +19,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
-    CFLoginViewController *landViewC = [[CFLoginViewController alloc]init];
+    CFLoginViewController *loginViewC = [[CFLoginViewController alloc]init];
     CFRepairOrderViewController *repair = [[CFRepairOrderViewController alloc]init];
     UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:repair];
     self.window.rootViewController = nav;

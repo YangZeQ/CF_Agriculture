@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface CFRepairOrderViewController : UIViewController
-
+@property (nonatomic, strong)NSString *dispatchId;
 @end

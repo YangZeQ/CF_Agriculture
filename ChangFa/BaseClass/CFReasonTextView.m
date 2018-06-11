@@ -9,10 +9,6 @@
 #import "CFReasonTextView.h"
 
 @interface CFReasonTextView()
-/**
- *  UITextView作为placeholderView，使placeholderView等于UITextView的大小，字体重叠显示，方便快捷，解决占位符问题.
- */
-@property (nonatomic, weak) UITextView *placeholderView;
 
 /**
  *  文字高度
@@ -36,19 +32,17 @@
 - (UITextView *)placeholderView
 {
     if (!_placeholderView ) {
-        UITextView *placeholderView = [[UITextView alloc] initWithFrame:self.bounds];
-        _placeholderView = placeholderView;
+        _placeholderView = [[UITextView alloc] initWithFrame:self.bounds];
         _placeholderView.returnKeyType = UIReturnKeyDone;
         //防止textView输入时跳动问题
         _placeholderView.scrollEnabled = NO;
         _placeholderView.showsHorizontalScrollIndicator = NO;
         _placeholderView.showsVerticalScrollIndicator = NO;
         _placeholderView.userInteractionEnabled = NO;
-//        _placeholderView.font = self.font;
-        _placeholderView.font = CFFONT14;
+//        _placeholderView.font = CFFONT14;
         _placeholderView.textColor = [UIColor lightGrayColor];
         _placeholderView.backgroundColor = [UIColor clearColor];
-        [self addSubview:placeholderView];
+        [self addSubview:_placeholderView];
     }
     return _placeholderView;
 }

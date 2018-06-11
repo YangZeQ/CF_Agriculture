@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "CFReasonTextView.h"
-
+#import "CFRegisterTextFieldView.h"
 typedef enum : NSUInteger {
     FillViewStylePhoto,// 合影
     FillViewStyleInfo,// 农机信息
@@ -20,6 +20,7 @@ typedef enum : NSUInteger {
     FaultTypeCommon,// 普通
 } FaultType;
 typedef void(^chooseTypeBlock)(void);
+typedef void(^addImageBlock)(void);
 @interface CFRepairOrderView : UIView
 @property (nonatomic, assign)BOOL isSelected;
 @property (nonatomic, strong)NSMutableArray *partInfoArray;
@@ -34,8 +35,11 @@ typedef void(^chooseTypeBlock)(void);
 @property (nonatomic, strong)CFReasonTextView *reasonView;
 @property (nonatomic, strong)UILabel *textNumberLabel;
 @property (nonatomic, strong)UIView *bodyView;
+@property (nonatomic, strong)CFRegisterTextFieldView *hourTextField;
+@property (nonatomic, strong)CFRegisterTextFieldView *mileageTextField;
 
-@property (nonatomic, copy)chooseTypeBlock chooseTypeBlock;
+//@property (nonatomic, copy)chooseTypeBlock chooseTypeBlock;
+@property (nonatomic, copy)addImageBlock addImageBlock;
 
 - (instancetype)initWithViewStyle:(FillViewStyle)viewStyle;
 - (void)addMachineFaultViewWithType:(FaultType)type;
