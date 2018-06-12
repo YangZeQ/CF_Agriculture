@@ -12,6 +12,7 @@
 #import "CFShowFillInfoViewController.h"
 #import "CFRefillOrderViewController.h"
 #import "CFPreviewPhotoViewController.h"
+#import "CFRepairOrderViewController.h"
 #import "CFReasonTextView.h"
 #import "CFRepairsPhotoCell.h"
 #import "CFRepairsRecordCourseTableViewCell.h"
@@ -800,12 +801,17 @@
         refill.disNum =  self.orderInfoModel.disNum;
         [self.navigationController pushViewController:refill animated:YES];
     } else {
-        CFFillInOrderViewController *fill = [[CFFillInOrderViewController alloc]init];
-        fill.dispatchId = self.dispatchId;
-        fill.repairId = self.orderInfoModel.repairId;
-        fill.disId = self.orderInfoModel.disId;
-        fill.disNum =  self.orderInfoModel.disNum;
-        [self.navigationController pushViewController:fill animated:YES];
+//        CFFillInOrderViewController *fill = [[CFFillInOrderViewController alloc]init];
+//        fill.dispatchId = self.dispatchId;
+//        fill.repairId = self.orderInfoModel.repairId;
+//        fill.disId = self.orderInfoModel.disId;
+//        fill.disNum =  self.orderInfoModel.disNum;
+        CFRepairOrderViewController *order = [[CFRepairOrderViewController alloc]init];
+        order.dispatchId = self.dispatchId;
+        order.repairId = self.orderInfoModel.repairId;
+        order.disId = self.orderInfoModel.disId;
+        order.disNum =  self.orderInfoModel.disNum;
+        [self.navigationController pushViewController:order animated:YES];
     }
 }
 - (void)leftButtonClick

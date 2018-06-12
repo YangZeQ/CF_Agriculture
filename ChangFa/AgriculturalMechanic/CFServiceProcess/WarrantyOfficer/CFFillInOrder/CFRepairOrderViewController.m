@@ -9,20 +9,29 @@
 #import "CFRepairOrderView.h"
 #import "CFFaultView.h"
 
+#import "CFLoginViewController.h"
 #import "AFHTTPSessionManager.h"
+#import "CFAFNetworkingManage.h"
 #import <Photos/Photos.h>
 #import "CTAssetsPickerController/CTAssetsPickerController.h"
 @interface CFRepairOrderViewController ()<CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong)UIScrollView *repairOrderScroll;
+@property (nonatomic, strong)CFRepairOrderView *groupPhotoView;
+@property (nonatomic, strong)CFRepairOrderView *faultPhotoView;
+@property (nonatomic, strong)CFRepairOrderView *machineInfoView;
+@property (nonatomic, strong)CFRepairOrderView *machineUseView;
 @property (nonatomic, strong)CFRepairOrderView *machineFaultView;
+@property (nonatomic, strong)CFRepairOrderView *userOpinionView;
+@property (nonatomic, strong)CFRepairOrderView *handleOpinionView;
 @property (nonatomic, strong)UIImagePickerController *imagePicker;
 @property (nonatomic, strong)UIView *vagueView;
 
+@property (nonatomic, assign)NSInteger uploadImageType;
 @property (nonatomic, strong)NSMutableArray *photoArray;
 @property (nonatomic, strong)NSMutableArray *groupPhotoArray;
 @property (nonatomic, strong)NSMutableArray *faultPhotoArray;
-@property (nonatomic, strong)NSMutableArray *groupPhotoIds;
-@property (nonatomic, strong)NSMutableArray *faultPhotoIds;
+@property (nonatomic, copy)NSString *groupPhotoIds;
+@property (nonatomic, copy)NSString *faultPhotoIds;
 @end
 
 @implementation CFRepairOrderViewController
@@ -81,23 +90,11 @@
     }
     return _faultPhotoArray;
 }
-- (NSMutableArray *)groupPhotoIds
-{
-    if (_groupPhotoIds == nil) {
-        _groupPhotoIds = [NSMutableArray array];
-    }
-    return _groupPhotoIds;
-}
-- (NSMutableArray *)faultPhotoIds
-{
-    if (_faultPhotoIds == nil) {
-        _faultPhotoIds = [NSMutableArray array];
-    }
-    return _faultPhotoIds;
-}
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = BackgroundColor;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"fanhuiwhite"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftButtonClick)];
+    
     [self createRepairOrderView];
     
     self.imagePicker = [[UIImagePickerController alloc] init];
@@ -117,56 +114,56 @@
     _repairOrderScroll.showsVerticalScrollIndicator = NO;
     [self.view addSubview:_repairOrderScroll];
     
-    CFRepairOrderView *groupPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
-    [_repairOrderScroll addSubview:groupPhotoView];
-    groupPhotoView.sd_layout.leftSpaceToView(_repairOrderScroll, 10).topSpaceToView(_repairOrderScroll, 10).heightIs(60).rightSpaceToView(_repairOrderScroll, 10);
-    groupPhotoView.isSelected = NO;
-    groupPhotoView.tag = 1001;
-    groupPhotoView.selectedButton.tag = 2001;
-    groupPhotoView.titleLabel.text = @"人机合影";
-    groupPhotoView.statuslabel.hidden = YES;
-    [groupPhotoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    groupPhotoView.addImageBlock = ^{
+    _groupPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
+    [_repairOrderScroll addSubview:_groupPhotoView];
+    _groupPhotoView.sd_layout.leftSpaceToView(_repairOrderScroll, 10).topSpaceToView(_repairOrderScroll, 10).heightIs(60).rightSpaceToView(_repairOrderScroll, 10);
+    _groupPhotoView.isSelected = NO;
+    _groupPhotoView.tag = 1001;
+    _groupPhotoView.selectedButton.tag = 2001;
+    _groupPhotoView.titleLabel.text = @"人机合影";
+    _groupPhotoView.statuslabel.hidden = YES;
+    [_groupPhotoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _groupPhotoView.addImageBlock = ^{
         [weakSelf addImageClick];
     };
     
-    CFRepairOrderView *faultPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
-    [_repairOrderScroll addSubview:faultPhotoView];
-    faultPhotoView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(groupPhotoView, 10).heightIs(60).rightEqualToView(groupPhotoView);
-    faultPhotoView.isSelected = NO;
-    faultPhotoView.tag = 1002;
-    faultPhotoView.selectedButton.tag = 2002;
-    faultPhotoView.titleLabel.text = @"故障照片";
-    faultPhotoView.statuslabel.hidden = YES;
-    [faultPhotoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    faultPhotoView.addImageBlock = ^{
+    _faultPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
+    [_repairOrderScroll addSubview:_faultPhotoView];
+    _faultPhotoView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_groupPhotoView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
+    _faultPhotoView.isSelected = NO;
+    _faultPhotoView.tag = 1002;
+    _faultPhotoView.selectedButton.tag = 2002;
+    _faultPhotoView.titleLabel.text = @"故障照片";
+    _faultPhotoView.statuslabel.hidden = YES;
+    [_faultPhotoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _faultPhotoView.addImageBlock = ^{
         [weakSelf addImageClick];
     };
     
-    CFRepairOrderView *machineInfoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleInfo];
-    [_repairOrderScroll addSubview:machineInfoView];
-    machineInfoView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(faultPhotoView, 10).heightIs(60).rightEqualToView(groupPhotoView);
-    machineInfoView.isSelected = NO;
-    machineInfoView.tag = 1003;
-    machineInfoView.selectedButton.tag = 2003;
-    machineInfoView.titleLabel.text = @"农机信息";
-    machineInfoView.statuslabel.hidden = YES;
-    [machineInfoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _machineInfoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleInfo];
+    [_repairOrderScroll addSubview:_machineInfoView];
+    _machineInfoView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_faultPhotoView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
+    _machineInfoView.isSelected = NO;
+    _machineInfoView.tag = 1003;
+    _machineInfoView.selectedButton.tag = 2003;
+    _machineInfoView.titleLabel.text = @"农机信息";
+    _machineInfoView.statuslabel.hidden = YES;
+    [_machineInfoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    CFRepairOrderView *machineUseView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
-    [_repairOrderScroll addSubview:machineUseView];
-    machineUseView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(machineInfoView, 10).heightIs(60).rightEqualToView(groupPhotoView);
-    machineUseView.isSelected = NO;
-    machineUseView.tag = 1004;
-    machineUseView.selectedButton.tag = 2004;
-    machineUseView.titleLabel.text = @"农机用途说明";
-    machineUseView.reasonView.placeholder = @"请简短描述农机用途说明";
-    machineUseView.statuslabel.hidden = YES;
-    [machineUseView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _machineUseView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    [_repairOrderScroll addSubview:_machineUseView];
+    _machineUseView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_machineInfoView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
+    _machineUseView.isSelected = NO;
+    _machineUseView.tag = 1004;
+    _machineUseView.selectedButton.tag = 2004;
+    _machineUseView.titleLabel.text = @"农机用途说明";
+    _machineUseView.reasonView.placeholder = @"请简短描述农机用途说明";
+    _machineUseView.statuslabel.hidden = YES;
+    [_machineUseView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     _machineFaultView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleParts];
     [_repairOrderScroll addSubview:_machineFaultView];
-    _machineFaultView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(machineUseView, 10).heightIs(60).rightEqualToView(groupPhotoView);
+    _machineFaultView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_machineUseView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _machineFaultView.isSelected = NO;
     _machineFaultView.tag = 1005;
     _machineFaultView.selectedButton.tag = 2005;
@@ -174,31 +171,31 @@
     _machineFaultView.statuslabel.hidden = YES;
     [_machineFaultView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    CFRepairOrderView *userOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
-    [_repairOrderScroll addSubview:userOpinionView];
-    userOpinionView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(_machineFaultView, 10).heightIs(60).rightEqualToView(groupPhotoView);
-    userOpinionView.isSelected = NO;
-    userOpinionView.tag = 1006;
-    userOpinionView.selectedButton.tag = 2006;
-    userOpinionView.titleLabel.text = @"客户意见";
-    userOpinionView.reasonView.placeholder = @"请简短描述客户意见";
-    userOpinionView.statuslabel.hidden = YES;
-    [userOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _userOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    [_repairOrderScroll addSubview:_userOpinionView];
+    _userOpinionView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_machineFaultView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
+    _userOpinionView.isSelected = NO;
+    _userOpinionView.tag = 1006;
+    _userOpinionView.selectedButton.tag = 2006;
+    _userOpinionView.titleLabel.text = @"客户意见";
+    _userOpinionView.reasonView.placeholder = @"请简短描述客户意见";
+    _userOpinionView.statuslabel.hidden = YES;
+    [_userOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    CFRepairOrderView *handleOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
-    [_repairOrderScroll addSubview:handleOpinionView];
-    handleOpinionView.sd_layout.leftEqualToView(groupPhotoView).topSpaceToView(userOpinionView, 10).heightIs(60).rightEqualToView(groupPhotoView);
-    handleOpinionView.isSelected = NO;
-    handleOpinionView.tag = 1007;
-    handleOpinionView.selectedButton.tag = 2007;
-    handleOpinionView.titleLabel.text = @"处理意见";
-    handleOpinionView.reasonView.placeholder = @"请简短描述处理意见";
-    handleOpinionView.statuslabel.hidden = YES;
-    [handleOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _handleOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    [_repairOrderScroll addSubview:_handleOpinionView];
+    _handleOpinionView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_userOpinionView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
+    _handleOpinionView.isSelected = NO;
+    _handleOpinionView.tag = 1007;
+    _handleOpinionView.selectedButton.tag = 2007;
+    _handleOpinionView.titleLabel.text = @"处理意见";
+    _handleOpinionView.reasonView.placeholder = @"请简短描述处理意见";
+    _handleOpinionView.statuslabel.hidden = YES;
+    [_handleOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *submitBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [_repairOrderScroll addSubview:submitBtn];
-    submitBtn.sd_layout.leftEqualToView(groupPhotoView).rightEqualToView(groupPhotoView).topSpaceToView(handleOpinionView, 15).heightIs(44);
+    submitBtn.sd_layout.leftEqualToView(_groupPhotoView).rightEqualToView(_groupPhotoView).topSpaceToView(_handleOpinionView, 15).heightIs(44);
     [submitBtn setTitle:@"提交" forState:UIControlStateNormal];
     submitBtn.titleLabel.font = CFFONT15;
     [submitBtn setBackgroundColor:ChangfaColor];
@@ -206,7 +203,7 @@
     submitBtn.layer.cornerRadius = 10 * screenWidth;
     
     
-    [_repairOrderScroll sd_addSubviews:@[groupPhotoView,faultPhotoView,machineInfoView,machineUseView,_machineFaultView,userOpinionView,handleOpinionView, submitBtn]];
+    [_repairOrderScroll sd_addSubviews:@[_groupPhotoView,_faultPhotoView,_machineInfoView,_machineUseView,_machineFaultView,_userOpinionView,_handleOpinionView, submitBtn]];
     _repairOrderScroll.sd_layout.spaceToSuperView(UIEdgeInsetsZero);
     [_repairOrderScroll setupAutoContentSizeWithBottomView:submitBtn bottomMargin:20 * screenHeight];
 }
@@ -218,6 +215,16 @@
         if ([view isMemberOfClass:[CFRepairOrderView class]] && view.tag != sender.tag - 1000) {
             view.isSelected = NO;
         }
+    }
+    switch (sender.tag) {
+        case 2001:
+            self.uploadImageType = 1;
+            break;
+        case 2002:
+            self.uploadImageType = 2;
+            break;
+        default:
+            break;
     }
 }
 
@@ -231,7 +238,6 @@
             NSLog(@"typeb%@", view.reasonView.text);
         }
     }
-    return;
     NSDictionary *no1 = @{
                           @"faultDes":@"123",
                           @"partNo":@"CF003102",
@@ -242,27 +248,44 @@
                           };
     NSError *error = nil;
     NSArray *arr = [NSArray arrayWithObjects:no1, no2, nil];
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:arr options:NSJSONWritingPrettyPrinted error:&error];
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
     NSDictionary *param = @{
-                            @"disId":@"",
-                            @"disNum":@"",
+                            @"disId":self.disId,
+                            @"disNum":self.disNum,
                             @"faultFileIds":@"",
                             @"personFileIds":@"",
-                            @"token":@"",
+                            @"token":[[NSUserDefaults standardUserDefaults] objectForKey:@"UserToken"],
                             @"useTime":@"",
                             @"driveDistance":@"",
                             @"machineInstruction":@"",
-                            @"partFaultList":jsonString,
-                            @"faultList":@"",
+                            @"partFault":@[@{@"faultDes":@"asdf",@"partNo":@"000"}],
+                            @"commonFault":@[@{@"faultDes":@"dddd",@"partNo":@"000"}],
                             @"customerOpinion":@"",
                             @"handleOpinion":@"",
                             @"remarks":@"",
-                            };
-    [CFAFNetWorkingMethod requestDataWithJavaUrl:@"repair/createRepair" Loading:0 Params:param Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSLog(@"%@", responseObject);
-    } Failure:^(NSURLSessionDataTask *task, NSError *error) {
-        
+                            }; // http://192.168.0.100:8080/changfa_system/repair/createRepair.do
+    NSDictionary *disNumDict = [NSDictionary dictionaryWithObject:self.disNum forKey:@"disNum"];
+    NSDictionary *useTimeDict = [NSDictionary dictionaryWithObject:@"232" forKey:@"useTime"];
+    NSMutableArray *array = [NSMutableArray array];
+    [array addObject:@{@"disId":[NSString stringWithFormat:@"%@", self.disId]}];
+    [array addObject:disNumDict];
+    [array addObject:useTimeDict];
+    [array addObject:@{@"faultFileIds":@"22"}];
+    [array addObject:@{@"personFileIds":@"22"}];
+    [array addObject:@{@"token":[NSString stringWithFormat:@"%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"UserToken"]]}];
+    [array addObject:@{@"machineInstruction":@"eef"}];
+    [array addObject:@{@"partFault":@[@{@"faultDes":@"asdf",@"partNo":@"000"}]}];
+    [array addObject:@{@"commonFault":@[@{@"faultDes":@"dddd",@"partNo":@"000"}]}];
+    [array addObject:@{@"customerOpinion":@"22"}];
+    [array addObject:@{@"handleOpinion":@"33"}];
+    [array addObject:@{@"remarks":@"22"}];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:param options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSLog(@"%@", jsonString);
+    [CFAFNetWorkingMethod postBossDemoWithUrl:@"http://192.168.0.100:8080/changfa_system/repair/createRepair.do" param:jsonString success:^(NSDictionary *dict) {
+        NSLog(@"sdfasf%@   \n  %@", [[dict objectForKey:@"head"] objectForKey:@"message"], dict);
+    } fail:^(NSError *error) {
+        NSLog(@"%@", error);
     }];
 }
 #pragma mark - <CTAssetsPickerControllerDelegate>
@@ -278,6 +301,18 @@
     }
     _imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
     [self presentViewController:_imagePicker animated:YES completion:nil];
+}
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(nullable NSDictionary<NSString *,id> *)editingInfo
+{
+    if (self.uploadImageType == 1) {
+        [self.groupPhotoArray addObject:image];
+        self.photoArray = self.groupPhotoArray;
+    } else {
+        [self.faultPhotoArray addObject:image];
+        self.photoArray = self.faultPhotoArray;
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [self uploadImagesArray];
 }
 - (void)photoButtonClick
 {
@@ -335,7 +370,13 @@
         CGSize size = CGSizeMake(asset.pixelWidth / scale, asset.pixelHeight / scale);
         // 获取图片
         [[PHImageManager defaultManager] requestImageForAsset:asset targetSize:size contentMode:PHImageContentModeDefault options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-            [self.photoArray addObject:result];
+            if (self.uploadImageType == 1) {
+                [self.groupPhotoArray addObject:result];
+                self.photoArray = self.groupPhotoArray;
+            } else {
+                [self.faultPhotoArray addObject:result];
+                self.photoArray = self.faultPhotoArray;
+            }
         }];
     }
     
@@ -347,13 +388,14 @@
     // 构造 NSURLRequest
     NSError* error = NULL;
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *params = @{@"file":@"",
+    NSDictionary *params = @{
+                             @"file":@"",
                              @"userId":[userDefaults objectForKey:@"UserUid"],
-                             //                             @"dispatchId":self.dispatchId,
+                             @"dispatchId":self.dispatchId,
                              @"token":[userDefaults objectForKey:@"UserToken"],
-                             //                             @"type":[NSString stringWithFormat:@"%lu", (_selectedIndex + 1)],
+                             @"type":[NSString stringWithFormat:@"%@", @1],
                              };
-    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:@"http://192.168.31.68:8080/changfa_system/file/manyFileUpload.do?" parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:@"http://192.168.0.100:8080/changfa_system/file/manyFileUpload.do?" parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
         [formData appendPartWithFileData:imageData name:@"file" fileName:@"avatar.png" mimeType:@"multipart/form-data"];
     } error:&error];
@@ -368,10 +410,17 @@
 }
 - (void)uploadImagesArray
 {
+    if (self.uploadImageType == 1) {
+        _groupPhotoView.photoArray = _groupPhotoArray;
+        [_groupPhotoView.photoCollectionView reloadData];
+    } else {
+        _faultPhotoView.photoArray = _groupPhotoArray;
+        [_faultPhotoView.photoCollectionView reloadData];
+    }
     [MBManager showWaitingWithTitle:@"上传图片中"];
     // 准备保存结果的数组，元素个数与上传的图片个数相同，先用 NSNull 占位
     NSMutableArray* result = [NSMutableArray array];
-    for (UIImage* image in self.photoArray) {
+    for (UIImage *image in self.photoArray) {
         [result addObject:[NSNull null]];
     }
     dispatch_group_t group = dispatch_group_create();
@@ -395,17 +444,33 @@
         [uploadTask resume];
     }
     
-    
     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        [MBManager hideAlert];
         NSLog(@"上传完成!");
         NSInteger ids = 0;
         for (id response in result) {
             NSLog(@"tupian%@", response);
-            
+            if (self.uploadImageType == 1) {
+                if (ids == 0) {
+                    self.groupPhotoIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
+                } else {
+                    self.groupPhotoIds = [[self.groupPhotoIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
+                }
+            } else {
+                if (ids == 0) {
+                    self.faultPhotoIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
+                } else {
+                    self.faultPhotoIds = [[self.faultPhotoIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
+                }
+            }
             ids++;
         }
         
     });
+}
+- (void)leftButtonClick
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

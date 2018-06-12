@@ -144,6 +144,21 @@
     }
     return nil;
 }
++ (NSURLSessionDataTask *)requestDataWithJavaUrl:(NSString *)url
+                                         Loading:(NSInteger)loading
+                                          JsonString:(id)JsonString
+                                          Method:(NSString *)method
+                                           Image:(NSString *)image
+                                         Success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
+                                         Failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure
+{
+    CFAFNetWorkingMethod *requestBase = [[self alloc] init];
+    if (requestBase)
+    {
+            return [requestBase RequestJavaUrl:url Loading:loading Params:JsonString Method:method success:success failure:failure];
+    }
+    return nil;
+}
 #pragma mark - Request no Image
 - (NSURLSessionDataTask *)RequestUrl:(NSString *)url
                               Params:(NSDictionary *)params
@@ -154,24 +169,6 @@
     [MBManager showLoading];
     self.url = url;
     CFAFNetworkingManage * manager = [CFAFNetworkingManage shareManage];
-    NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
-    
-    NSTimeInterval a=[dat timeIntervalSince1970];
-    
-    NSString*timeString = [NSString stringWithFormat:@"%0.f", a];//转为字符型
-    
-    NSString *str = [@"" stringByAppendingString:timeString];
-    [str stringByAppendingString:@"M/vkPOWXgBa7GnRd73t7j+jsKfbZtb+f"];
-    [str stringByAppendingString:[self dictionaryToJson:params]];
-    //    设置请求内容的类型
-    //    [manager.requestSerializer setValue:@"application/json;charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    //    设置请求的编码类型
-    //    [manager.requestSerializer setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
-    //
-    //    [manager.requestSerializer setValue:@"BA4E67519DF644D1B004D3CEB257FF58"forHTTPHeaderField:@"appId"];
-    //    [manager.requestSerializer setValue:[self md5:str] forHTTPHeaderField:@"signature"];
-    //    [manager.requestSerializer setValue:timeString forHTTPHeaderField:@"timestamp"];
-    
     //1.获得NSUserDefaults文件
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [manager.requestSerializer setValue:[userDefaults objectForKey:@"UserToken"] forHTTPHeaderField:@"token"];
@@ -342,24 +339,8 @@
     }
     self.url = url;
     CFAFNetworkingManage * manager = [CFAFNetworkingManage shareManage];
-    NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
-    
-    NSTimeInterval a=[dat timeIntervalSince1970];
-    
-    NSString*timeString = [NSString stringWithFormat:@"%0.f", a];//转为字符型
-    
-    NSString *str = [@"" stringByAppendingString:timeString];
-    [str stringByAppendingString:@"M/vkPOWXgBa7GnRd73t7j+jsKfbZtb+f"];
-    [str stringByAppendingString:[self dictionaryToJson:params]];
-    //    设置请求内容的类型
-    //    [manager.requestSerializer setValue:@"application/json;charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    //    设置请求的编码类型
-    //    [manager.requestSerializer setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
-    //
-    //    [manager.requestSerializer setValue:@"BA4E67519DF644D1B004D3CEB257FF58"forHTTPHeaderField:@"appId"];
-    //    [manager.requestSerializer setValue:[self md5:str] forHTTPHeaderField:@"signature"];
-    //    [manager.requestSerializer setValue:timeString forHTTPHeaderField:@"timestamp"];
-    
+    manager.requestSerializer=[AFJSONRequestSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/json",@"application/json",nil]; 
     //1.获得NSUserDefaults文件
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [manager.requestSerializer setValue:[userDefaults objectForKey:@"UserToken"] forHTTPHeaderField:@"token"];
@@ -516,5 +497,29 @@
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic options:NSJSONWritingPrettyPrinted error:&parseError];
     
     return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+}
+
++(void)postBossDemoWithUrl:(NSString*)url
+                     param:(id)param
+                   success:(void(^)(NSDictionary *dict))success
+                      fail:(void (^)(NSError *error))fail
+{
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];//不设置会报-1016或者会有编码问题
+    manager.requestSerializer = [AFJSONRequestSerializer serializer]; //不设置会报-1016或者会有编码问题
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer]; //不设置会报 error 3840
+//    [manager.responseSerializer setAcceptableContentTypes:[NSSet setWithObjects:@"application/json",@"text/json", @"text/javascript",@"text/html",@"text/plain",nil]];
+    NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:url parameters:nil error:nil];
+    [request addValue:@"application/json"forHTTPHeaderField:@"Content-Type"];
+    [request addValue:@"application/json"forHTTPHeaderField:@"Accept"];
+    NSData *body  =[NSData dataWithBytes:[param UTF8String] length:[param length]];
+    [request setHTTPBody:body];
+    //发起请求
+    [[manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *_Nonnull response, id _Nullable responseObject,NSError * _Nullable error)
+      {
+          NSDictionary * dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+          success(dic);
+          
+      }] resume];
 }
 @end

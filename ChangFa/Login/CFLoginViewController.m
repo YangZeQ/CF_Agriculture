@@ -199,14 +199,15 @@
 - (void)landingView{
 
     NSDictionary *dic = @{
-                           @"account":self.accountText.text,
-                           @"password":self.secretText.text,
+                           @"userName":self.accountText.text,
+                           @"userpwd":self.secretText.text,
                            @"loginType":@0,
                            @"accessToken":@"",
                            @"code":@"",
                            };
-    [CFAFNetWorkingMethod requestDataWithUrl:@"user/appLogin" Params:dic Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
+    [CFAFNetWorkingMethod requestDataWithUrl:@"accounts/userLogin" Params:dic Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"%@", responseObject);
+        NSLog(@"%@", [responseObject objectForKey:@"Message"]);
         NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
         
         if ([[dict objectForKey:@"code"] integerValue] == 200) {

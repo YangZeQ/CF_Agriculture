@@ -20,11 +20,9 @@ typedef void(^textNumberBlock)(NSInteger number);
 @interface CFRepairOrderView ()<UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegate, UICollectionViewDataSource, CTAssetsPickerControllerDelegate>
 @property (nonatomic, assign)FillViewStyle viewStyle;
 @property (nonatomic, assign)NSInteger viewTag;
-@property (nonatomic, strong)NSMutableArray *photoArray;
 
 @property (nonatomic, strong)UIView *vagueView;
 @property (nonatomic, strong)UIView *faultView;
-@property (nonatomic, strong)UICollectionView *photoCollectionView;
 @property (nonatomic, strong)CFRepairsPhotoCell *photoCell;
 @property (nonatomic, strong)AddMachineCollectionViewCell *addCell;
 
@@ -175,7 +173,7 @@ typedef void(^textNumberBlock)(NSInteger number);
 {
     _bodyView.sd_layout.heightIs(300 * screenHeight);
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-    _photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(30 * screenWidth, 120 * screenHeight, CF_WIDTH - 100 * screenWidth, 200 * screenHeight) collectionViewLayout:layout];
+    _photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(30 * screenWidth, 50 * screenHeight, CF_WIDTH - 100 * screenWidth, 200 * screenHeight) collectionViewLayout:layout];
     _photoCollectionView.backgroundColor = [UIColor whiteColor];
     layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
     layout.itemSize = CGSizeMake(200 * screenWidth, 200 * screenHeight);
@@ -207,6 +205,7 @@ typedef void(^textNumberBlock)(NSInteger number);
     _photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
     _photoCell.deleteButton.hidden = NO;
     _photoCell.deleteButton.tag = 1000 + indexPath.row - 1;
+    _photoCell.repairsPhoto.image = self.photoArray[indexPath.row - 1];
     [_photoCell.deleteButton addTarget:self action:@selector(deletebuttonClick:) forControlEvents:UIControlEventTouchUpInside];
     return _photoCell;
 }

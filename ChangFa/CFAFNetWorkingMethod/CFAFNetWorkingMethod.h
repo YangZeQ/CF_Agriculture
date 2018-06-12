@@ -41,10 +41,21 @@ typedef NS_ENUM(NSUInteger, RequestType) {
 //Java请求
 + (NSURLSessionDataTask *)requestDataWithJavaUrl:(NSString *)url
                                          Loading:(NSInteger)loading
-                                          Params:(NSDictionary *)params
+                                          Params:(id)params
                                           Method:(NSString *)method
                                            Image:(NSString *)image
                                          Success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
                                          Failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure;
++ (NSURLSessionDataTask *)requestDataWithJavaUrl:(NSString *)url
+                                         Loading:(NSInteger)loading
+                                          JsonString:(id)JsonString
+                                          Method:(NSString *)method
+                                           Image:(NSString *)image
+                                         Success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
+                                         Failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure;
++(void)postBossDemoWithUrl:(NSString*)url
+                     param:(id)param
+                   success:(void(^)(NSDictionary *dict))success
+                      fail:(void (^)(NSError *error))fail;
 
 @end

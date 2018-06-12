@@ -10,4 +10,7 @@
 
 @interface CFRepairOrderViewController : UIViewController
 @property (nonatomic, strong)NSString *dispatchId;
+@property (nonatomic, strong)NSString *repairId;
+@property (nonatomic, copy)NSString *disId;
+@property (nonatomic, strong)NSString *disNum;
 @end

@@ -21,7 +21,7 @@
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
     CFLoginViewController *loginViewC = [[CFLoginViewController alloc]init];
     CFRepairOrderViewController *repair = [[CFRepairOrderViewController alloc]init];
-    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:repair];
+    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loginViewC];
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     [[AMapServices sharedServices] setEnableHTTPS:YES];
