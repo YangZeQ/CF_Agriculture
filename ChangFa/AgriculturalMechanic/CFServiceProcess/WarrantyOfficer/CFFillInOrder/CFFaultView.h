@@ -15,6 +15,7 @@ typedef void(^changeFrameBlock)(NSInteger type);
 @property (nonatomic, assign)NSInteger type;
 
 @property (nonatomic, strong)UIButton *titleBtn;
+@property (nonatomic, strong)UITextField *partNameText;
 @property (nonatomic, strong)CFReasonTextView *reasonView;
 
 @property (nonatomic, copy)changeViewBlock changeViewBlock;

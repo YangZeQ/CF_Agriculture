@@ -9,6 +9,7 @@
 #import "CFCompleteOrderInfoViewController.h"
 #import "CFWorkOrderInfoViewController.h"
 #import "CFShowFillInfoViewController.h"
+#import "CFRepairOrderViewController.h"
 #import "CFCompleteCommentViewController.h"
 #import "CFWordOrderInfoModel.h"
 #import "ChangFa-Bridging-Header.h"
@@ -340,11 +341,12 @@
         order.dispatchId = self.dispatchId;
         [self.navigationController pushViewController:order animated:YES];
     } else if (sender.tag == 1002) {
-        CFShowFillInfoViewController *show = [[CFShowFillInfoViewController alloc]init];
+        CFRepairOrderViewController *show = [[CFRepairOrderViewController alloc]init];
         show.repairId = self.orderInfoModel.repairId;
         show.disId = self.orderInfoModel.disId;
         show.disNum = self.orderInfoModel.disNum;
         show.dispatchId = self.dispatchId;
+        show.isCheck = YES;
         [self.navigationController pushViewController:show animated:YES];
     } else {
         if (self.orderInfoModel.commentId.length < 1) {

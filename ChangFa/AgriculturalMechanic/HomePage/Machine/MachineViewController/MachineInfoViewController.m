@@ -12,7 +12,7 @@
 @interface MachineInfoViewController ()<UITextFieldDelegate>
 @property (nonatomic, strong)UITableView *tableView;
 @property (nonatomic, strong)UIView *vagueView;
-@property (nonatomic, strong)NSString *editNote;
+@property (nonatomic, copy)NSString *editNote;
 @end
 
 @implementation MachineInfoViewController

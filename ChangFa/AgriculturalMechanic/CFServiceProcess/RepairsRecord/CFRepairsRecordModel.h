@@ -9,38 +9,38 @@
 #import <Foundation/Foundation.h>
 
 @interface CFRepairsRecordModel : NSObject
-@property (nonatomic, strong)NSString *fileIds;
-@property (nonatomic, strong)NSString *imei;
-@property (nonatomic, strong)NSString *machineModel;
-@property (nonatomic, strong)NSString *machineName;
-@property (nonatomic, strong)NSString *machineType;
-@property (nonatomic, strong)NSString *machineRemarks;
-@property (nonatomic, strong)NSString *reportId;
-@property (nonatomic, strong)NSString *reportTime;
-@property (nonatomic, strong)NSString *status;
-@property (nonatomic, strong)NSString *userName;
+@property (nonatomic, copy)NSString *fileIds;
+@property (nonatomic, copy)NSString *imei;
+@property (nonatomic, copy)NSString *machineModel;
+@property (nonatomic, copy)NSString *machineName;
+@property (nonatomic, copy)NSString *machineType;
+@property (nonatomic, copy)NSString *machineRemarks;
+@property (nonatomic, copy)NSString *reportId;
+@property (nonatomic, copy)NSString *reportTime;
+@property (nonatomic, copy)NSString *status;
+@property (nonatomic, copy)NSString *userName;
 
-@property (nonatomic, strong)NSString *contactMobile;
-@property (nonatomic, strong)NSString *contactName;
-@property (nonatomic, strong)NSString *createTime;
-@property (nonatomic, strong)NSString *discription;
-@property (nonatomic, strong)NSString *distance;
+@property (nonatomic, copy)NSString *contactMobile;
+@property (nonatomic, copy)NSString *contactName;
+@property (nonatomic, copy)NSString *createTime;
+@property (nonatomic, copy)NSString *discription;
+@property (nonatomic, copy)NSString *distance;
 @property (nonatomic, strong)NSMutableArray *filePath;
-@property (nonatomic, strong)NSString *ID;
-@property (nonatomic, strong)NSString *mobile;
-@property (nonatomic, strong)NSString *repairMobile;
-@property (nonatomic, strong)NSString *repairUserName;
-@property (nonatomic, strong)NSString *serviceCompany;
-@property (nonatomic, strong)NSString *serviceId;
-@property (nonatomic, strong)NSString *serviceLocation;
+@property (nonatomic, copy)NSString *ID;
+@property (nonatomic, copy)NSString *mobile;
+@property (nonatomic, copy)NSString *repairMobile;
+@property (nonatomic, copy)NSString *repairUserName;
+@property (nonatomic, copy)NSString *serviceCompany;
+@property (nonatomic, copy)NSString *serviceId;
+@property (nonatomic, copy)NSString *serviceLocation;
 @property (nonatomic, strong)NSMutableArray *statusArray;
-@property (nonatomic, strong)NSString *userId;
-@property (nonatomic, strong)NSString *userLocation;
-@property (nonatomic, strong)NSString *commentTime;
-@property (nonatomic, strong)NSString *commentLevel;
-@property (nonatomic, strong)NSString *commentContent;
+@property (nonatomic, copy)NSString *userId;
+@property (nonatomic, copy)NSString *userLocation;
+@property (nonatomic, copy)NSString *commentTime;
+@property (nonatomic, copy)NSString *commentLevel;
+@property (nonatomic, copy)NSString *commentContent;
 
-@property (nonatomic, strong)NSString *finishTime;
+@property (nonatomic, copy)NSString *finishTime;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)recordModelWithDictionary:(NSDictionary *)dict;

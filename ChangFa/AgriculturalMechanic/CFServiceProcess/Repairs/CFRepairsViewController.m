@@ -56,15 +56,15 @@
 @property (nonatomic, strong)AddMachineCollectionViewCell *addRepairsPhotoCell;
 @property (nonatomic, strong)NSMutableArray *photoArray;
 
-@property (nonatomic, strong)NSString *fileIds;
-@property (nonatomic, strong)NSString *province;
-@property (nonatomic, strong)NSString *city;
+@property (nonatomic, copy)NSString *fileIds;
+@property (nonatomic, copy)NSString *province;
+@property (nonatomic, copy)NSString *city;
 // 定位
 @property (nonatomic, strong)AMapLocationManager *locationManager;
 @property (nonatomic, assign)double latitude;
 @property (nonatomic, assign)double longitude;
-@property (nonatomic, strong)NSString *machineLat;
-@property (nonatomic, strong)NSString *machineLng;
+@property (nonatomic, copy)NSString *machineLat;
+@property (nonatomic, copy)NSString *machineLng;
 //@property (nonatomic, strong)UIImagePickerController *imagePicker;
 @end
 

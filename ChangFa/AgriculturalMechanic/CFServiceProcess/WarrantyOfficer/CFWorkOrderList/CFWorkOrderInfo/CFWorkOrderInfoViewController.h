@@ -10,5 +10,5 @@
 
 @interface CFWorkOrderInfoViewController : UIViewController
 @property (nonatomic, assign)NSInteger pushType;   // completeorder push:2
-@property (nonatomic, strong)NSString *dispatchId;
+@property (nonatomic, copy)NSString *dispatchId;
 @end

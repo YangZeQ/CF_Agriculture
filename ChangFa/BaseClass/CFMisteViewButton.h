@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface CFMisteViewButton : UIView
-@property (nonatomic, strong)NSString *imageName;
-@property (nonatomic, strong)NSString *titleName;
+@property (nonatomic, copy)NSString *imageName;
+@property (nonatomic, copy)NSString *titleName;
 @property (nonatomic, strong)UIImageView *buttonImage;
 @property (nonatomic, strong)UILabel *titleLabel;
 @property (nonatomic, strong)UIButton *misteViewButton;

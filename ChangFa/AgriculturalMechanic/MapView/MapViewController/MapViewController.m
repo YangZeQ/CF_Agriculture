@@ -46,7 +46,7 @@
 @property (nonatomic, assign)double longitude;
 @property (nonatomic, strong)MAAnnotationView *selectedPin;
 @property (nonatomic, assign)NSInteger selectedPinStatus;
-@property (nonatomic, strong)NSString *lastSelectedImage;
+@property (nonatomic, copy)NSString *lastSelectedImage;
 @end
 
 

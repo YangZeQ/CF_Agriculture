@@ -10,7 +10,7 @@
 
 @interface RootTabbarViewController : UITabBarController
 @property (nonatomic, assign)float navigationBarHeight;
-@property (nonatomic, strong)NSString *str;
+@property (nonatomic, copy)NSString *str;
 
 - (instancetype)initWithNavigationHeight:(float)navigationHeight;
 @end

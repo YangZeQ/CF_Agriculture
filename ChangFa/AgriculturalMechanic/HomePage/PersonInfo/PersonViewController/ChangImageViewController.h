@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface ChangImageViewController : UIViewController
-@property (nonatomic, strong)NSString *imageUrl;
+@property (nonatomic, copy)NSString *imageUrl;
 @end

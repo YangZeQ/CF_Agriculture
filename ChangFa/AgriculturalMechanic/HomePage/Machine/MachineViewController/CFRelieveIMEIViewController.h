@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface CFRelieveIMEIViewController : UIViewController
-@property (nonatomic, strong)NSString *imei;
-@property (nonatomic, strong)NSString *carbar;
+@property (nonatomic, copy)NSString *imei;
+@property (nonatomic, copy)NSString *carbar;
 @end

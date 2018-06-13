@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface CFCompleteOrderInfoViewController : UIViewController
-@property (nonatomic, strong)NSString *dispatchId;
+@property (nonatomic, copy)NSString *dispatchId;
 @end

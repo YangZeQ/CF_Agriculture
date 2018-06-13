@@ -12,5 +12,5 @@
 @interface CFAgencyMachineDetailInfoViewController : UIViewController
 @property (nonatomic, strong)MachineModel *machineModel;
 @property (nonatomic, strong)PersonModel *personModel;
-@property (nonatomic, strong)NSString *viewType;
+@property (nonatomic, copy)NSString *viewType;
 @end

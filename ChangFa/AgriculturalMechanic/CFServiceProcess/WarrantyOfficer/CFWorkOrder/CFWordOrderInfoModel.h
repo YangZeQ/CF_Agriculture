@@ -9,25 +9,25 @@
 #import <Foundation/Foundation.h>
 
 @interface CFWordOrderInfoModel : NSObject
-@property (nonatomic, strong)NSString *buyTime;
-@property (nonatomic, strong)NSString *commentId;
-@property (nonatomic, strong)NSString *contactMobile;
-@property (nonatomic, strong)NSString *contactName;
-@property (nonatomic, strong)NSString *createTime;
-@property (nonatomic, strong)NSString *descriptions;
-@property (nonatomic, strong)NSString *disId;
-@property (nonatomic, strong)NSString *disNum;
+@property (nonatomic, copy)NSString *buyTime;
+@property (nonatomic, copy)NSString *commentId;
+@property (nonatomic, copy)NSString *contactMobile;
+@property (nonatomic, copy)NSString *contactName;
+@property (nonatomic, copy)NSString *createTime;
+@property (nonatomic, copy)NSString *descriptions;
+@property (nonatomic, copy)NSString *disId;
+@property (nonatomic, copy)NSString *disNum;
 @property (nonatomic, strong)NSArray *filePath;
-@property (nonatomic, strong)NSString *finishTime;
-@property (nonatomic, strong)NSString *machineModel;
-@property (nonatomic, strong)NSString *machineName;
-@property (nonatomic, strong)NSString *machineType;
-@property (nonatomic, strong)NSString *repairId;
-@property (nonatomic, strong)NSString *reportTime;
-@property (nonatomic, strong)NSString *status;
+@property (nonatomic, copy)NSString *finishTime;
+@property (nonatomic, copy)NSString *machineModel;
+@property (nonatomic, copy)NSString *machineName;
+@property (nonatomic, copy)NSString *machineType;
+@property (nonatomic, copy)NSString *repairId;
+@property (nonatomic, copy)NSString *reportTime;
+@property (nonatomic, copy)NSString *status;
 @property (nonatomic, strong)NSArray *statusArray;
-@property (nonatomic, strong)NSString *taskAddress;
-@property (nonatomic, strong)NSString *taskLocation;
+@property (nonatomic, copy)NSString *taskAddress;
+@property (nonatomic, copy)NSString *taskLocation;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)orderInfoModelWithDictionary:(NSDictionary *)dict;

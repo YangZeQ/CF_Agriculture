@@ -10,6 +10,6 @@
 
 @interface CFCommentInfoViewController : UIViewController
 @property (nonatomic, assign)NSInteger pushType;  // completeorder push:2
-@property (nonatomic, strong)NSString *serviceId;
-@property (nonatomic, strong)NSString *commentLevel;
+@property (nonatomic, copy)NSString *serviceId;
+@property (nonatomic, copy)NSString *commentLevel;
 @end

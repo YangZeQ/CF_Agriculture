@@ -40,9 +40,9 @@ agriculturaliOS
 	<key>NSCameraUsageDescription</key>
 	<string>是否允许使用相机</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>YES</string>
+	<string>是否允许始终访问您的地理位置</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>YES</string>
+	<string>使用应用期间是否允许访问您的地理位置</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>是否允许使用相册</string>
 	<key>UIBackgroundModes</key>

@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 
 @interface ProvinceModel : NSObject
-@property (nonatomic, strong)NSString *ID;
-@property (nonatomic, strong)NSString *level;
-@property (nonatomic, strong)NSString *pid;
-@property (nonatomic, strong)NSString *title;
+@property (nonatomic, copy)NSString *ID;
+@property (nonatomic, copy)NSString *level;
+@property (nonatomic, copy)NSString *pid;
+@property (nonatomic, copy)NSString *title;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)provinceModelWithDictionary:(NSDictionary *)dict;
 @end

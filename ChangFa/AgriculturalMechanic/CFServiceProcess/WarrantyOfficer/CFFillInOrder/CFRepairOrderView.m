@@ -11,13 +11,9 @@
 #import "CFRepairsPhotoCell.h"
 #import "AddMachineCollectionViewCell.h"
 
-#import "AFHTTPSessionManager.h"
-#import <Photos/Photos.h>
-#import "CTAssetsPickerController/CTAssetsPickerController.h"
-
 typedef void(^textNumberBlock)(NSInteger number);
 
-@interface CFRepairOrderView ()<UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegate, UICollectionViewDataSource, CTAssetsPickerControllerDelegate>
+@interface CFRepairOrderView ()<UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegate, UICollectionViewDataSource>
 @property (nonatomic, assign)FillViewStyle viewStyle;
 @property (nonatomic, assign)NSInteger viewTag;
 
@@ -157,8 +153,8 @@ typedef void(^textNumberBlock)(NSInteger number);
     
     _statusImage = [[UIImageView alloc]init];
     [self addSubview:_statusImage];
-    _statusImage.sd_layout.widthIs(10).topSpaceToView(self, 23).heightIs(15).rightSpaceToView(self, 25);
-    _statusImage.image = [UIImage imageNamed:@"xiugai"];
+    _statusImage.sd_layout.widthIs(15).topSpaceToView(self, 23).heightIs(15).rightSpaceToView(self, 22);
+    _statusImage.image = [UIImage imageNamed:@"CF_CloseBtn"];
     _statusImage.userInteractionEnabled = YES;
     
     _selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -193,7 +189,14 @@ typedef void(^textNumberBlock)(NSInteger number);
 }
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return _photoArray.count + 1;
+    if (self.photoArray.count > 0) {
+        self.titleLabel.textColor = ChangfaColor;
+        self.statuslabel.hidden = NO;
+    } else {
+        self.titleLabel.textColor = UIColorWithRGBA(107, 107, 107, 1);
+        self.statuslabel.hidden = YES;
+    }
+    return self.photoArray.count + 1;
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -205,7 +208,11 @@ typedef void(^textNumberBlock)(NSInteger number);
     _photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
     _photoCell.deleteButton.hidden = NO;
     _photoCell.deleteButton.tag = 1000 + indexPath.row - 1;
-    _photoCell.repairsPhoto.image = self.photoArray[indexPath.row - 1];
+    if ([self.photoArray[indexPath.row - 1] isKindOfClass:[NSString class]]) {
+        [_photoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:self.photoArray[indexPath.row - 1]] placeholderImage:[UIImage imageNamed:@""]];
+    } else {
+        _photoCell.repairsPhoto.image = self.photoArray[indexPath.row - 1];
+    }
     [_photoCell.deleteButton addTarget:self action:@selector(deletebuttonClick:) forControlEvents:UIControlEventTouchUpInside];
     return _photoCell;
 }
@@ -234,6 +241,8 @@ typedef void(^textNumberBlock)(NSInteger number);
     _reasonView.font = CFFONT13;
     _reasonView.sd_layout.topSpaceToView(_bodyView, 0).leftSpaceToView(_bodyView, 32 * screenWidth).rightSpaceToView(_bodyView, 32 * screenWidth).heightIs(448 * screenHeight);
     _reasonView.placeholderView.sd_layout.leftSpaceToView(_reasonView, 0).topSpaceToView(_reasonView, 0).rightSpaceToView(_reasonView, 0).heightIs(_reasonView.height);
+    _reasonView.enablesReturnKeyAutomatically = NO;
+    _reasonView.returnKeyType = UIReturnKeyDone;
 }
 - (void)createPartsView
 {
@@ -253,11 +262,13 @@ typedef void(^textNumberBlock)(NSInteger number);
     [typeBtn addTarget:self action:@selector(typeBtnClick) forControlEvents:UIControlEventTouchUpInside];
 }
 - (void)addMachineFaultViewWithType:(FaultType)type
+                     infoDictionary:(NSDictionary *)dcit
 {
     self.viewTag++;
     __block CFFaultView *faultView = [[CFFaultView alloc]initWithType:type];
     [_bodyView addSubview:faultView];
     faultView.tag = self.viewTag;
+    
 
     CFFaultView *fault = [self viewWithTag:self.viewTag - 1];
     switch (type) {
@@ -290,6 +301,13 @@ typedef void(^textNumberBlock)(NSInteger number);
                 break;
         }
     };
+    if (!(dcit == nil)) {
+        faultView.partNameText.text = [dcit objectForKey:@"partNo"];
+        faultView.reasonView.text = [dcit objectForKey:@"faultDes"];
+        faultView.reasonView.placeholder = @"";
+        self.sd_layout.heightIs(60);
+        _bodyView.hidden = YES;
+    }
 }
 #pragma mark -选择故障类型
 - (void)typeBtnClick
@@ -299,12 +317,12 @@ typedef void(^textNumberBlock)(NSInteger number);
 - (void)partBtnClick
 {
     self.vagueView.hidden = YES;
-    [self addMachineFaultViewWithType:FaultTypePart];
+    [self addMachineFaultViewWithType:FaultTypePart infoDictionary:nil];
 }
 - (void)commonBtnClick
 {
     self.vagueView.hidden = YES;
-    [self addMachineFaultViewWithType:FaultTypeCommon];
+    [self addMachineFaultViewWithType:FaultTypeCommon infoDictionary:nil];
 }
 - (void)cancelBtnClick
 {
@@ -316,114 +334,47 @@ typedef void(^textNumberBlock)(NSInteger number);
     if (isSelected) {
         _bodyView.hidden = NO;
         self.sd_layout.heightIs(60 + _bodyView.height);
+        _statusImage.image = [UIImage imageNamed:@"CF_OpenBtn"];
     } else {
         self.sd_layout.heightIs(60);
         _bodyView.hidden = YES;
+        _statusImage.image = [UIImage imageNamed:@"CF_CloseBtn"];
     }
 }
-
-#pragma mark - <CTAssetsPickerControllerDelegate>
--(BOOL)assetsPickerController:(CTAssetsPickerController *)picker shouldSelectAsset:(PHAsset *)asset
+- (void)textViewDidEndEditing:(UITextView *)textView
 {
-    NSInteger max = 9;
-    if (picker.selectedAssets.count + self.photoArray.count >= max) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:[NSString stringWithFormat:@"最多选择%zd张图片", picker.selectedAssets.count] preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:nil]];
-        [picker presentViewController:alert animated:YES completion:nil];
-        // 这里不能使用self来modal别的控制器，因为此时self.view不在window上
-        return NO;
+    if (textView.text.length > 0) {
+        self.titleLabel.textColor = ChangfaColor;
+        self.statuslabel.hidden = NO;
+    } else {
+        self.titleLabel.textColor = UIColorWithRGBA(107, 107, 107, 1);
+        self.statuslabel.hidden = YES;
     }
+}
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if (_hourTextField.textField.text.length > 0 && _mileageTextField.textField.text.length > 0) {
+        self.titleLabel.textColor = ChangfaColor;
+        self.statuslabel.hidden = NO;
+    } else {
+        self.titleLabel.textColor = UIColorWithRGBA(107, 107, 107, 1);
+        self.statuslabel.hidden = YES;
+    }
+}
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    
+    if ([text isEqualToString:@"\n"]){ //判断输入的字是否是回车，即按下return
+        //在这里做你响应return键的代码
+        [self endEditing:YES];
+        return NO; //这里返回NO，就代表return键值失效，即页面上按下return，不会出现换行，如果为yes，则输入页面会换行
+    }
+
     return YES;
 }
-- (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishPickingAssets:(NSArray *)assets
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    // 关闭图片选择界面
-    [picker dismissViewControllerAnimated:YES completion:nil];
-    // 基本配置
-    CGFloat scale = [UIScreen mainScreen].scale;
-    PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
-    options.resizeMode   = PHImageRequestOptionsResizeModeExact;
-    options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
-    options.synchronous = YES;
-    options.networkAccessAllowed = YES;
-    // 遍历选择的所有图片
-    for (NSInteger i = 0; i < assets.count; i++) {
-        PHAsset *asset = assets[i];
-        CGSize size = CGSizeMake(asset.pixelWidth / scale, asset.pixelHeight / scale);
-        // 获取图片
-        [[PHImageManager defaultManager] requestImageForAsset:asset targetSize:size contentMode:PHImageContentModeDefault options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-                [self.photoArray addObject:result];
-        }];
-    }
-    
-    [self uploadImagesArray];
-}
-#pragma mark-多图片上传
-- (NSURLSessionUploadTask*)uploadTaskWithImage:(UIImage*)image completion:(void (^)(NSURLResponse *response, id responseObject, NSError *error))completionBlock
-{
-    // 构造 NSURLRequest
-    NSError* error = NULL;
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *params = @{@"file":@"",
-                             @"userId":[userDefaults objectForKey:@"UserUid"],
-//                             @"dispatchId":self.dispatchId,
-                             @"token":[userDefaults objectForKey:@"UserToken"],
-//                             @"type":[NSString stringWithFormat:@"%lu", (_selectedIndex + 1)],
-                             };
-    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:@"http://192.168.31.68:8080/changfa_system/file/manyFileUpload.do?" parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
-        [formData appendPartWithFileData:imageData name:@"file" fileName:@"avatar.png" mimeType:@"multipart/form-data"];
-    } error:&error];
-    
-    // 可在此处配置验证信息
-    
-    // 将 NSURLRequest 与 completionBlock 包装为 NSURLSessionUploadTask
-    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    NSURLSessionUploadTask *uploadTask = [manager uploadTaskWithStreamedRequest:request progress:^(NSProgress * _Nonnull uploadProgress) {
-    } completionHandler:completionBlock];
-    return uploadTask;
-}
-- (void)uploadImagesArray
-{
-    self.vagueView.hidden = YES;
-    [MBManager showWaitingWithTitle:@"上传图片中"];
-    // 准备保存结果的数组，元素个数与上传的图片个数相同，先用 NSNull 占位
-    NSMutableArray* result = [NSMutableArray array];
-    for (UIImage* image in self.photoArray) {
-        [result addObject:[NSNull null]];
-    }
-    dispatch_group_t group = dispatch_group_create();
-    for (NSInteger i = 0; i < self.photoArray.count; i++) {
-        
-        dispatch_group_enter(group);
-        
-        NSURLSessionUploadTask* uploadTask = [self uploadTaskWithImage:self.photoArray[i] completion:^(NSURLResponse *response, NSDictionary* responseObject, NSError *error) {
-            if (error) {
-                NSLog(@"第 %d 张图片上传失败: %@", (int)i + 1, error);
-                dispatch_group_leave(group);
-            } else {
-                NSLog(@"uploadimages%@", response);
-                NSLog(@"第 %d 张图片上传成功: %@", (int)i + 1, responseObject);
-                @synchronized (result) { // NSMutableArray 是线程不安全的，所以加个同步锁
-                    result[i] = responseObject;
-                }
-                dispatch_group_leave(group);
-            }
-        }];
-        [uploadTask resume];
-    }
-    
-    
-    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
-        NSLog(@"上传完成!");
-        NSInteger ids = 0;
-        for (id response in result) {
-            NSLog(@"tupian%@", response);
-           
-            ids++;
-        }
-
-    });
+    [self endEditing:YES];
+    return NO;
 }
 - (void)awakeFromNib {
     [super awakeFromNib];

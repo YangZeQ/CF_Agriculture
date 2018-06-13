@@ -55,6 +55,7 @@
 		8B5F2F27202828EF00BF04B0 /* CFAgencyReturnViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F2F26202828EF00BF04B0 /* CFAgencyReturnViewController.m */; };
 		8B6304D82099A9D300B4DD6B /* CFMyMachineListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6304D72099A9D300B4DD6B /* CFMyMachineListViewController.m */; };
 		8B6304DB2099B31500B4DD6B /* CFMyMachineListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6304DA2099B31500B4DD6B /* CFMyMachineListTableViewCell.m */; };
+		8B651CB620D0EEDC00758096 /* CFRefillRepairOrderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B651CB520D0EEDC00758096 /* CFRefillRepairOrderController.m */; };
 		8B6C861020CA551D0059B37B /* CFFaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6C860F20CA551D0059B37B /* CFFaultView.m */; };
 		8B6EDBA0201983630082DEF0 /* CFAgencySellSuccessViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6EDB9F201983630082DEF0 /* CFAgencySellSuccessViewController.m */; };
 		8B6EDBA32019ABC70082DEF0 /* CFAgencyMachineDetailInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6EDBA22019ABC70082DEF0 /* CFAgencyMachineDetailInfoViewController.m */; };
@@ -298,6 +299,8 @@
 		8B6304D72099A9D300B4DD6B /* CFMyMachineListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFMyMachineListViewController.m; sourceTree = "<group>"; };
 		8B6304D92099B31500B4DD6B /* CFMyMachineListTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFMyMachineListTableViewCell.h; sourceTree = "<group>"; };
 		8B6304DA2099B31500B4DD6B /* CFMyMachineListTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFMyMachineListTableViewCell.m; sourceTree = "<group>"; };
+		8B651CB420D0EEDC00758096 /* CFRefillRepairOrderController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFRefillRepairOrderController.h; sourceTree = "<group>"; };
+		8B651CB520D0EEDC00758096 /* CFRefillRepairOrderController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFRefillRepairOrderController.m; sourceTree = "<group>"; };
 		8B6C860E20CA551D0059B37B /* CFFaultView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFFaultView.h; sourceTree = "<group>"; };
 		8B6C860F20CA551D0059B37B /* CFFaultView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CFFaultView.m; sourceTree = "<group>"; };
 		8B6EDB9E201983630082DEF0 /* CFAgencySellSuccessViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFAgencySellSuccessViewController.h; sourceTree = "<group>"; };
@@ -1185,6 +1188,8 @@
 				8B938D6220BBDFA1000B016D /* TestViewController.m */,
 				8B9C5F5120C782EE00CC7EC5 /* CFRepairOrderViewController.h */,
 				8B9C5F5220C782EE00CC7EC5 /* CFRepairOrderViewController.m */,
+				8B651CB420D0EEDC00758096 /* CFRefillRepairOrderController.h */,
+				8B651CB520D0EEDC00758096 /* CFRefillRepairOrderController.m */,
 				8B9C5F5420C782FD00CC7EC5 /* CFRepairOrderView.h */,
 				8B9C5F5520C782FD00CC7EC5 /* CFRepairOrderView.m */,
 				8B6C860E20CA551D0059B37B /* CFFaultView.h */,
@@ -1851,6 +1856,7 @@
 				8B5E67092068C4B000DDDB8F /* File.swift in Sources */,
 				8B598903200EF07F00A35683 /* MachinebarTableViewCell.m in Sources */,
 				D723EB2620044DCF00F71389 /* City.m in Sources */,
+				8B651CB620D0EEDC00758096 /* CFRefillRepairOrderController.m in Sources */,
 				8B5BFB862059F2570031A673 /* CFClassMethod.m in Sources */,
 				8B6EDBB02019FC320082DEF0 /* AgencyModel.m in Sources */,
 				8BA9A82B209451EB00DE5B4A /* CFIntegralViewController.m in Sources */,

@@ -9,14 +9,14 @@
 #import <Foundation/Foundation.h>
 
 @interface PersonModel : NSObject
-@property (nonatomic, strong)NSString *uname;
-@property (nonatomic, strong)NSString *uid;
-@property (nonatomic, strong)NSString *phone;
-@property (nonatomic, strong)NSString *headUrl;
-@property (nonatomic, strong)NSString *location;
-@property (nonatomic, strong)NSString *roleType;
-@property (nonatomic, strong)NSString *distributorId;
-@property (nonatomic, strong)NSString *identify;
+@property (nonatomic, copy)NSString *uname;
+@property (nonatomic, copy)NSString *uid;
+@property (nonatomic, copy)NSString *phone;
+@property (nonatomic, copy)NSString *headUrl;
+@property (nonatomic, copy)NSString *location;
+@property (nonatomic, copy)NSString *roleType;
+@property (nonatomic, copy)NSString *distributorId;
+@property (nonatomic, copy)NSString *identify;
  
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)personModelWithDictionary:(NSDictionary *)dict;

@@ -9,23 +9,22 @@
 #import <Foundation/Foundation.h>
 
 @interface CFFillInOrderModel : NSObject
-@property (nonatomic, strong)NSString *customerOpinion;
-@property (nonatomic, strong)NSString *disNum;
-@property (nonatomic, strong)NSString *driveDistance;
-@property (nonatomic, strong)NSString *examineStatus;
-//@property (nonatomic, strong)NSString *faultFileIds;
+@property (nonatomic, copy)NSString *customerOpinion;
+@property (nonatomic, copy)NSString *disNum;
+@property (nonatomic, copy)NSString *driveDistance;
+@property (nonatomic, copy)NSString *examineStatus;
 @property (nonatomic, strong)NSMutableArray *faultFileInfo;
-@property (nonatomic, strong)NSString *faultInstruction;
-@property (nonatomic, strong)NSString *handleOpinion;
-@property (nonatomic, strong)NSString *machineInstruction;
-//@property (nonatomic, strong)NSString *personFileIds;
+@property (nonatomic, copy)NSString *faultInstruction;
+@property (nonatomic, copy)NSString *handleOpinion;
+@property (nonatomic, copy)NSString *machineInstruction;
 @property (nonatomic, strong)NSMutableArray *personFileInfo;
-@property (nonatomic, strong)NSString *reason;
-@property (nonatomic, strong)NSString *remarks;
-@property (nonatomic, strong)NSString *repairId;
-@property (nonatomic, strong)NSString *repairNum;
-@property (nonatomic, strong)NSString *repairType;
-@property (nonatomic, strong)NSString *useTime;
+@property (nonatomic, copy)NSString *reason;
+@property (nonatomic, copy)NSString *remarks;
+@property (nonatomic, copy)NSString *repairId;
+@property (nonatomic, copy)NSString *repairNum;
+@property (nonatomic, copy)NSString *repairType;
+@property (nonatomic, copy)NSString *useTime;
+@property (nonatomic, strong)NSDictionary *faults;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)fillInOrderModelWithDictionary:(NSDictionary *)dict;

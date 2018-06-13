@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "NewsModel.h"
 @interface SystemNewsTableViewCell : UITableViewCell
-@property (nonatomic, strong)NSString *title;
-@property (nonatomic, strong)NSString *time;
+@property (nonatomic, copy)NSString *title;
+@property (nonatomic, copy)NSString *time;
 @property (nonatomic, assign)BOOL read;
 @property (nonatomic, strong)UILabel *titleLabel;
 @property (nonatomic, strong)UILabel *timeLabel;

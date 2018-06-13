@@ -16,7 +16,7 @@
 
 @property (nonatomic, strong)AddMachineCollectionViewCell *addCell;
 @property (nonatomic, strong)UIButton *submitBackButton;
-@property (nonatomic, strong)NSString *textInfo;
+@property (nonatomic, copy)NSString *textInfo;
 
 @end
 @implementation CFFillInOrderViewTableViewCell

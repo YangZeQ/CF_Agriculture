@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface CFBandInformationView : UIView
-@property (nonatomic, strong)NSString *bandinfo;
+@property (nonatomic, copy)NSString *bandinfo;
 @property (nonatomic, strong)UITextField *bandTextField;
 //@property (nonatomic, strong)UITextField *nameTextField;
 //@property (nonatomic, strong)UITextField *phoneTextField;

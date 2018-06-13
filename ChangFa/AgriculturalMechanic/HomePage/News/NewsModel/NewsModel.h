@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @interface NewsModel : NSObject
-@property (nonatomic, strong)NSString *IsRead;
-@property (nonatomic, strong)NSString *createDate;
-@property (nonatomic, strong)NSString *createper;
-@property (nonatomic, strong)NSString *ID;
-@property (nonatomic, strong)NSString *title;
+@property (nonatomic, copy)NSString *IsRead;
+@property (nonatomic, copy)NSString *createDate;
+@property (nonatomic, copy)NSString *createper;
+@property (nonatomic, copy)NSString *ID;
+@property (nonatomic, copy)NSString *title;
 
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;

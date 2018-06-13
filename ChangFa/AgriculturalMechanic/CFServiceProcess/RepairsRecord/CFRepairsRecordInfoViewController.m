@@ -20,7 +20,7 @@
 @property (nonatomic, strong)NSMutableArray *timeArray;
 @property (nonatomic, strong)NSMutableArray *photoArray;
 @property (nonatomic, strong)NSArray *titleArray;
-@property (nonatomic, strong)NSString *reportId;
+@property (nonatomic, copy)NSString *reportId;
 
 @property (nonatomic, strong)UIView *commentView;
 @property (nonatomic, strong)UILabel *phoneLabel;

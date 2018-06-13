@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface CFAgencyMachineStatusViewController : UIViewController
-@property (nonatomic, strong)NSString *distributorsID;
+@property (nonatomic, copy)NSString *distributorsID;
 @end

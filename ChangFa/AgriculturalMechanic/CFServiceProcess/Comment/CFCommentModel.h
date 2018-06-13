@@ -9,14 +9,14 @@
 #import <Foundation/Foundation.h>
 
 @interface CFCommentModel : NSObject
-@property (nonatomic, strong)NSString *content;
-@property (nonatomic, strong)NSString *commentTime;
+@property (nonatomic, copy)NSString *content;
+@property (nonatomic, copy)NSString *commentTime;
 @property (nonatomic, strong)NSMutableArray *filePath;
-@property (nonatomic, strong)NSString *level;
-@property (nonatomic, strong)NSString *mobile;
-@property (nonatomic, strong)NSString *createTime;
-@property (nonatomic, strong)NSString *fileIds;
-@property (nonatomic, strong)NSString *userId;
+@property (nonatomic, copy)NSString *level;
+@property (nonatomic, copy)NSString *mobile;
+@property (nonatomic, copy)NSString *createTime;
+@property (nonatomic, copy)NSString *fileIds;
+@property (nonatomic, copy)NSString *userId;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)commentModelWithDictionary:(NSDictionary *)dict;

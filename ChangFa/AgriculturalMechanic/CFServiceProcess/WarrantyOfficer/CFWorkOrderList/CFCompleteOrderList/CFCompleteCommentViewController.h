@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface CFCompleteCommentViewController : UIViewController
-@property (nonatomic, strong)NSString *commentId;
-@property (nonatomic, strong)NSString *contactMobile;
+@property (nonatomic, copy)NSString *commentId;
+@property (nonatomic, copy)NSString *contactMobile;
 @end

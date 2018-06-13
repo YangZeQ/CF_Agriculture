@@ -11,5 +11,5 @@
 @interface AddMachineCollectionViewCell : UICollectionViewCell
 @property (nonatomic, strong)UIImageView *addImageView;
 @property (nonatomic, strong)UILabel *addLable;
-@property (nonatomic, strong)NSString *imageName;
+@property (nonatomic, copy)NSString *imageName;
 @end

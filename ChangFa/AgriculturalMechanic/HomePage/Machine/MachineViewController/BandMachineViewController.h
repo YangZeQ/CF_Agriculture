@@ -12,6 +12,6 @@
 - (void)bindMachineSuccess;
 @end
 @interface BandMachineViewController : UIViewController
-@property (nonatomic, strong)NSString *userType;
+@property (nonatomic, copy)NSString *userType;
 @property (nonatomic, weak)id delegate;
 @end

@@ -27,7 +27,7 @@
 @property (nonatomic, strong)UIButton *placeInfo;
 
 @property (nonatomic, strong)UIImageView *headImage;
-@property (nonatomic, strong)NSString *headImageUrl;
+@property (nonatomic, copy)NSString *headImageUrl;
 
 @property (nonatomic, strong)CFPickView *areaPickView;
 @property (nonatomic, strong)UIView *vagueView; // 透明层

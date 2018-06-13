@@ -9,15 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "AgencyModel.h"
 @interface CFPickViewController : UIViewController
-@property (nonatomic, strong)NSString *type;
+@property (nonatomic, copy)NSString *type;
 @property (nonatomic, strong)UIButton *cancelButton;
 @property (nonatomic, strong)UIButton *sureButton;
-@property (nonatomic, strong)NSString *province;
-@property (nonatomic, strong)NSString *city;
-@property (nonatomic, strong)NSString *district;
-@property (nonatomic, strong)NSString *provinceID;
-@property (nonatomic, strong)NSString *cityID;
-@property (nonatomic, strong)NSString *districtID;
+@property (nonatomic, copy)NSString *province;
+@property (nonatomic, copy)NSString *city;
+@property (nonatomic, copy)NSString *district;
+@property (nonatomic, copy)NSString *provinceID;
+@property (nonatomic, copy)NSString *cityID;
+@property (nonatomic, copy)NSString *districtID;
 @property (nonatomic, strong)AgencyModel *agencyModel;
 - (instancetype)initWithType:(NSString *)type;
 - (instancetype)initWithProvinceID:(NSString *)provinceID

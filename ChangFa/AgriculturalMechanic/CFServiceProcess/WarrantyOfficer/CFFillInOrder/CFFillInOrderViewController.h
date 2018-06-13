@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 @interface CFFillInOrderViewController : UIViewController
-@property (nonatomic, strong)NSString *dispatchId;
-@property (nonatomic, strong)NSString *repairId;
-@property (nonatomic, strong)NSString *disId;
-@property (nonatomic, strong)NSString *disNum;
+@property (nonatomic, copy)NSString *dispatchId;
+@property (nonatomic, copy)NSString *repairId;
+@property (nonatomic, copy)NSString *disId;
+@property (nonatomic, copy)NSString *disNum;
 @end

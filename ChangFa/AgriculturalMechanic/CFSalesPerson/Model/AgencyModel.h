@@ -9,14 +9,14 @@
 #import <Foundation/Foundation.h>
 
 @interface AgencyModel : NSObject
-@property (nonatomic, strong)NSString *distributorsID;
-@property (nonatomic, strong)NSString *distributorsCode;
-@property (nonatomic, strong)NSString *distributorsName;
-@property (nonatomic, strong)NSString *distributorsAddress;
-@property (nonatomic, strong)NSString *distributorsType;
-@property (nonatomic, strong)NSString *distributorsProduct;
-@property (nonatomic, strong)NSString *contact;
-@property (nonatomic, strong)NSString *tel;
+@property (nonatomic, copy)NSString *distributorsID;
+@property (nonatomic, copy)NSString *distributorsCode;
+@property (nonatomic, copy)NSString *distributorsName;
+@property (nonatomic, copy)NSString *distributorsAddress;
+@property (nonatomic, copy)NSString *distributorsType;
+@property (nonatomic, copy)NSString *distributorsProduct;
+@property (nonatomic, copy)NSString *contact;
+@property (nonatomic, copy)NSString *tel;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)agencyModelWithDictionary:(NSDictionary *)dict;
 @end

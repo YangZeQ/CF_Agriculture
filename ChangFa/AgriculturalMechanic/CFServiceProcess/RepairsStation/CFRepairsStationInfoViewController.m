@@ -24,7 +24,7 @@
 @property (nonatomic, strong)UIButton *mapButton;
 @property (nonatomic, assign)double latitude;
 @property (nonatomic, assign)double longitude;
-@property (nonatomic, strong)NSString *stationLocation;
+@property (nonatomic, copy)NSString *stationLocation;
 @property (nonatomic, strong)MAAnnotationView *selectedPin;
 @property (nonatomic, assign)NSInteger selectedPinStatus;
 

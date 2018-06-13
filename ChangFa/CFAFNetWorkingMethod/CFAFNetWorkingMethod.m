@@ -339,8 +339,8 @@
     }
     self.url = url;
     CFAFNetworkingManage * manager = [CFAFNetworkingManage shareManage];
-    manager.requestSerializer=[AFJSONRequestSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/json",@"application/json",nil]; 
+//    manager.requestSerializer=[AFJSONRequestSerializer serializer];
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/json",@"application/json",nil]; 
     //1.获得NSUserDefaults文件
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [manager.requestSerializer setValue:[userDefaults objectForKey:@"UserToken"] forHTTPHeaderField:@"token"];
@@ -508,7 +508,7 @@
     manager.securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];//不设置会报-1016或者会有编码问题
     manager.requestSerializer = [AFJSONRequestSerializer serializer]; //不设置会报-1016或者会有编码问题
     manager.responseSerializer = [AFHTTPResponseSerializer serializer]; //不设置会报 error 3840
-//    [manager.responseSerializer setAcceptableContentTypes:[NSSet setWithObjects:@"application/json",@"text/json", @"text/javascript",@"text/html",@"text/plain",nil]];
+    [manager.responseSerializer setAcceptableContentTypes:[NSSet setWithObjects:@"application/json",@"text/json", @"text/javascript",@"text/html",@"text/plain",nil]];
     NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:url parameters:nil error:nil];
     [request addValue:@"application/json"forHTTPHeaderField:@"Content-Type"];
     [request addValue:@"application/json"forHTTPHeaderField:@"Accept"];
@@ -517,9 +517,9 @@
     //发起请求
     [[manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *_Nonnull response, id _Nullable responseObject,NSError * _Nullable error)
       {
+          NSLog(@"%@", responseObject);
           NSDictionary * dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
           success(dic);
-          
       }] resume];
 }
 @end

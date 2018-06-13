@@ -46,6 +46,7 @@ typedef void(^reloadCollectionViewBlock)(void);
 @property (nonatomic, copy)reloadCollectionViewBlock reloadCollectionViewBlock;
 
 - (instancetype)initWithViewStyle:(FillViewStyle)viewStyle;
-- (void)addMachineFaultViewWithType:(FaultType)type;
+- (void)addMachineFaultViewWithType:(FaultType)type
+                     infoDictionary:(NSDictionary *)dcit;
 @end
 

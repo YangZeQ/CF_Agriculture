@@ -14,6 +14,6 @@
 typedef void(^CFTouchEventBlock)(NSAttributedString *str);
 @interface CFAttributeTouchView : UIView
 @property (nonatomic, strong)UITextView *textView;
-@property (nonatomic, strong)NSString *content;
+@property (nonatomic, copy)NSString *content;
 @property (nonatomic, strong)CFTouchEventBlock eventBlock;
 @end

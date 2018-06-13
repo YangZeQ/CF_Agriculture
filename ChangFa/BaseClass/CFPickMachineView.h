@@ -10,7 +10,7 @@
 
 @interface CFPickMachineView : UIView
 
-@property (nonatomic, strong)NSString *name;
-@property (nonatomic, strong)NSString *type;
+@property (nonatomic, copy)NSString *name;
+@property (nonatomic, copy)NSString *type;
 
 @end

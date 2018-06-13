@@ -10,5 +10,5 @@
 
 @interface PersonTableViewCell : UITableViewCell
 @property (nonatomic, strong)UILabel *labelInfo;
-@property (nonatomic, strong)NSString *info;
+@property (nonatomic, copy)NSString *info;
 @end

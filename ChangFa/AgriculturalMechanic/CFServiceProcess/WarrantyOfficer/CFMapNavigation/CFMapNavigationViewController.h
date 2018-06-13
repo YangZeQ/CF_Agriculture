@@ -11,6 +11,6 @@
 @interface CFMapNavigationViewController : UIViewController
 @property (nonatomic, assign)double stationLatitude;
 @property (nonatomic, assign)double stationLongitude;
-@property (nonatomic, strong)NSString *position;
-@property (nonatomic, strong)NSString *machineType;
+@property (nonatomic, copy)NSString *position;
+@property (nonatomic, copy)NSString *machineType;
 @end

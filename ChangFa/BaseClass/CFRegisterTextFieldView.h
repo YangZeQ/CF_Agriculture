@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface CFRegisterTextFieldView : UIView
-//@property (nonatomic, strong)NSString *imageName;
-//@property (nonatomic, strong)NSString *placeHolder;
+//@property (nonatomic, copy)NSString *imageName;
+//@property (nonatomic, copy)NSString *placeHolder;
 //@property (nonatomic, assign)BOOL getCode;
 //@property (nonatomic, assign)BOOL secretCode;
 //@property (nonatomic, assign)CGRect reframe;

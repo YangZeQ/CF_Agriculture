@@ -13,6 +13,7 @@
 #import "CFRefillOrderViewController.h"
 #import "CFPreviewPhotoViewController.h"
 #import "CFRepairOrderViewController.h"
+#import "CFRefillRepairOrderController.h"
 #import "CFReasonTextView.h"
 #import "CFRepairsPhotoCell.h"
 #import "CFRepairsRecordCourseTableViewCell.h"
@@ -51,7 +52,7 @@
 @property (nonatomic, strong)NSMutableArray *statusTimeArray;
 
 @property (nonatomic, assign)BOOL switchStatus;
-@property (nonatomic, strong)NSString *fileIds;
+@property (nonatomic, copy)NSString *fileIds;
 @end
 
 @implementation CFWorkOrderInfoViewController
@@ -107,6 +108,21 @@
 }
 - (void)viewDidLoad
 {
+    NSDictionary *dict = @{
+                           @"dispatchId":@"202",
+                           @"driveLocation":@[@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904"],
+                           @"endLocation":@"31.697293,119.945904",
+                           @"startLocation":@"31.697293,119.945904"
+                           };
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSLog(@"%@", jsonString);
+    [CFAFNetWorkingMethod postBossDemoWithUrl:@"http://192.168.0.100:8080/changfa_system/locationRecord/saveLocationRecord.do" param:jsonString success:^(NSDictionary *dict) {
+        NSLog(@"dict%@", dict);
+    } fail:^(NSError *error) {
+        
+    }];
     [super viewDidLoad];
     self.view.backgroundColor = BackgroundColor;
     self.navigationItem.title = @"派工单详情";
@@ -595,17 +611,19 @@
 - (void)updataOrderStatus
 {
     NSString *status = [NSString stringWithFormat:@"%ld", [self.orderInfoModel.status integerValue] + 1];
-
+    NSLog(@"%@", status);
     NSDictionary *param = @{
                             @"status":status,
                             @"dispatchId":self.orderInfoModel.disId,
                             @"fileIds":self.fileIds,
                             };
+    NSLog(@"====%@", param);
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"dispatch/updateDispatchStatus" Loading:0 Params:param Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"dispatch%@", responseObject);
         NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
         if ([[dict objectForKey:@"code"] integerValue] == 200) {
             [self getOrderInfoWithDispatchId:self.dispatchId];
+            self.orderScrollView.contentOffset = CGPointMake(0, 2250 * screenHeight - CF_HEIGHT);
         } else {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[dict objectForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -754,11 +772,12 @@
 - (void)submitButtonClick
 {
     if ([self.orderInfoModel.status integerValue] == 14 || [self.orderInfoModel.status integerValue] == 15) {
-        CFShowFillInfoViewController *show = [[CFShowFillInfoViewController alloc]init];
+        CFRepairOrderViewController *show = [[CFRepairOrderViewController alloc]init];
         show.dispatchId = self.dispatchId;
         show.repairId = self.orderInfoModel.repairId;
         show.disId = self.orderInfoModel.disId;
         show.disNum =  self.orderInfoModel.disNum;
+        show.isCheck = YES;
         [self.navigationController pushViewController:show animated:YES];
     } else if ([self.orderInfoModel.status integerValue] < 10) {
         if ([self.orderInfoModel.status integerValue] == 8) {
@@ -775,6 +794,7 @@
             [self presentViewController:alert animated:YES completion:^{
                 
             }];
+            self.orderScrollView.contentOffset = CGPointMake(0, 2250 * screenHeight - CF_HEIGHT);
         } else if ([self.orderInfoModel.status integerValue] == 9) {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"确定到达目的地" message:@"" preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
@@ -789,12 +809,17 @@
             [self presentViewController:alert animated:YES completion:^{
                 
             }];
+            self.orderScrollView.contentOffset = CGPointMake(0, 2250 * screenHeight - CF_HEIGHT);
         } else {
             [self updataOrderStatus];
         }
-        self.orderScrollView.contentOffset = CGPointMake(0, 2250 * screenHeight - CF_HEIGHT);
     } else if ([self.orderInfoModel.status integerValue] == 16) {
-        CFRefillOrderViewController *refill = [[CFRefillOrderViewController alloc]init];
+//        CFRefillOrderViewController *refill = [[CFRefillOrderViewController alloc]init];
+//        refill.dispatchId = self.dispatchId;
+//        refill.repairId = self.orderInfoModel.repairId;
+//        refill.disId = self.orderInfoModel.disId;
+//        refill.disNum =  self.orderInfoModel.disNum;
+        CFRefillRepairOrderController *refill = [[CFRefillRepairOrderController alloc]init];
         refill.dispatchId = self.dispatchId;
         refill.repairId = self.orderInfoModel.repairId;
         refill.disId = self.orderInfoModel.disId;
@@ -811,6 +836,7 @@
         order.repairId = self.orderInfoModel.repairId;
         order.disId = self.orderInfoModel.disId;
         order.disNum =  self.orderInfoModel.disNum;
+        order.isCheck = NO;
         [self.navigationController pushViewController:order animated:YES];
     }
 }

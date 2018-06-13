@@ -30,7 +30,7 @@
 @property (nonatomic, strong)CFPickViewController *agencyPick;
 @property (nonatomic, strong)CFPickView *areaPickView;
 @property (nonatomic, strong)CFPickView *agencyPickView;
-@property (nonatomic, strong)NSString *selectedButton;
+@property (nonatomic, copy)NSString *selectedButton;
 @property (nonatomic, strong)UIView *vagueView; // 透明层
 
 @property (nonatomic, assign)NSInteger sign;

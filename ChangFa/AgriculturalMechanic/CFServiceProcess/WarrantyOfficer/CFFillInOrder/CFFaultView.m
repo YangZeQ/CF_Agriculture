@@ -85,12 +85,13 @@ typedef void(^textNumberBlock)(NSInteger number);
     [_titleBtn setTitleColor:UIColorWithRGBA(107, 107, 107, 1) forState:UIControlStateNormal];
     [_titleBtn addTarget:self action:@selector(titleBtnClick) forControlEvents:UIControlEventTouchUpInside];
     
-    __block UITextField *partNameText = [[UITextField alloc]init];
-    [self addSubview:partNameText];
-    partNameText.sd_layout.leftSpaceToView(self, 34).topSpaceToView(_titleBtn, 0).heightIs(60).widthIs(250);
-    partNameText.font = CFFONT14;
-    partNameText.textColor = UIColorWithRGBA(107, 107, 107, 1);
-    partNameText.placeholder = @"扫描故障零配件条码";
+    _partNameText = [[UITextField alloc]init];
+    [self addSubview:_partNameText];
+    _partNameText.userInteractionEnabled = NO;
+    _partNameText.sd_layout.leftSpaceToView(self, 34).topSpaceToView(_titleBtn, 0).heightIs(60).widthIs(250);
+    _partNameText.font = CFFONT14;
+    _partNameText.textColor = UIColorWithRGBA(107, 107, 107, 1);
+    _partNameText.placeholder = @"扫描故障零配件条码";
     
     __block UIButton *scanBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [self addSubview:scanBtn];
@@ -107,14 +108,14 @@ typedef void(^textNumberBlock)(NSInteger number);
     switch (_type) {
         case 1:
             [_titleBtn setTitle:@"普通故障" forState:UIControlStateNormal];;
-            partNameText.hidden = YES;
+            _partNameText.hidden = YES;
             scanBtn.hidden = YES;
             _reasonView.sd_layout.leftSpaceToView(self, 34).topSpaceToView(self, 60).rightSpaceToView(self, 34).heightIs(237);
             _reasonView.placeholderView.sd_layout.leftSpaceToView(_reasonView, 0).topSpaceToView(_reasonView, 0).rightSpaceToView(_reasonView, 0).heightIs(_reasonView.height);
             break;
         case 0:
             [_titleBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
-            partNameText.hidden = NO;
+            _partNameText.hidden = NO;
             scanBtn.hidden = NO;
             _reasonView.sd_layout.leftSpaceToView(self, 34).topSpaceToView(self, 120).rightSpaceToView(self, 34).heightIs(237);
             _reasonView.placeholderView.sd_layout.leftSpaceToView(_reasonView, 0).topSpaceToView(_reasonView, 0).rightSpaceToView(_reasonView, 0).heightIs(_reasonView.height);
@@ -129,7 +130,7 @@ typedef void(^textNumberBlock)(NSInteger number);
             switch (type) {
                 case 1:
                     [weakSelf.titleBtn setTitle:@"普通故障" forState:UIControlStateNormal];;
-                    partNameText.hidden = YES;
+                    weakSelf.partNameText.hidden = YES;
                     scanBtn.hidden = YES;
                     weakSelf.reasonView.sd_layout.leftSpaceToView(weakSelf, 34).topSpaceToView(weakSelf, 60).rightSpaceToView(weakSelf, 34).heightIs(237);
 //                    weakSelf.bodyView.sd_layout.heightIs(weakSelf.bodyView.height - 60);
@@ -138,7 +139,7 @@ typedef void(^textNumberBlock)(NSInteger number);
                     break;
                 case 0:
                     [weakSelf.titleBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
-                    partNameText.hidden = NO;
+                    weakSelf.partNameText.hidden = NO;
                     scanBtn.hidden = NO;
                     weakSelf.reasonView.sd_layout.leftSpaceToView(weakSelf, 34).topSpaceToView(weakSelf, 120).rightSpaceToView(weakSelf, 34).heightIs(237);
 //                    weakSelf.bodyView.sd_layout.heightIs(weakSelf.bodyView.height + 60);

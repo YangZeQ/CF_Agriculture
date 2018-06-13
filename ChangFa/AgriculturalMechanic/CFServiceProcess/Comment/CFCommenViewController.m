@@ -24,7 +24,7 @@
 @property (nonatomic, strong)CFRepairsPhotoCell *commentPhotoCell;
 @property (nonatomic, strong)AddMachineCollectionViewCell *addCommentPhotoCell;
 @property (nonatomic, strong)NSMutableArray *photoArray;
-@property (nonatomic, strong)NSString *fileIds;
+@property (nonatomic, copy)NSString *fileIds;
 @end
 
 @implementation CFCommenViewController

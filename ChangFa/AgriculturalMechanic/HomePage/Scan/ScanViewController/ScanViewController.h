@@ -13,6 +13,6 @@
 @end
 @interface ScanViewController : UIViewController
 @property (nonatomic, weak)id delegate;
-@property (nonatomic, strong)NSString *scanType;
-@property (nonatomic, strong)NSString *getInfoType;
+@property (nonatomic, copy)NSString *scanType;
+@property (nonatomic, copy)NSString *getInfoType;
 @end

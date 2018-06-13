@@ -12,8 +12,8 @@
 @interface CFAgencyEXchangeStatusViewController : UIViewController
 - (instancetype)initWithSubmitTime:(NSString *)time;
 - (instancetype)initWithModel:(MachineModel *)model;
-@property (nonatomic, strong)NSString *applyId;
-@property (nonatomic, strong)NSString *submitTime;
+@property (nonatomic, copy)NSString *applyId;
+@property (nonatomic, copy)NSString *submitTime;
 @property (nonatomic, strong)MachineModel *model;
 @property (nonatomic, strong)AgencyModel *agencyModel;
 @end

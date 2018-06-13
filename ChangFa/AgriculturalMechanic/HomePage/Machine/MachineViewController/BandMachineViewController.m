@@ -32,7 +32,7 @@
 @property (nonatomic, strong)MachineModel *model;
 @property (nonatomic, strong)UITextField *imeiTextField; //
 @property (nonatomic, strong)UIButton *bandButton;
-@property (nonatomic, strong)NSString *carBar;
+@property (nonatomic, copy)NSString *carBar;
 @end
 
 @implementation BandMachineViewController

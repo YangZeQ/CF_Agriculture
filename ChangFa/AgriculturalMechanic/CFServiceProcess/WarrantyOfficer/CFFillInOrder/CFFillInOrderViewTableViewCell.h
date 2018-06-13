@@ -23,7 +23,7 @@ typedef void(^clickImageBlock)(NSInteger sender);
 @property (nonatomic, strong)UILabel *textNumberLabel;
 @property (nonatomic, strong)UIImageView *starImage;
 @property (nonatomic, assign)NSInteger styleStatus;  // 0:收起cell  1:添加图片  2：文字说明
-@property (nonatomic, strong)NSString *reasonPlaceholder;
+@property (nonatomic, copy)NSString *reasonPlaceholder;
 @property (nonatomic, assign)NSInteger cellIndex;
 @property (nonatomic, assign)BOOL cellSelected;
 @property (nonatomic, assign)NSInteger cellType;

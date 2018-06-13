@@ -9,13 +9,13 @@
 #import <Foundation/Foundation.h>
 
 @interface CFWorkOrderModel : NSObject
-@property (nonatomic, strong)NSString *dispatchId;
-@property (nonatomic, strong)NSString *machineModel;
-@property (nonatomic, strong)NSString *machineName;
-@property (nonatomic, strong)NSString *machineType;
-@property (nonatomic, strong)NSString *status;
-@property (nonatomic, strong)NSString *buyTime;
-@property (nonatomic, strong)NSString *updateTime;
+@property (nonatomic, copy)NSString *dispatchId;
+@property (nonatomic, copy)NSString *machineModel;
+@property (nonatomic, copy)NSString *machineName;
+@property (nonatomic, copy)NSString *machineType;
+@property (nonatomic, copy)NSString *status;
+@property (nonatomic, copy)NSString *buyTime;
+@property (nonatomic, copy)NSString *updateTime;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 + (instancetype)orderModelWithDictionary:(NSDictionary *)dict;

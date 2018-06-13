@@ -14,7 +14,7 @@
 @interface CFAgencySoldViewController : UIViewController
 @property (nonatomic, assign)float height;
 @property (nonatomic, strong)UITableView *soldTableView;
-@property (nonatomic, strong)NSString *distributorsID;
+@property (nonatomic, copy)NSString *distributorsID;
 @property (nonatomic, weak)id delegate;
-@property (nonatomic, strong)NSString *refresh;
+@property (nonatomic, copy)NSString *refresh;
 @end

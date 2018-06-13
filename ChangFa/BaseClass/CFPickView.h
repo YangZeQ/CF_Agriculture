@@ -19,19 +19,19 @@
 @property (nonatomic, weak)id delegate;
 @property (nonatomic, strong)UIButton *cancelButton;
 @property (nonatomic, strong)UIButton *sureButton;
-@property (nonatomic, strong)NSString *selectedInfo;
+@property (nonatomic, copy)NSString *selectedInfo;
 @property (nonatomic, strong)NSArray *sourceArray;
 @property (nonatomic, strong)NSMutableArray *provinceArray;
 @property (nonatomic, strong)NSMutableArray *cityArray;
 @property (nonatomic, strong)NSMutableArray *areaArray;
 @property (nonatomic, assign)int numberOfComponents;
-@property (nonatomic, strong)NSString *provinceID;
-@property (nonatomic, strong)NSString *cityID;
-@property (nonatomic, strong)NSString *areaID;
+@property (nonatomic, copy)NSString *provinceID;
+@property (nonatomic, copy)NSString *cityID;
+@property (nonatomic, copy)NSString *areaID;
 
-@property (nonatomic, strong)NSString *province;
-@property (nonatomic, strong)NSString *city;
-@property (nonatomic, strong)NSString *area;
+@property (nonatomic, copy)NSString *province;
+@property (nonatomic, copy)NSString *city;
+@property (nonatomic, copy)NSString *area;
 
 @property (nonatomic, strong)AgencyModel *agencyModel;
 @property (nonatomic, strong)MachineModel *machineModel;

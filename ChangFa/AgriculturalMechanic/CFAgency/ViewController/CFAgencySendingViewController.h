@@ -13,10 +13,10 @@
 @end
 @interface CFAgencySendingViewController : UIViewController
 @property (nonatomic, assign)float height;
-@property (nonatomic, strong)NSString *cellType;
+@property (nonatomic, copy)NSString *cellType;
 //@property (nonatomic, assign) BOOL vcCanScroll;
 @property (nonatomic, strong)UITableView *sendingTableView;
-@property (nonatomic, strong)NSString *distributorsID;
+@property (nonatomic, copy)NSString *distributorsID;
 @property (nonatomic, weak)id delegate;
-@property (nonatomic, strong)NSString *refresh;
+@property (nonatomic, copy)NSString *refresh;
 @end

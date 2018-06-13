@@ -29,16 +29,16 @@
 @property (nonatomic, strong)NSMutableArray *personPhotoArray;
 @property (nonatomic, strong)NSMutableArray *faultPhotoPathArray;
 @property (nonatomic, strong)NSMutableArray *personPhotoPathArray;
-@property (nonatomic, strong)NSString *fileIds;
-@property (nonatomic, strong)NSString *useTime;
-@property (nonatomic, strong)NSString *driveDistance;
-@property (nonatomic, strong)NSString *faultFileIds;
-@property (nonatomic, strong)NSString *personFileIds;
-@property (nonatomic, strong)NSString *machineInstruction;
-@property (nonatomic, strong)NSString *faultInstruction;
-@property (nonatomic, strong)NSString *customerOpinion;
-@property (nonatomic, strong)NSString *handleOpinion;
-@property (nonatomic, strong)NSString *remarks;
+@property (nonatomic, copy)NSString *fileIds;
+@property (nonatomic, copy)NSString *useTime;
+@property (nonatomic, copy)NSString *driveDistance;
+@property (nonatomic, copy)NSString *faultFileIds;
+@property (nonatomic, copy)NSString *personFileIds;
+@property (nonatomic, copy)NSString *machineInstruction;
+@property (nonatomic, copy)NSString *faultInstruction;
+@property (nonatomic, copy)NSString *customerOpinion;
+@property (nonatomic, copy)NSString *handleOpinion;
+@property (nonatomic, copy)NSString *remarks;
 
 @end
 

@@ -1,11 +1,12 @@
 //
-//  CFRepairOrderViewController.m
+//  CFRefillRepairOrderController.m
 //  ChangFa
 //
-//  Created by yang on 2018/6/6.
+//  Created by yang on 2018/6/13.
 //  Copyright © 2018年 dev. All rights reserved.
 //
-#import "CFRepairOrderViewController.h"
+
+#import "CFRefillRepairOrderController.h"
 #import "CFRepairOrderView.h"
 #import "CFFaultView.h"
 #import "CFFillInOrderModel.h"
@@ -13,7 +14,7 @@
 #import "CFAFNetworkingManage.h"
 #import <Photos/Photos.h>
 #import "CTAssetsPickerController/CTAssetsPickerController.h"
-@interface CFRepairOrderViewController ()<CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate>
+@interface CFRefillRepairOrderController ()<CTAssetsPickerControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong)UIScrollView *repairOrderScroll;
 @property (nonatomic, strong)CFRepairOrderView *groupPhotoView;
 @property (nonatomic, strong)CFRepairOrderView *faultPhotoView;
@@ -34,7 +35,8 @@
 @property (nonatomic, strong)CFFillInOrderModel *fillModel;
 @end
 
-@implementation CFRepairOrderViewController
+@implementation CFRefillRepairOrderController
+
 - (UIView *)vagueView
 {
     if (_vagueView == nil) {
@@ -108,12 +110,11 @@
 }
 - (void)createRepairOrderView
 {
-    __block CFRepairOrderViewController *weakSelf = self;
+    __block CFRefillRepairOrderController *weakSelf = self;
     self.navigationItem.title = @"填写维修单";
     _repairOrderScroll = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, CF_WIDTH, CF_HEIGHT - navHeight)];
     _repairOrderScroll.contentSize = CGSizeMake(0, 0);
     _repairOrderScroll.showsVerticalScrollIndicator = NO;
-    _repairOrderScroll.delegate = self;
     [self.view addSubview:_repairOrderScroll];
     
     _groupPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
@@ -208,16 +209,6 @@
     [_repairOrderScroll sd_addSubviews:@[_groupPhotoView,_faultPhotoView,_machineInfoView,_machineUseView,_machineFaultView,_userOpinionView,_handleOpinionView, submitBtn]];
     _repairOrderScroll.sd_layout.spaceToSuperView(UIEdgeInsetsZero);
     [_repairOrderScroll setupAutoContentSizeWithBottomView:submitBtn bottomMargin:20 * screenHeight];
-// 查看
-    if (_isCheck) {
-        _groupPhotoView.bodyView.userInteractionEnabled = NO;
-        _faultPhotoView.bodyView.userInteractionEnabled = NO;
-        _machineInfoView.bodyView.userInteractionEnabled = NO;
-        _machineUseView.bodyView.userInteractionEnabled = NO;
-        _machineFaultView.bodyView.userInteractionEnabled = NO;
-        _userOpinionView.bodyView.userInteractionEnabled = NO;
-        _handleOpinionView.bodyView.userInteractionEnabled = NO;
-    }
 }
 - (void)selectedButtonClick:(UIButton *)sender
 {
@@ -249,16 +240,16 @@
         if ([view isMemberOfClass:[CFFaultView class]] && view.type == 0) {
             NSLog(@"typea%@  %@", view.reasonView.text, view.partNameText.text);
             NSDictionary *dict = @{
-                                  @"faultDes":view.reasonView.text,
-                                  @"partNo":view.partNameText.text,
-                                  };
+                                   @"faultDes":view.reasonView.text,
+                                   @"partNo":view.partNameText.text,
+                                   };
             [partFaultArray addObject:dict];
         } else if ([view isMemberOfClass:[CFFaultView class]] && view.type == 1) {
             NSLog(@"typeb%@  %@", view.reasonView.text, view.partNameText.text);
             NSDictionary *dict = @{
-                                  @"faultDes":view.reasonView.text,
-                                  @"partNo":@"0",
-                                  };
+                                   @"faultDes":view.reasonView.text,
+                                   @"partNo":@"0",
+                                   };
             [commonFaultArray addObject:dict];
         }
     }
@@ -501,7 +492,7 @@
             [_faultPhotoView.photoCollectionView reloadData];
         });
     }
-
+    
     for (NSDictionary *dic in self.fillModel.personFileInfo) {
         if (self.groupPhotoIds.length == 0) {
             self.groupPhotoIds = [dic objectForKey:@"fileId"];
@@ -513,7 +504,7 @@
             [_groupPhotoView.photoCollectionView reloadData];
         });
     }
-
+    
     if ([_fillModel.useTime integerValue] >= 0) {
         _machineUseView.hourTextField.textField.text = [NSString stringWithFormat:@"%@", _fillModel.useTime];
     }
@@ -529,22 +520,25 @@
     for (NSDictionary *dict in [self.fillModel.faults objectForKey:@"commonFaults"]) {
         [_machineFaultView addMachineFaultViewWithType:1 infoDictionary:dict];
     }
-//    self.remarks = self.fillModel.remarks;
-
+    //    self.remarks = self.fillModel.remarks;
+    
 }
 - (void)leftButtonClick
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"确定退出编辑吗" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }];
+    [sureAction setValue:[UIColor redColor] forKey:@"titleTextColor"];
+    [alert addAction:cancelAction];
+    [alert addAction:sureAction];
+    [self presentViewController:alert animated:YES completion:^{
+        
+    }];
 }
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    [self.view endEditing:YES];
-}
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 /*
 #pragma mark - Navigation
 

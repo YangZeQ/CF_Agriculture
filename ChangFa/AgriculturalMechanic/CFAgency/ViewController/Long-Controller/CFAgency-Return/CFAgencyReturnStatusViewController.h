@@ -11,9 +11,9 @@
 @interface CFAgencyReturnStatusViewController : UIViewController
 - (instancetype)initWithSubmitTime:(NSString *)time;
 - (instancetype)initWithModel:(MachineModel *)model;
-@property (nonatomic, strong)NSString *applyId;
-@property (nonatomic, strong)NSString *submitTime;
+@property (nonatomic, copy)NSString *applyId;
+@property (nonatomic, copy)NSString *submitTime;
 @property (nonatomic, strong)MachineModel *model;
-@property (nonatomic, strong)NSString *returnReason;
-@property (nonatomic, strong)NSString *returnReasonText;
+@property (nonatomic, copy)NSString *returnReason;
+@property (nonatomic, copy)NSString *returnReasonText;
 @end

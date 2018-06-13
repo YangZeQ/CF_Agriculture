@@ -37,7 +37,7 @@
 @property (nonatomic, strong)AgencyModel *agencymodel;
 @property (nonatomic, strong)CFPickView *areaPickView;
 @property (nonatomic, strong)CFPickView *agencyPickView;
-@property (nonatomic, strong)NSString *selectedButton;
+@property (nonatomic, copy)NSString *selectedButton;
 @end
 
 @implementation OutputMachineViewController
