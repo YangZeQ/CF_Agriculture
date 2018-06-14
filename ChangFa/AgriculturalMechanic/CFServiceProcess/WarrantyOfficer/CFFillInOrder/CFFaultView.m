@@ -67,6 +67,7 @@ typedef void(^textNumberBlock)(NSInteger number);
 }
 - (void)createView
 {
+    __block CFFaultView *weakSelf = self;
     UILabel *headerLineLabel = [[UILabel alloc]init];
     [self addSubview:headerLineLabel];
     headerLineLabel.sd_layout.leftSpaceToView(self, 15).topSpaceToView(self, 0).heightIs(1).rightSpaceToView(self, 15);
@@ -79,27 +80,41 @@ typedef void(^textNumberBlock)(NSInteger number);
     
     _titleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [self addSubview:_titleBtn];
-    _titleBtn.sd_layout.topSpaceToView(self, 0).leftSpaceToView(self, 34).heightIs(60).widthIs(100);
-    [_titleBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
-    _titleBtn.titleLabel.font = CFFONT14;
+    _titleBtn.sd_layout.topSpaceToView(self, 0).leftSpaceToView(self, 64 * screenWidth).heightIs(60).widthIs(180 * screenWidth);
+    _titleBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    _titleBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+    _titleBtn.titleLabel.font = CFFONT16;
     [_titleBtn setTitleColor:UIColorWithRGBA(107, 107, 107, 1) forState:UIControlStateNormal];
     [_titleBtn addTarget:self action:@selector(titleBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    if (!_isCheck) {
+        _titleImage = [[UIImageView alloc]init];
+        [self addSubview:_titleImage];
+        _titleImage.sd_layout.leftSpaceToView(_titleBtn, 0).topSpaceToView(self, 50 * screenHeight).widthIs(26 * screenWidth).heightIs(20 * screenHeight);
+        _titleImage.image = [UIImage imageNamed:@"CF_Traingle"];
+        
+        _scanBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self addSubview:_scanBtn];
+        _scanBtn.sd_layout.topSpaceToView(_titleBtn, 20).rightSpaceToView(self, 25).heightIs(20).widthIs(20);
+        [_scanBtn setBackgroundImage:[UIImage imageNamed:@"CF_PartScan"] forState:UIControlStateNormal];
+        [_scanBtn addTarget:self action:@selector(scanBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    }
     
     _partNameText = [[UITextField alloc]init];
     [self addSubview:_partNameText];
     _partNameText.userInteractionEnabled = NO;
-    _partNameText.sd_layout.leftSpaceToView(self, 34).topSpaceToView(_titleBtn, 0).heightIs(60).widthIs(250);
+    _partNameText.sd_layout.leftSpaceToView(self, 64 * screenWidth).topSpaceToView(_titleBtn, 0).heightIs(60).widthIs(250);
     _partNameText.font = CFFONT14;
     _partNameText.textColor = UIColorWithRGBA(107, 107, 107, 1);
     _partNameText.placeholder = @"扫描故障零配件条码";
-    
-    __block UIButton *scanBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self addSubview:scanBtn];
-    scanBtn.sd_layout.topSpaceToView(_titleBtn, 20).rightSpaceToView(self, 25).heightIs(20).widthIs(20);
+    self.getScanInfoBlock = ^(NSString *str) {
+        weakSelf.partNameText.text = str;
+    };
     
     _reasonView = [[CFReasonTextView alloc]init];
     [self addSubview:_reasonView];
     _reasonView.placeholder = @"请简短描述农机故障原因" ;
+
     _reasonView.delegate = self;
     _reasonView.editable = YES;
     _reasonView.maxNumberOfLines = 10;
@@ -109,21 +124,21 @@ typedef void(^textNumberBlock)(NSInteger number);
         case 1:
             [_titleBtn setTitle:@"普通故障" forState:UIControlStateNormal];;
             _partNameText.hidden = YES;
-            scanBtn.hidden = YES;
-            _reasonView.sd_layout.leftSpaceToView(self, 34).topSpaceToView(self, 60).rightSpaceToView(self, 34).heightIs(237);
+            _scanBtn.hidden = YES;
+            _reasonView.sd_layout.leftSpaceToView(self, 64 * screenWidth).topSpaceToView(self, 60).rightSpaceToView(self, 34).heightIs(237);
             _reasonView.placeholderView.sd_layout.leftSpaceToView(_reasonView, 0).topSpaceToView(_reasonView, 0).rightSpaceToView(_reasonView, 0).heightIs(_reasonView.height);
             break;
         case 0:
             [_titleBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
             _partNameText.hidden = NO;
-            scanBtn.hidden = NO;
-            _reasonView.sd_layout.leftSpaceToView(self, 34).topSpaceToView(self, 120).rightSpaceToView(self, 34).heightIs(237);
+            _scanBtn.hidden = NO;
+            _reasonView.sd_layout.leftSpaceToView(self, 64 * screenWidth).topSpaceToView(self, 120).rightSpaceToView(self, 34).heightIs(237);
             _reasonView.placeholderView.sd_layout.leftSpaceToView(_reasonView, 0).topSpaceToView(_reasonView, 0).rightSpaceToView(_reasonView, 0).heightIs(_reasonView.height);
             break;
         default:
             break;
     }
-    __block CFFaultView *weakSelf = self;
+    
     self.changeViewBlock = ^(NSInteger type) {
         
             weakSelf.type = type;
@@ -131,8 +146,8 @@ typedef void(^textNumberBlock)(NSInteger number);
                 case 1:
                     [weakSelf.titleBtn setTitle:@"普通故障" forState:UIControlStateNormal];;
                     weakSelf.partNameText.hidden = YES;
-                    scanBtn.hidden = YES;
-                    weakSelf.reasonView.sd_layout.leftSpaceToView(weakSelf, 34).topSpaceToView(weakSelf, 60).rightSpaceToView(weakSelf, 34).heightIs(237);
+                    weakSelf.scanBtn.hidden = YES;
+                    weakSelf.reasonView.sd_layout.leftSpaceToView(weakSelf, 64 * screenWidth).topSpaceToView(weakSelf, 60).rightSpaceToView(weakSelf, 34).heightIs(237);
 //                    weakSelf.bodyView.sd_layout.heightIs(weakSelf.bodyView.height - 60);
                     weakSelf.sd_layout.heightIs(298);
                     weakSelf.sd_layout.yIs(358);
@@ -140,8 +155,8 @@ typedef void(^textNumberBlock)(NSInteger number);
                 case 0:
                     [weakSelf.titleBtn setTitle:@"零配件故障" forState:UIControlStateNormal];
                     weakSelf.partNameText.hidden = NO;
-                    scanBtn.hidden = NO;
-                    weakSelf.reasonView.sd_layout.leftSpaceToView(weakSelf, 34).topSpaceToView(weakSelf, 120).rightSpaceToView(weakSelf, 34).heightIs(237);
+                    weakSelf.scanBtn.hidden = NO;
+                    weakSelf.reasonView.sd_layout.leftSpaceToView(weakSelf, 64 * screenWidth).topSpaceToView(weakSelf, 120).rightSpaceToView(weakSelf, 34).heightIs(237);
 //                    weakSelf.bodyView.sd_layout.heightIs(weakSelf.bodyView.height + 60);
                     weakSelf.sd_layout.heightIs(358);
                     weakSelf.sd_layout.yIs(418);
@@ -149,7 +164,6 @@ typedef void(^textNumberBlock)(NSInteger number);
                 default:
                     break;
             }
-        
     };
     __block UILabel *textNumberLabel = [[UILabel alloc]init];
     [_reasonView addSubview:textNumberLabel];
@@ -163,6 +177,7 @@ typedef void(^textNumberBlock)(NSInteger number);
     self.textNumberBlock = ^(NSInteger number) {
         textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", (long)number, MAX_LIMIT_NUMS];
     };
+    
 }
 - (void)titleBtnClick
 {
@@ -192,6 +207,10 @@ typedef void(^textNumberBlock)(NSInteger number);
 - (void)cancelBtnClick
 {
     self.vagueView.hidden = YES;
+}
+- (void)scanBtnClick
+{
+    self.scanBlock();
 }
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range
  replacementText:(NSString *)text

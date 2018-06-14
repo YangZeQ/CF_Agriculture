@@ -22,8 +22,14 @@ typedef enum : NSUInteger {
 typedef void(^chooseTypeBlock)(void);
 typedef void(^addImageBlock)(void);
 typedef void(^reloadCollectionViewBlock)(void);
+typedef void(^deleteImageBlock)(NSInteger index);
+typedef void(^scanBlock)(void);
+typedef void(^getScanInfoBlock)(NSString *str);
+
 @interface CFRepairOrderView : UIView
 @property (nonatomic, assign)BOOL isSelected;
+@property (nonatomic, assign)BOOL isRefill;
+@property (nonatomic, assign)BOOL isCheck;
 @property (nonatomic, strong)NSMutableArray *partInfoArray;
 @property (nonatomic, strong)NSMutableArray *photoArray;
 
@@ -44,6 +50,9 @@ typedef void(^reloadCollectionViewBlock)(void);
 //@property (nonatomic, copy)chooseTypeBlock chooseTypeBlock;
 @property (nonatomic, copy)addImageBlock addImageBlock;
 @property (nonatomic, copy)reloadCollectionViewBlock reloadCollectionViewBlock;
+@property (nonatomic, copy)deleteImageBlock deleteImageBlock;
+@property (nonatomic, copy)scanBlock scanBlock;
+@property (nonatomic, copy)getScanInfoBlock getScanInfoBlock;
 
 - (instancetype)initWithViewStyle:(FillViewStyle)viewStyle;
 - (void)addMachineFaultViewWithType:(FaultType)type

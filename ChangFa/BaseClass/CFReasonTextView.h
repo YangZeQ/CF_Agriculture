@@ -10,6 +10,10 @@
 typedef void(^CF_textHeightChangedBlock)(NSString *text,CGFloat textHeight);
 @interface CFReasonTextView : UITextView
 /**
+ *
+ */
+@property (nonatomic, copy) NSString *textString;
+/**
  *  UITextView作为placeholderView，使placeholderView等于UITextView的大小，字体重叠显示，方便快捷，解决占位符问题.
  */
 @property (nonatomic, strong) UITextView *placeholderView;

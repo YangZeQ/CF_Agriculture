@@ -282,11 +282,34 @@
 // 农机手
 - (void)createMachineWorkerView
 {
-    UILabel *myMachineLabel = [[UILabel alloc]initWithFrame:CGRectMake(38 * screenWidth, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 30 * screenHeight, CF_WIDTH - 30 * screenWidth, 50 * screenHeight)];
+//    UILabel *myMachineLabel = [[UILabel alloc]initWithFrame:CGRectMake(38 * screenWidth, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 30 * screenHeight, CF_WIDTH - 30 * screenWidth, 50 * screenHeight)];
+//    myMachineLabel.text = @"我的农机";
+//    myMachineLabel.textColor = [UIColor grayColor];
+//    myMachineLabel.font = CFFONT14;
+//    [self.view addSubview:myMachineLabel];
+    // 我的农机
+    UILabel *myMachineLabel = [[UILabel alloc]initWithFrame:CGRectMake(30 * screenWidth, _imageScrollView.frame.size.height + _imageScrollView.frame.origin.y + 40 * screenHeight, CF_WIDTH - 30 * screenWidth, 50 * screenHeight)];
     myMachineLabel.text = @"我的农机";
-    myMachineLabel.textColor = [UIColor grayColor];
-    myMachineLabel.font = CFFONT14;
+    myMachineLabel.textColor = [UIColor darkGrayColor];
+    myMachineLabel.font = CFFONT18;
     [self.view addSubview:myMachineLabel];
+    
+    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+    _machineCollection = [[UICollectionView alloc]initWithFrame:CGRectMake(0, myMachineLabel.frame.origin.y + myMachineLabel.frame.size.height, self.view.frame.size.width, 414 * screenHeight) collectionViewLayout:layout];
+    _machineCollection.backgroundColor = [UIColor whiteColor];
+    layout.sectionInset = UIEdgeInsetsMake(0 * screenHeight, 0 * screenWidth, 0 * screenHeight, 0 * screenWidth);
+    layout.itemSize = CGSizeMake(334 * screenWidth, 414 * screenHeight);
+    layout.minimumLineSpacing = 0 * screenWidth;
+    layout.minimumInteritemSpacing = 0;
+    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    _machineCollection.showsHorizontalScrollIndicator = NO;
+    _machineCollection.delegate = self;
+    _machineCollection.dataSource = self;
+    [_machineCollection registerClass:[MyMachineCollectionViewCell class] forCellWithReuseIdentifier:@"machineCellId"];
+    [_machineCollection registerClass:[AddMachineCollectionViewCell class] forCellWithReuseIdentifier:@"addMachineCellId"];
+    [self.view addSubview:_machineCollection];
+    [self getMyMachineInformation];
+    return;
     
     _rightButton.hidden = YES;
     self.view.backgroundColor = UserBackgroundColor;
@@ -338,12 +361,6 @@
     _imageTitleLabel.font = CFFONT16;
     _imageScrollView.pageControlBottomOffset = -10 * screenHeight;
     [scrollTitleView addSubview:_imageTitleLabel];
-    
-//    _imageScrollView.titleLabelHeight = 60 * screenHeight;
-//    _imageScrollView.titleLabelTextFont = CFFONT16;
-//    _imageScrollView.titlesGroup = [NSArray arrayWithObjects:@"每日资讯：常发农机开启新旅程", nil];
-//    _imageScrollView.titleLabelBackgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
-//    _imageScrollView.pageControlBottomOffset = 80 * screenHeight;
     
     // 添加农机
     UILabel *additionLabel = [[UILabel alloc]initWithFrame:CGRectMake(555 * screenWidth, myMachineLabel.frame.origin.y, 120 * screenWidth, myMachineLabel.frame.size.height)];
@@ -578,7 +595,7 @@
                 machineRemarkLabel.textColor = [UIColor grayColor];
                 [machineView addSubview:machineRemarkLabel];
                 [self.machineScrollView.machineModelArray addObject:machineView];
-//                [self.machineCollection reloadData];
+                [self.machineCollection reloadData];
             }
             self.machineScrollView.imageURLStringsGroup = modelArray;
             self.machineScrollView.isAddMachineView = YES;

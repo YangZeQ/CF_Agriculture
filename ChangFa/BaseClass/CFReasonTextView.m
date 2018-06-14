@@ -147,11 +147,17 @@
         }
     }
 }
-
+- (void)setTextString:(NSString *)textString
+{
+    _textString = textString;
+    if (textString.length > 0) {
+        self.placeholder = @"";
+    }
+    self.text = textString;
+}
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
-
 
 @end

@@ -10,6 +10,7 @@
 #import <AMapFoundationKit/AMapFoundationKit.h>
 #import <Bugly/Bugly.h>
 #import "CFRepairOrderViewController.h"
+
 @interface AppDelegate ()<BuglyDelegate>
 
 @end
@@ -29,6 +30,7 @@
     [self setupBugly];
     return YES;
 }
+
 - (void)setupBugly
 {
     [Bugly startWithAppId:CF_Bugly

@@ -11,6 +11,7 @@
 #import "CFRepairsPhotoCell.h"
 #import "AddMachineCollectionViewCell.h"
 
+#define MAX_LIMIT_NUMS 150
 typedef void(^textNumberBlock)(NSInteger number);
 
 @interface CFRepairOrderView ()<UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegate, UICollectionViewDataSource>
@@ -21,6 +22,7 @@ typedef void(^textNumberBlock)(NSInteger number);
 @property (nonatomic, strong)UIView *faultView;
 @property (nonatomic, strong)CFRepairsPhotoCell *photoCell;
 @property (nonatomic, strong)AddMachineCollectionViewCell *addCell;
+@property (nonatomic, strong)UILabel *photoNumberLabel;
 
 @property (nonatomic, copy)textNumberBlock textNumberBlock;
 @end
@@ -169,7 +171,7 @@ typedef void(^textNumberBlock)(NSInteger number);
 {
     _bodyView.sd_layout.heightIs(300 * screenHeight);
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-    _photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(30 * screenWidth, 50 * screenHeight, CF_WIDTH - 100 * screenWidth, 200 * screenHeight) collectionViewLayout:layout];
+    _photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(30 * screenWidth, 30 * screenHeight, CF_WIDTH - 100 * screenWidth, 200 * screenHeight) collectionViewLayout:layout];
     _photoCollectionView.backgroundColor = [UIColor whiteColor];
     layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
     layout.itemSize = CGSizeMake(200 * screenWidth, 200 * screenHeight);
@@ -182,6 +184,16 @@ typedef void(^textNumberBlock)(NSInteger number);
     [_photoCollectionView registerClass:[CFRepairsPhotoCell class] forCellWithReuseIdentifier:@"repairsPhotoCellId"];
     [_photoCollectionView registerClass:[AddMachineCollectionViewCell class] forCellWithReuseIdentifier:@"addRepairsPhotoCellId"];
     [_bodyView addSubview:_photoCollectionView];
+    
+    _photoNumberLabel = [[UILabel alloc]init];
+    [_bodyView addSubview:_photoNumberLabel];
+    _photoNumberLabel.sd_layout.bottomSpaceToView(_bodyView, 10).leftSpaceToView(_bodyView, 30 * screenWidth).heightIs(10);
+    [_photoNumberLabel setSingleLineAutoResizeWithMaxWidth:100];
+    _photoNumberLabel.textAlignment = NSTextAlignmentRight;
+    _photoNumberLabel.textColor = [UIColor grayColor];
+    _photoNumberLabel.font = CFFONT10;
+    _photoNumberLabel.text = [NSString stringWithFormat:@"0/%@", @"9"];
+
 }
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -189,31 +201,40 @@ typedef void(^textNumberBlock)(NSInteger number);
 }
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    if (self.photoArray.count > 0) {
-        self.titleLabel.textColor = ChangfaColor;
-        self.statuslabel.hidden = NO;
-    } else {
-        self.titleLabel.textColor = UIColorWithRGBA(107, 107, 107, 1);
-        self.statuslabel.hidden = YES;
+    _photoNumberLabel.text =  _photoNumberLabel.text = [NSString stringWithFormat:@"0/%ld", self.photoArray.count];
+    if (_isCheck) {
+        return self.photoArray.count;
     }
     return self.photoArray.count + 1;
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == 0) {
-        _addCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"addRepairsPhotoCellId" forIndexPath:indexPath];
-        _addCell.imageName= @"CF_Repairs_AddPhoto";
-        return _addCell;
-    }
-    _photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
-    _photoCell.deleteButton.hidden = NO;
-    _photoCell.deleteButton.tag = 1000 + indexPath.row - 1;
-    if ([self.photoArray[indexPath.row - 1] isKindOfClass:[NSString class]]) {
-        [_photoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:self.photoArray[indexPath.row - 1]] placeholderImage:[UIImage imageNamed:@""]];
+    if (_isCheck) {
+        _photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
+        _photoCell.deleteButton.hidden = NO;
+        _photoCell.deleteButton.tag = 1000 + indexPath.row;
+        if ([self.photoArray[indexPath.row - 1] isKindOfClass:[NSString class]]) {
+            [_photoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:self.photoArray[indexPath.row - 1]] placeholderImage:[UIImage imageNamed:@""]];
+        } else {
+            _photoCell.repairsPhoto.image = self.photoArray[indexPath.row - 1];
+        }
+        [_photoCell.deleteButton addTarget:self action:@selector(deletebuttonClick:) forControlEvents:UIControlEventTouchUpInside];
     } else {
-        _photoCell.repairsPhoto.image = self.photoArray[indexPath.row - 1];
+        if (indexPath.row == 0) {
+            _addCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"addRepairsPhotoCellId" forIndexPath:indexPath];
+            _addCell.imageName= @"CF_Repairs_AddPhoto";
+            return _addCell;
+        }
+        _photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
+        _photoCell.deleteButton.hidden = NO;
+        _photoCell.deleteButton.tag = 1000 + indexPath.row - 1;
+        if ([self.photoArray[indexPath.row - 1] isKindOfClass:[NSString class]]) {
+            [_photoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:self.photoArray[indexPath.row - 1]] placeholderImage:[UIImage imageNamed:@""]];
+        } else {
+            _photoCell.repairsPhoto.image = self.photoArray[indexPath.row - 1];
+        }
+        [_photoCell.deleteButton addTarget:self action:@selector(deletebuttonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
-    [_photoCell.deleteButton addTarget:self action:@selector(deletebuttonClick:) forControlEvents:UIControlEventTouchUpInside];
     return _photoCell;
 }
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -222,7 +243,9 @@ typedef void(^textNumberBlock)(NSInteger number);
 }
 - (void)deletebuttonClick:(UIButton *)sender
 {
-    
+    [self.photoArray removeObjectAtIndex:sender.tag - 1000];
+    [self.photoCollectionView reloadData];
+    self.deleteImageBlock(sender.tag - 1000);
 }
 - (void)createMachineInfoView
 {
@@ -243,14 +266,31 @@ typedef void(^textNumberBlock)(NSInteger number);
     _reasonView.placeholderView.sd_layout.leftSpaceToView(_reasonView, 0).topSpaceToView(_reasonView, 0).rightSpaceToView(_reasonView, 0).heightIs(_reasonView.height);
     _reasonView.enablesReturnKeyAutomatically = NO;
     _reasonView.returnKeyType = UIReturnKeyDone;
+    
+    __block UILabel *textNumberLabel = [[UILabel alloc]init];
+    [_reasonView addSubview:textNumberLabel];
+    textNumberLabel.sd_layout.bottomSpaceToView(_reasonView, 20).rightSpaceToView(_reasonView, 0).heightIs(10);
+    [textNumberLabel setSingleLineAutoResizeWithMaxWidth:100];
+    textNumberLabel.textAlignment = NSTextAlignmentRight;
+    textNumberLabel.textColor = [UIColor grayColor];
+    textNumberLabel.font = CFFONT10;
+    textNumberLabel.text = [NSString stringWithFormat:@"0/%d", MAX_LIMIT_NUMS];
+    
+    self.textNumberBlock = ^(NSInteger number) {
+        textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d", (long)number, MAX_LIMIT_NUMS];
+    };
 }
 - (void)createPartsView
 {
     self.viewTag = 1000;
-    _bodyView.sd_layout.heightIs(60);
-    _partTypeView = [[UIView alloc]init];
-    [_bodyView addSubview:_partTypeView];
-    _partTypeView.sd_layout.leftSpaceToView(_bodyView, 0).heightIs(60).rightSpaceToView(_bodyView, 0).bottomSpaceToView(_bodyView, 0);
+    if (!_isCheck) {
+        _bodyView.sd_layout.heightIs(60);
+        _partTypeView = [[UIView alloc]init];
+        [_bodyView addSubview:_partTypeView];
+        _partTypeView.sd_layout.leftSpaceToView(_bodyView, 0).heightIs(60).rightSpaceToView(_bodyView, 0).bottomSpaceToView(_bodyView, 0);
+    } else {
+        _bodyView.sd_layout.heightIs(0);
+    }
     UIButton *typeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [_partTypeView addSubview:typeBtn];
     typeBtn.sd_layout.heightIs(60).leftSpaceToView(_partTypeView, 0).rightSpaceToView(_partTypeView, 0).bottomSpaceToView(_partTypeView, 0);
@@ -264,11 +304,17 @@ typedef void(^textNumberBlock)(NSInteger number);
 - (void)addMachineFaultViewWithType:(FaultType)type
                      infoDictionary:(NSDictionary *)dcit
 {
+    __block CFRepairOrderView *weakSelf = self;
     self.viewTag++;
     __block CFFaultView *faultView = [[CFFaultView alloc]initWithType:type];
+    if (_isCheck) {
+        faultView.isCheck = YES;
+    }
     [_bodyView addSubview:faultView];
     faultView.tag = self.viewTag;
-    
+    faultView.scanBlock = ^{
+        weakSelf.scanBlock();
+    };
 
     CFFaultView *fault = [self viewWithTag:self.viewTag - 1];
     switch (type) {
@@ -286,7 +332,6 @@ typedef void(^textNumberBlock)(NSInteger number);
     
     self.sd_layout.heightIs(60 + _bodyView.height);
     
-    __block CFRepairOrderView *weakSelf = self;
     faultView.changeFrameBlock = ^(NSInteger type) {
         switch (type) {
             case 0:
@@ -301,13 +346,18 @@ typedef void(^textNumberBlock)(NSInteger number);
                 break;
         }
     };
+    self.getScanInfoBlock = ^(NSString *str) {
+        faultView.getScanInfoBlock(str);
+    };
+    
     if (!(dcit == nil)) {
         faultView.partNameText.text = [dcit objectForKey:@"partNo"];
-        faultView.reasonView.text = [dcit objectForKey:@"faultDes"];
-        faultView.reasonView.placeholder = @"";
+        faultView.reasonView.textString = [dcit objectForKey:@"faultDes"];
         self.sd_layout.heightIs(60);
         _bodyView.hidden = YES;
     }
+    self.titleLabel.textColor = ChangfaColor;
+    self.statuslabel.hidden = NO;
 }
 #pragma mark -选择故障类型
 - (void)typeBtnClick
@@ -328,6 +378,7 @@ typedef void(^textNumberBlock)(NSInteger number);
 {
     self.vagueView.hidden = YES;
 }
+
 - (void)setIsSelected:(BOOL)isSelected
 {
     _isSelected = isSelected;
@@ -361,20 +412,125 @@ typedef void(^textNumberBlock)(NSInteger number);
         self.statuslabel.hidden = YES;
     }
 }
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
-    
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [self endEditing:YES];
+    return NO;
+}
+- (void)setIsRefill:(BOOL)isRefill
+{
+    _isRefill = isRefill;
+}
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range
+ replacementText:(NSString *)text
+{
     if ([text isEqualToString:@"\n"]){ //判断输入的字是否是回车，即按下return
         //在这里做你响应return键的代码
         [self endEditing:YES];
         return NO; //这里返回NO，就代表return键值失效，即页面上按下return，不会出现换行，如果为yes，则输入页面会换行
     }
-
-    return YES;
+    UITextRange *selectedRange = [textView markedTextRange];
+    //获取高亮部分
+    UITextPosition *pos = [textView positionFromPosition:selectedRange.start offset:0];
+    //获取高亮部分内容
+    //NSString * selectedtext = [textView textInRange:selectedRange];
+    
+    //如果有高亮且当前字数开始位置小于最大限制时允许输入
+    if (selectedRange && pos) {
+        NSInteger startOffset = [textView offsetFromPosition:textView.beginningOfDocument toPosition:selectedRange.start];
+        NSInteger endOffset = [textView offsetFromPosition:textView.beginningOfDocument toPosition:selectedRange.end];
+        NSRange offsetRange = NSMakeRange(startOffset, endOffset - startOffset);
+        
+        if (offsetRange.location < MAX_LIMIT_NUMS) {
+            return YES;
+        }
+        else
+        {
+            return NO;
+        }
+    }
+    
+    
+    NSString *comcatstr = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    
+    NSInteger caninputlen = MAX_LIMIT_NUMS - comcatstr.length;
+    
+    if (caninputlen >= 0)
+    {
+        return YES;
+    }
+    else
+    {
+        NSInteger len = text.length + caninputlen;
+        //防止当text.length + caninputlen < 0时，使得rg.length为一个非法最大正数出错
+        NSRange rg = {0,MAX(len,0)};
+        
+        if (rg.length > 0)
+        {
+            NSString *s = @"";
+            //判断是否只普通的字符或asc码(对于中文和表情返回NO)
+            BOOL asc = [text canBeConvertedToEncoding:NSASCIIStringEncoding];
+            if (asc) {
+                s = [text substringWithRange:rg];//因为是ascii码直接取就可以了不会错
+            }
+            else
+            {
+                __block NSInteger idx = 0;
+                __block NSString  *trimString = @"";//截取出的字串
+                //使用字符串遍历，这个方法能准确知道每个emoji是占一个unicode还是两个
+                [text enumerateSubstringsInRange:NSMakeRange(0, [text length])
+                                         options:NSStringEnumerationByComposedCharacterSequences
+                                      usingBlock: ^(NSString* substring, NSRange substringRange, NSRange enclosingRange, BOOL* stop) {
+                                          
+                                          if (idx >= rg.length) {
+                                              *stop = YES; //取出所需要就break，提高效率
+                                              return ;
+                                          }
+                                          
+                                          trimString = [trimString stringByAppendingString:substring];
+                                          
+                                          idx++;
+                                      }];
+                
+                s = trimString;
+            }
+            //rang是指从当前光标处进行替换处理(注意如果执行此句后面返回的是YES会触发didchange事件)
+            [textView setText:[textView.text stringByReplacingCharactersInRange:range withString:s]];
+            //既然是超出部分截取了，哪一定是最大限制了。
+            //            self.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%ld", (long)MAX_LIMIT_NUMS, (long)MAX_LIMIT_NUMS];
+            self.textNumberBlock(MAX_LIMIT_NUMS);
+        }
+        return NO;
+    }
+    
+    
 }
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
+
+- (void)textViewDidChange:(UITextView *)textView
 {
-    [self endEditing:YES];
-    return NO;
+    UITextRange *selectedRange = [textView markedTextRange];
+    //获取高亮部分
+    UITextPosition *pos = [textView positionFromPosition:selectedRange.start offset:0];
+    
+    //如果在变化中是高亮部分在变，就不要计算字符了
+    if (selectedRange && pos) {
+        return;
+    }
+    
+    NSString  *nsTextContent = textView.text;
+    NSInteger existTextNum = nsTextContent.length;
+    
+    if (existTextNum > MAX_LIMIT_NUMS)
+    {
+        //截取到最大位置的字符
+        NSString *s = [nsTextContent substringToIndex:MAX_LIMIT_NUMS];
+        
+        [textView setText:s];
+    }
+    
+    //不让显示负数 口口日
+    //    self.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d",MAX(0, existTextNum),MAX_LIMIT_NUMS];
+    self.textNumberBlock(MAX(0, existTextNum));
 }
 - (void)awakeFromNib {
     [super awakeFromNib];

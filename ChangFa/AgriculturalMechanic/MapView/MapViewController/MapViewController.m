@@ -331,7 +331,7 @@
     self.locationManager.locationTimeout = 5;
     [self.locationManager setDelegate:self];
     
-    [self.locationManager setPausesLocationUpdatesAutomatically:YES];
+    [self.locationManager setPausesLocationUpdatesAutomatically:NO];
     
     [self.locationManager setAllowsBackgroundLocationUpdates:YES];
     

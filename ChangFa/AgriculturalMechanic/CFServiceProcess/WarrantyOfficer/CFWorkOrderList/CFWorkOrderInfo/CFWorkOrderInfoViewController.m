@@ -18,7 +18,9 @@
 #import "CFRepairsPhotoCell.h"
 #import "CFRepairsRecordCourseTableViewCell.h"
 #import "CFWordOrderInfoModel.h"
-@interface CFWorkOrderInfoViewController ()<UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource>
+#import <AMapFoundationKit/AMapFoundationKit.h>
+#import <AMapLocationKit/AMapLocationKit.h>
+@interface CFWorkOrderInfoViewController ()<UICollectionViewDelegate, UICollectionViewDataSource, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource, AMapLocationManagerDelegate>
 @property (nonatomic, strong)UIScrollView *orderScrollView;
 @property (nonatomic, strong)UILabel *orderNumberLabel;
 @property (nonatomic, strong)UILabel *orderNameLabel;
@@ -53,6 +55,9 @@
 
 @property (nonatomic, assign)BOOL switchStatus;
 @property (nonatomic, copy)NSString *fileIds;
+@property (nonatomic, copy)NSString *filepath;
+@property (nonatomic, strong)NSMutableArray *locationArray;
+@property (nonatomic, strong)AMapLocationManager *locationManager;
 @end
 
 @implementation CFWorkOrderInfoViewController
@@ -69,6 +74,13 @@
         _statusTimeArray = [NSMutableArray array];
     }
     return _statusTimeArray;
+}
+- (NSMutableArray *)locationArray
+{
+    if (_locationArray == nil) {
+        _locationArray = [NSMutableArray array];
+    }
+    return _locationArray;
 }
 - (UIView *)vagueView
 {
@@ -108,21 +120,6 @@
 }
 - (void)viewDidLoad
 {
-    NSDictionary *dict = @{
-                           @"dispatchId":@"202",
-                           @"driveLocation":@[@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904",@"31.697293,119.945904"],
-                           @"endLocation":@"31.697293,119.945904",
-                           @"startLocation":@"31.697293,119.945904"
-                           };
-    NSError *error = nil;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    NSLog(@"%@", jsonString);
-    [CFAFNetWorkingMethod postBossDemoWithUrl:@"http://192.168.0.100:8080/changfa_system/locationRecord/saveLocationRecord.do" param:jsonString success:^(NSDictionary *dict) {
-        NSLog(@"dict%@", dict);
-    } fail:^(NSError *error) {
-        
-    }];
     [super viewDidLoad];
     self.view.backgroundColor = BackgroundColor;
     self.navigationItem.title = @"派工单详情";
@@ -367,7 +364,6 @@
         cell.dayLabel.hidden = NO;
         cell.dayTimeLabel.hidden = NO;
         cell.timeLabel.hidden = NO;
-        NSLog(@"%@", self.statusTimeArray[indexPath.row]);
         NSDate *nowDate = [NSDate date]; // 当前时间
         
         NSDateFormatter *dayFormatter = [[NSDateFormatter alloc] init];
@@ -443,7 +439,6 @@
             cell.dayLabel.hidden = NO;
             cell.dayTimeLabel.hidden = NO;
             cell.timeLabel.hidden = NO;
-            NSLog(@"%@", self.statusTimeArray[indexPath.row]);
             NSDate *nowDate = [NSDate date]; // 当前时间
             
             NSDateFormatter *dayFormatter = [[NSDateFormatter alloc] init];
@@ -453,17 +448,14 @@
             NSCalendar *dayCalendar = [NSCalendar currentCalendar];
             NSCalendarUnit dayUnit = NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear;
             NSDateComponents *dayCompas = [dayCalendar components:dayUnit fromDate:dayCreat toDate:nowDate options:0];
-            NSLog(@"year=%zd  month=%zd  day=%zd",dayCompas.year,dayCompas.month,dayCompas.day);
             
             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
             formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
             NSDate *creat = [formatter dateFromString:self.statusTimeArray[indexPath.row]]; // 传入的时间
             
-            
             NSCalendar *calendar = [NSCalendar currentCalendar];
             NSCalendarUnit unit = NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
             NSDateComponents *compas = [calendar components:unit fromDate:creat toDate:nowDate options:0];
-            NSLog(@"year=%zd  month=%zd  day=%zd hour=%zd  minute=%zd",compas.year,compas.month,compas.day,compas.hour,compas.minute);
             
             if ([[NSString stringWithFormat:@"%zd", dayCompas.day] integerValue] > 2) {
                 cell.timeLabel.hidden = YES;
@@ -611,13 +603,11 @@
 - (void)updataOrderStatus
 {
     NSString *status = [NSString stringWithFormat:@"%ld", [self.orderInfoModel.status integerValue] + 1];
-    NSLog(@"%@", status);
     NSDictionary *param = @{
                             @"status":status,
                             @"dispatchId":self.orderInfoModel.disId,
                             @"fileIds":self.fileIds,
                             };
-    NSLog(@"====%@", param);
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"dispatch/updateDispatchStatus" Loading:0 Params:param Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"dispatch%@", responseObject);
         NSDictionary *dict = [NSDictionary dictionaryWithDictionary:[responseObject objectForKey:@"head"]];
@@ -786,6 +776,7 @@
                 
             }];
             UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [self startRecordLocation];
                 [self updataOrderStatus];
             }];
             [sureAction setValue:[UIColor redColor] forKey:@"titleTextColor"];
@@ -801,6 +792,7 @@
                 
             }];
             UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [self endRecordLocation];
                 [self updataOrderStatus];
             }];
             [sureAction setValue:[UIColor redColor] forKey:@"titleTextColor"];
@@ -853,6 +845,63 @@
     UIWebView *callWebview = [[UIWebView alloc] init];
     [callWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:str]]];
     [self.view addSubview:callWebview];
+}
+- (void)startRecordLocation
+{
+    NSArray *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cachePaths = [cachePath objectAtIndex:0];
+    NSArray *path = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *paths = [path objectAtIndex:0];
+    _filepath = [paths stringByAppendingPathComponent:@"textFile.text"];
+    
+    
+    self.locationManager = [[AMapLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    [self.locationManager setPausesLocationUpdatesAutomatically:NO];
+    [self.locationManager setAllowsBackgroundLocationUpdates:YES];
+    [self startSerialLocation];
+}
+- (void)endRecordLocation
+{
+    [self stopSerialLocation];
+    NSDictionary *dict = @{
+                           @"dispatchId":self.dispatchId,
+                           @"driveLocation":self.locationArray
+                           };
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSLog(@"%@", jsonString);
+    [CFAFNetWorkingMethod postBossDemoWithUrl:@"http://192.168.0.100:8080/changfa_system/locationRecord/saveLocationRecord.do" param:jsonString success:^(NSDictionary *dict) {
+        NSLog(@"dict%@", dict);
+    } fail:^(NSError *error) {
+        
+    }];
+}
+- (void)startSerialLocation
+{
+    //开始定位
+    [self.locationManager startUpdatingLocation];
+}
+
+- (void)stopSerialLocation
+{
+    //停止定位
+    [self.locationManager stopUpdatingLocation];
+}
+
+- (void)amapLocationManager:(AMapLocationManager *)manager didFailWithError:(NSError *)error
+{
+    //定位错误
+    NSLog(@"%s, amapLocationManager = %@, error = %@", __func__, [manager class], error);
+}
+
+- (void)amapLocationManager:(AMapLocationManager *)manager didUpdateLocation:(CLLocation *)location
+{
+    //定位结果
+    NSLog(@"location:{lat:%f; lon:%f; accuracy:%f}", location.coordinate.latitude, location.coordinate.longitude, location.horizontalAccuracy);
+    NSString *locationStr = [[[NSString stringWithFormat:@"%f", location.coordinate.latitude] stringByAppendingString:@","] stringByAppendingString:[NSString stringWithFormat:@"%f", location.coordinate.longitude]];
+    [self.locationArray addObject:locationStr];
 }
 - (void)didReceiveMemoryWarning
 {

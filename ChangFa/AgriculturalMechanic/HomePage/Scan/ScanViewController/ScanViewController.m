@@ -146,6 +146,13 @@
             [self.session stopRunning];
             return;
         }
+        if ([self.getInfoType isEqualToString:@"partNumber"]) {
+            MachineModel *model = [[MachineModel alloc]init];
+            model.imei = obj.stringValue;
+            [self.delegate scanGetInformation:model];
+            [self.session stopRunning];
+            return;
+        }
         if ([self.getInfoType isEqualToString:@"retreat"]) {
             [self getRetreatDetailMachineInformation:obj.stringValue];
         } else if ([self.getInfoType isEqualToString:@"repair"]){
