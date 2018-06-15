@@ -28,5 +28,6 @@ typedef void(^getScanInfoBlock)(NSString *str);
 @property (nonatomic, copy)changeFrameBlock changeFrameBlock;
 @property (nonatomic, copy)scanBlock scanBlock;
 @property (nonatomic, copy)getScanInfoBlock getScanInfoBlock;
-- (instancetype)initWithType:(NSInteger)type;
+- (instancetype)initWithType:(NSInteger)type
+                     IsCheck:(BOOL)isCheck;
 @end

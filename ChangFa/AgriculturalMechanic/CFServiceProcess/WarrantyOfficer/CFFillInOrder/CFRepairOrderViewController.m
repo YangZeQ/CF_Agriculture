@@ -24,6 +24,7 @@
 @property (nonatomic, strong)CFRepairOrderView *userOpinionView;
 @property (nonatomic, strong)CFRepairOrderView *handleOpinionView;
 @property (nonatomic, strong)CFRepairOrderView *remarksView;
+@property (nonatomic, strong)UIButton *submitBtn;
 @property (nonatomic, strong)UIImagePickerController *imagePicker;
 @property (nonatomic, strong)UIView *vagueView;
 
@@ -127,7 +128,7 @@
 - (void)createRepairOrderView
 {
     __block CFRepairOrderViewController *weakSelf = self;
-    self.navigationItem.title = @"填写维修单";
+    
     _repairOrderScroll = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, CF_WIDTH, CF_HEIGHT - navHeight)];
     _repairOrderScroll.contentSize = CGSizeMake(0, 0);
     _repairOrderScroll.showsVerticalScrollIndicator = NO;
@@ -150,7 +151,7 @@
     repairTitleLabel.font = CFFONT14;
     [repairStyleLabel addSubview:repairTitleLabel];
     
-    _groupPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
+    _groupPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_groupPhotoView];
     _groupPhotoView.sd_layout.leftSpaceToView(_repairOrderScroll, 10).topSpaceToView(repairStyleLabel, 10).heightIs(60).rightSpaceToView(_repairOrderScroll, 10);
     _groupPhotoView.isSelected = NO;
@@ -168,10 +169,11 @@
         if (weakSelf.groupPhotoArray.count < 1) {
             weakSelf.groupPhotoView.titleLabel.textColor = UIColorWithRGBA(107, 107, 107, 1);
             weakSelf.groupPhotoView.statuslabel.hidden = YES;
+            weakSelf.groupPhotoView.isComplete = NO;
         }
     };
     
-    _faultPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
+    _faultPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_faultPhotoView];
     _faultPhotoView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_groupPhotoView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _faultPhotoView.isSelected = NO;
@@ -189,10 +191,11 @@
         if (weakSelf.faultPhotoArray.count < 1) {
             weakSelf.faultPhotoView.titleLabel.textColor = UIColorWithRGBA(107, 107, 107, 1);
             weakSelf.faultPhotoView.statuslabel.hidden = YES;
+            weakSelf.faultPhotoView.isComplete = NO;
         }
     };
     
-    _machineInfoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleInfo];
+    _machineInfoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleInfo IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_machineInfoView];
     _machineInfoView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_faultPhotoView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _machineInfoView.isSelected = NO;
@@ -201,8 +204,11 @@
     _machineInfoView.titleLabel.text = @"农机信息";
     _machineInfoView.statuslabel.hidden = YES;
     [_machineInfoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _machineInfoView.isCompleteBlock = ^(BOOL isComplete) {
+        weakSelf.machineInfoView.isComplete = isComplete;
+    };
     
-    _machineUseView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    _machineUseView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_machineUseView];
     _machineUseView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_machineInfoView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _machineUseView.isSelected = NO;
@@ -212,8 +218,11 @@
     _machineUseView.reasonView.placeholder = @"请简短描述农机用途说明";
     _machineUseView.statuslabel.hidden = YES;
     [_machineUseView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _machineUseView.isCompleteBlock = ^(BOOL isComplete) {
+        weakSelf.machineUseView.isComplete = isComplete;
+    };
     
-    _machineFaultView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleParts];
+    _machineFaultView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleParts IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_machineFaultView];
     _machineFaultView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_machineUseView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _machineFaultView.isSelected = NO;
@@ -230,8 +239,11 @@
             
         }];
     };
+    _machineFaultView.isCompleteBlock = ^(BOOL isComplete) {
+        weakSelf.machineFaultView.isComplete = isComplete;
+    };
     
-    _userOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    _userOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_userOpinionView];
     _userOpinionView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_machineFaultView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _userOpinionView.isSelected = NO;
@@ -241,8 +253,11 @@
     _userOpinionView.reasonView.placeholder = @"请简短描述客户意见";
     _userOpinionView.statuslabel.hidden = YES;
     [_userOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _userOpinionView.isCompleteBlock = ^(BOOL isComplete) {
+        weakSelf.userOpinionView.isComplete = isComplete;
+    };
     
-    _handleOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    _handleOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_handleOpinionView];
     _handleOpinionView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_userOpinionView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _handleOpinionView.isSelected = NO;
@@ -252,8 +267,11 @@
     _handleOpinionView.reasonView.placeholder = @"请简短描述处理意见";
     _handleOpinionView.statuslabel.hidden = YES;
     [_handleOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    _handleOpinionView.isCompleteBlock = ^(BOOL isComplete) {
+        weakSelf.handleOpinionView.isComplete = isComplete;
+    };
     
-    _remarksView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    _remarksView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_remarksView];
     _remarksView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_handleOpinionView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _remarksView.isSelected = NO;
@@ -264,20 +282,10 @@
     _remarksView.statuslabel.hidden = YES;
     _remarksView.signImage.hidden = YES;
     [_remarksView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIButton *submitBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_repairOrderScroll addSubview:submitBtn];
-    submitBtn.sd_layout.leftEqualToView(_groupPhotoView).rightEqualToView(_groupPhotoView).topSpaceToView(_remarksView, 15).heightIs(44);
-    [submitBtn setTitle:@"提交" forState:UIControlStateNormal];
-    submitBtn.titleLabel.font = CFFONT15;
-    [submitBtn setBackgroundColor:ChangfaColor];
-    [submitBtn addTarget:self action:@selector(submitBtnClcik) forControlEvents:UIControlEventTouchUpInside];
-    submitBtn.layer.cornerRadius = 10 * screenWidth;
-    
-    
-    [_repairOrderScroll sd_addSubviews:@[repairStyleLabel,_groupPhotoView,_faultPhotoView,_machineInfoView,_machineUseView,_machineFaultView,_userOpinionView,_handleOpinionView,_remarksView,submitBtn]];
-    _repairOrderScroll.sd_layout.spaceToSuperView(UIEdgeInsetsZero);
-    [_repairOrderScroll setupAutoContentSizeWithBottomView:submitBtn bottomMargin:20 * screenHeight];
+    _remarksView.isCompleteBlock = ^(BOOL isComplete) {
+        weakSelf.remarksView.isComplete = isComplete;
+    };
+
 // 查看
     if (_isCheck) {
         _groupPhotoView.bodyView.userInteractionEnabled = NO;
@@ -288,7 +296,23 @@
         _userOpinionView.bodyView.userInteractionEnabled = NO;
         _handleOpinionView.bodyView.userInteractionEnabled = NO;
         _remarksView.bodyView.userInteractionEnabled = NO;
+        [_repairOrderScroll sd_addSubviews:@[repairStyleLabel,_groupPhotoView,_faultPhotoView,_machineInfoView,_machineUseView,_machineFaultView,_userOpinionView,_handleOpinionView,_remarksView]];
+        [_repairOrderScroll setupAutoContentSizeWithBottomView:_remarksView bottomMargin:20 * screenHeight];
+        self.navigationItem.title = @"填写维修单";
+    } else {
+        _submitBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_repairOrderScroll addSubview:_submitBtn];
+        _submitBtn.sd_layout.leftEqualToView(_groupPhotoView).rightEqualToView(_groupPhotoView).topSpaceToView(_remarksView, 15).heightIs(44);
+        [_submitBtn setTitle:@"提交" forState:UIControlStateNormal];
+        _submitBtn.titleLabel.font = CFFONT15;
+        [_submitBtn setBackgroundColor:ChangfaColor];
+        [_submitBtn addTarget:self action:@selector(submitBtnClcik) forControlEvents:UIControlEventTouchUpInside];
+        _submitBtn.layer.cornerRadius = 10 * screenWidth;
+        [_repairOrderScroll sd_addSubviews:@[repairStyleLabel,_groupPhotoView,_faultPhotoView,_machineInfoView,_machineUseView,_machineFaultView,_userOpinionView,_handleOpinionView,_remarksView,_submitBtn]];
+        [_repairOrderScroll setupAutoContentSizeWithBottomView:_submitBtn bottomMargin:20 * screenHeight];
+        self.navigationItem.title = @"查看维修单";
     }
+    _repairOrderScroll.sd_layout.spaceToSuperView(UIEdgeInsetsZero);
 }
 - (void)selectedButtonClick:(UIButton *)sender
 {
@@ -302,10 +326,10 @@
     }
     switch (sender.tag) {
         case 2001:
-            self.uploadImageType = 1;
+            self.uploadImageType = 2;
             break;
         case 2002:
-            self.uploadImageType = 2;
+            self.uploadImageType = 1;
             break;
         default:
             break;
@@ -320,18 +344,31 @@
     for (CFFaultView *view in _machineFaultView.bodyView.subviews) {
         if ([view isMemberOfClass:[CFFaultView class]] && view.type == 0) {
             NSDictionary *dict = @{
-                                  @"faultDes":view.reasonView.text,
+                                  @"faultDes":[view.reasonView.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                                   @"partNo":view.partNameText.text,
                                   };
+            if (view.reasonView.text.length < 1 || view.partNameText.text.length < 1) {
+                [MBManager showBriefAlert:@"故障信息未填写完毕" time:1.5];
+                _machineFaultView.isCompleteBlock(NO);
+                return;
+            }
             [partFaultArray addObject:dict];
         } else if ([view isMemberOfClass:[CFFaultView class]] && view.type == 1) {
             NSDictionary *dict = @{
-                                  @"faultDes":view.reasonView.text,
+                                  @"faultDes":[view.reasonView.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                                   @"partNo":[NSString stringWithFormat:@"%ld", partNo],
                                   };
+            if (view.reasonView.text.length < 1) {
+                [MBManager showBriefAlert:@"故障信息未填写完毕" time:1.5];
+                _machineFaultView.isCompleteBlock(NO);
+                return;
+            }
             partNo++;
             [commonFaultArray addObject:dict];
         }
+    }
+    if (partFaultArray.count > 0 || commonFaultArray.count > 0) {
+        _machineFaultView.isCompleteBlock(YES);
     }
     NSDictionary *param = @{
                             @"disId":[NSString stringWithFormat:@"%@", self.disId],
@@ -355,7 +392,26 @@
     [CFAFNetWorkingMethod postBossDemoWithUrl:@"http://192.168.0.100:8080/changfa_system/repair/createRepair.do" param:jsonString success:^(NSDictionary *dict) {
         NSLog(@"sdfasf%@   \n  %@   %@", [[dict objectForKey:@"head"] objectForKey:@"message"], dict, [dict objectForKey:@"message"]);
         if ([[[dict objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
-            
+            if (!_groupPhotoView.isComplete) {
+                [self selectedButtonClick:_groupPhotoView.selectedButton];
+            } else if (!_faultPhotoView.isComplete) {
+                [self selectedButtonClick:_faultPhotoView.selectedButton];
+            } else if (!_machineInfoView.isComplete) {
+                [self selectedButtonClick:_machineInfoView.selectedButton];
+            } else if (!_machineUseView.isComplete) {
+                [self selectedButtonClick:_machineUseView.selectedButton];
+            } else if (!_machineFaultView.isComplete) {
+                [self selectedButtonClick:_machineFaultView.selectedButton];
+            } else if (!_handleOpinionView.isComplete) {
+                [self selectedButtonClick:_handleOpinionView.selectedButton];
+            } else if (!_userOpinionView.isComplete) {
+                [self selectedButtonClick:_userOpinionView.selectedButton];
+            } else if (!_remarksView.isComplete) {
+                [self selectedButtonClick:_remarksView.selectedButton];
+                [_submitBtn setTitle:@"提交" forState:UIControlStateNormal];
+            } else {
+                [_submitBtn setTitle:@"提交" forState:UIControlStateNormal];
+            }
         }
     } fail:^(NSError *error) {
         NSLog(@"%@", error);
@@ -382,11 +438,11 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(nullable NSDictionary<NSString *,id> *)editingInfo
 {
     if (self.uploadImageType == 1) {
-        [self.groupPhotoArray addObject:image];
-        self.photoArray = self.groupPhotoArray;
-    } else {
         [self.faultPhotoArray addObject:image];
         self.photoArray = self.faultPhotoArray;
+    } else {
+        [self.groupPhotoArray addObject:image];
+        self.photoArray = self.groupPhotoArray;
     }
     [self dismissViewControllerAnimated:YES completion:nil];
     [self uploadImagesArray];
@@ -448,11 +504,11 @@
         // 获取图片
         [[PHImageManager defaultManager] requestImageForAsset:asset targetSize:size contentMode:PHImageContentModeDefault options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
             if (self.uploadImageType == 1) {
-                [self.groupPhotoArray addObject:result];
-                self.photoArray = self.groupPhotoArray;
-            } else {
                 [self.faultPhotoArray addObject:result];
                 self.photoArray = self.faultPhotoArray;
+            } else {
+                [self.groupPhotoArray addObject:result];
+                self.photoArray = self.groupPhotoArray;
             }
         }];
     }
@@ -488,11 +544,11 @@
 - (void)uploadImagesArray
 {
     if (self.uploadImageType == 1) {
-        [_groupPhotoView.photoArray addObjectsFromArray:_groupPhotoArray];
-        [_groupPhotoView.photoCollectionView reloadData];
-    } else {
         [_faultPhotoView.photoArray addObjectsFromArray:_faultPhotoArray];
         [_faultPhotoView.photoCollectionView reloadData];
+    } else {
+        [_groupPhotoView.photoArray addObjectsFromArray:_groupPhotoArray];
+        [_groupPhotoView.photoCollectionView reloadData];
     }
     [MBManager showWaitingWithTitle:@"上传图片中"];
     // 准备保存结果的数组，元素个数与上传的图片个数相同，先用 NSNull 占位
@@ -526,15 +582,6 @@
         for (id response in result) {
             NSLog(@"tupian%@", response);
             if (self.uploadImageType == 1) {
-                [self.groupPhotoIdsArray addObject:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
-                if (self.groupPhotoIds.length == 0) {
-                    self.groupPhotoIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
-                } else {
-                    self.groupPhotoIds = [[self.groupPhotoIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
-                }
-                _groupPhotoView.titleLabel.textColor = ChangfaColor;
-                _groupPhotoView.statuslabel.hidden = NO;
-            } else {
                 [self.faultPhotoIdsArray addObject:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
                 if (self.faultPhotoIds.length == 0) {
                     self.faultPhotoIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
@@ -543,6 +590,17 @@
                 }
                 _faultPhotoView.titleLabel.textColor = ChangfaColor;
                 _faultPhotoView.statuslabel.hidden = NO;
+                _faultPhotoView.isComplete = YES;
+            } else {
+                [self.groupPhotoIdsArray addObject:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
+                if (self.groupPhotoIds.length == 0) {
+                    self.groupPhotoIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
+                } else {
+                    self.groupPhotoIds = [[self.groupPhotoIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
+                }
+                _groupPhotoView.titleLabel.textColor = ChangfaColor;
+                _groupPhotoView.statuslabel.hidden = NO;
+                _groupPhotoView.isComplete = YES;
             }
             ids++;
         }
@@ -572,6 +630,30 @@
 }
 - (void)fillInOrderInfo
 {
+    if (_fillModel.faultFileInfo.count > 0) {
+        _faultPhotoView.isComplete = YES;
+    }
+    if (_fillModel.personFileInfo.count > 0) {
+        _groupPhotoView.isComplete = YES;
+    }
+    if (_fillModel.useTime > 0 && _fillModel.driveDistance > 0) {
+        _machineInfoView.isComplete = YES;
+    }
+    if (_fillModel.machineInstruction.length > 0) {
+        _machineUseView.isComplete = YES;
+    }
+    if ([[_fillModel.faults objectForKey:@"partFaults"] count] > 0 || [[_fillModel.faults objectForKey:@"commonFaults"] count] > 0) {
+        _machineFaultView.isComplete = YES;
+    }
+    if (_fillModel.customerOpinion.length > 0) {
+        _userOpinionView.isComplete = YES;
+    }
+    if (_fillModel.handleOpinion.length > 0) {
+        _handleOpinionView.isComplete = YES;
+    }
+    if (_fillModel.remarks.length > 0) {
+        _remarksView.isComplete = YES;
+    }
     for (NSDictionary *dic in self.fillModel.faultFileInfo) {
         [self.faultPhotoIdsArray addObject:[dic objectForKey:@"fileId"]];
         if (self.faultPhotoIds.length == 0) {
@@ -604,10 +686,10 @@
     if ([_fillModel.driveDistance integerValue] >= 0) {
         _machineInfoView.mileageTextField.textField.text = [NSString stringWithFormat:@"%@", _fillModel.driveDistance];
     }
-    _machineUseView.reasonView.text = [self.fillModel.machineInstruction stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    _userOpinionView.reasonView.text = [self.fillModel.customerOpinion stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    _handleOpinionView.reasonView.text = [self.fillModel.handleOpinion stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    _remarksView.reasonView.text = [self.fillModel.remarks stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    _machineUseView.reasonView.textString = [self.fillModel.machineInstruction stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    _userOpinionView.reasonView.textString = [self.fillModel.customerOpinion stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    _handleOpinionView.reasonView.textString = [self.fillModel.handleOpinion stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    _remarksView.reasonView.textString = [self.fillModel.remarks stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     for (NSDictionary *dict in [self.fillModel.faults objectForKey:@"partFaults"]) {
         [_machineFaultView addMachineFaultViewWithType:0 infoDictionary:dict];
     }

@@ -13,4 +13,5 @@
 @property (nonatomic, copy)NSString *repairId;
 @property (nonatomic, copy)NSString *disId;
 @property (nonatomic, copy)NSString *disNum;
+@property (nonatomic, assign)BOOL isCheck;
 @end

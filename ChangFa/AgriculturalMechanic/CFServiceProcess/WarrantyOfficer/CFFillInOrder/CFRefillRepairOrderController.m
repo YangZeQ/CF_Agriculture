@@ -161,7 +161,7 @@
     repairTitleLabel.font = CFFONT14;
     [repairStyleLabel addSubview:repairTitleLabel];
     
-    _groupPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
+    _groupPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_groupPhotoView];
     _groupPhotoView.sd_layout.leftSpaceToView(_repairOrderScroll, 10).topSpaceToView(repairStyleLabel, 10).heightIs(60).rightSpaceToView(_repairOrderScroll, 10);
     _groupPhotoView.isSelected = NO;
@@ -184,7 +184,7 @@
         }
     };
     
-    _faultPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto];
+    _faultPhotoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStylePhoto IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_faultPhotoView];
     _faultPhotoView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_groupPhotoView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _faultPhotoView.isSelected = NO;
@@ -207,7 +207,7 @@
         }
     };
     
-    _machineInfoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleInfo];
+    _machineInfoView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleInfo IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_machineInfoView];
     _machineInfoView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_faultPhotoView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _machineInfoView.isSelected = NO;
@@ -219,7 +219,7 @@
     _machineInfoView.statuslabel.hidden = NO;
     [_machineInfoView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    _machineUseView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    _machineUseView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_machineUseView];
     _machineUseView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_machineInfoView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _machineUseView.isSelected = NO;
@@ -232,7 +232,7 @@
     _machineUseView.statuslabel.hidden = NO;
     [_machineUseView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    _machineFaultView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleParts];
+    _machineFaultView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleParts IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_machineFaultView];
     _machineFaultView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_machineUseView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _machineFaultView.isSelected = NO;
@@ -252,7 +252,7 @@
         }];
     };
     
-    _userOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    _userOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_userOpinionView];
     _userOpinionView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_machineFaultView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _userOpinionView.isSelected = NO;
@@ -265,7 +265,7 @@
     _userOpinionView.statuslabel.hidden = NO;
     [_userOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    _handleOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    _handleOpinionView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_handleOpinionView];
     _handleOpinionView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_userOpinionView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _handleOpinionView.isSelected = NO;
@@ -278,7 +278,7 @@
     _handleOpinionView.statuslabel.hidden = NO;
     [_handleOpinionView.selectedButton addTarget:self action:@selector(selectedButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    _remarksView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason];
+    _remarksView = [[CFRepairOrderView alloc]initWithViewStyle:FillViewStyleReason IsCheck:_isCheck];
     [_repairOrderScroll addSubview:_remarksView];
     _remarksView.sd_layout.leftEqualToView(_groupPhotoView).topSpaceToView(_handleOpinionView, 10).heightIs(60).rightEqualToView(_groupPhotoView);
     _remarksView.isSelected = NO;
@@ -330,6 +330,7 @@
 }
 - (void)selectedButtonClick:(UIButton *)sender
 {
+    NSLog(@"%ld", sender.tag);
     [self.view endEditing:YES];
     CFRepairOrderView *view = [self.view viewWithTag:sender.tag - 1000];
     view.isSelected = !view.isSelected;
@@ -340,10 +341,10 @@
     }
     switch (sender.tag) {
         case 2001:
-            self.uploadImageType = 1;
+            self.uploadImageType = 2;
             break;
         case 2002:
-            self.uploadImageType = 2;
+            self.uploadImageType = 1;
             break;
         default:
             break;
@@ -358,13 +359,13 @@
     for (CFFaultView *view in _machineFaultView.bodyView.subviews) {
         if ([view isMemberOfClass:[CFFaultView class]] && view.type == 0) {
             NSDictionary *dict = @{
-                                   @"faultDes":view.reasonView.text,
+                                   @"faultDes":[view.reasonView.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                                    @"partNo":view.partNameText.text,
                                    };
             [partFaultArray addObject:dict];
         } else if ([view isMemberOfClass:[CFFaultView class]] && view.type == 1) {
             NSDictionary *dict = @{
-                                   @"faultDes":view.reasonView.text,
+                                   @"faultDes":[view.reasonView.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
                                    @"partNo":[NSString stringWithFormat:@"%ld", (long)partNo],
                                    };
             partNo++;
@@ -417,11 +418,11 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(nullable NSDictionary<NSString *,id> *)editingInfo
 {
     if (self.uploadImageType == 1) {
-        [self.groupPhotoArray addObject:image];
-        self.photoArray = self.groupPhotoArray;
-    } else {
         [self.faultPhotoArray addObject:image];
         self.photoArray = self.faultPhotoArray;
+    } else {
+        [self.groupPhotoArray addObject:image];
+        self.photoArray = self.groupPhotoArray;
     }
     [self dismissViewControllerAnimated:YES completion:nil];
     [self uploadImagesArray];
@@ -483,11 +484,11 @@
         // 获取图片
         [[PHImageManager defaultManager] requestImageForAsset:asset targetSize:size contentMode:PHImageContentModeDefault options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
             if (self.uploadImageType == 1) {
-                [self.groupPhotoArray addObject:result];
-                self.photoArray = self.groupPhotoArray;
-            } else {
                 [self.faultPhotoArray addObject:result];
                 self.photoArray = self.faultPhotoArray;
+            } else {
+                [self.groupPhotoArray addObject:result];
+                self.photoArray = self.groupPhotoArray;
             }
         }];
     }
@@ -523,32 +524,40 @@
 - (void)uploadImagesArray
 {
     if (self.uploadImageType == 1) {
-        _groupPhotoView.photoArray = _groupPhotoArray;
-        [_groupPhotoView.photoCollectionView reloadData];
-    } else {
         _faultPhotoView.photoArray = _faultPhotoArray;
         [_faultPhotoView.photoCollectionView reloadData];
+    } else {
+        _groupPhotoView.photoArray = _groupPhotoArray;
+        [_groupPhotoView.photoCollectionView reloadData];
     }
     [MBManager showWaitingWithTitle:@"上传图片中"];
     // 准备保存结果的数组，元素个数与上传的图片个数相同，先用 NSNull 占位
     NSMutableArray* result = [NSMutableArray array];
+    NSInteger photoIndex = 0;
     for (UIImage *image in self.photoArray) {
+        if ([image isKindOfClass:[NSString class]]) {
+            continue;
+        }
+        photoIndex++;
         [result addObject:[NSNull null]];
     }
     dispatch_group_t group = dispatch_group_create();
-    for (NSInteger i = 0; i < self.photoArray.count; i++) {
-        
+    NSLog(@"%@", self.photoArray);
+    for (NSInteger i = self.photoArray.count - photoIndex; i < self.photoArray.count; i++) {
+        if ([self.photoArray[i] isKindOfClass:[NSString class]]) {
+            continue;
+        }
         dispatch_group_enter(group);
         
         NSURLSessionUploadTask* uploadTask = [self uploadTaskWithImage:self.photoArray[i] completion:^(NSURLResponse *response, NSDictionary* responseObject, NSError *error) {
             if (error) {
-                NSLog(@"第 %d 张图片上传失败: %@", (int)i + 1, error);
+                NSLog(@"第 %ld 张图片上传失败: %@", (int)i - photoIndex + 1, error);
                 dispatch_group_leave(group);
             } else {
                 NSLog(@"uploadimages%@", response);
-                NSLog(@"第 %d 张图片上传成功: %@", (int)i + 1, responseObject);
+                NSLog(@"第 %ld 张图片上传成功: %@", (int)i - photoIndex + 1, responseObject);
                 @synchronized (result) { // NSMutableArray 是线程不安全的，所以加个同步锁
-                    result[i] = responseObject;
+                    result[i - (self.photoArray.count - photoIndex)] = responseObject;
                 }
                 dispatch_group_leave(group);
             }
@@ -563,18 +572,18 @@
         for (id response in result) {
             NSLog(@"tupian%@", response);
             if (self.uploadImageType == 1) {
-                [self.groupPhotoIdsArray addObject:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
-                if (self.groupPhotoIds.length == 0) {
-                    self.groupPhotoIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
-                } else {
-                    self.groupPhotoIds = [[self.groupPhotoIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
-                }
-            } else {
                 [self.faultPhotoIdsArray addObject:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
                 if (self.faultPhotoIds.length == 0) {
                     self.faultPhotoIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
                 } else {
                     self.faultPhotoIds = [[self.faultPhotoIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
+                }
+            } else {
+                [self.groupPhotoIdsArray addObject:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
+                if (self.groupPhotoIds.length == 0) {
+                    self.groupPhotoIds = [[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"];
+                } else {
+                    self.groupPhotoIds = [[self.groupPhotoIds stringByAppendingString:@","] stringByAppendingString:[[[response objectForKey:@"body"] objectForKey:@"result"] objectForKey:@"fileIds"]];
                 }
             }
             ids++;
@@ -683,6 +692,7 @@
             _faultPhotoView.bodyView.userInteractionEnabled = YES;
             _faultPhotoView.statuslabel.hidden = YES;
             _faultPhotoView.isRefill = YES;
+            _faultPhotoView.isCheck = NO;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_faultPhotoView.photoCollectionView reloadData];
             });
@@ -691,6 +701,7 @@
             _groupPhotoView.bodyView.userInteractionEnabled = YES;
             _groupPhotoView.statuslabel.hidden = YES;
             _groupPhotoView.isRefill = YES;
+            _groupPhotoView.isCheck = NO;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_groupPhotoView.photoCollectionView reloadData];
             });
@@ -698,18 +709,22 @@
             _machineUseView.titleLabel.textColor = [UIColor redColor];
             _machineUseView.bodyView.userInteractionEnabled = YES;
             _machineUseView.statuslabel.hidden = YES;
+            _machineUseView.isCheck = NO;
         } else if ([str integerValue] == 20) {
             _machineFaultView.titleLabel.textColor = [UIColor redColor];
             _machineFaultView.bodyView.userInteractionEnabled = YES;
             _machineFaultView.statuslabel.hidden = YES;
+            _machineFaultView.isCheck = NO;
         } else if ([str integerValue] == 21) {
             _userOpinionView.titleLabel.textColor = [UIColor redColor];
             _userOpinionView.bodyView.userInteractionEnabled = YES;
             _userOpinionView.statuslabel.hidden = YES;
+            _userOpinionView.isCheck = NO;
         } else if ([str integerValue] == 22) {
             _handleOpinionView.titleLabel.textColor = [UIColor redColor];
             _handleOpinionView.bodyView.userInteractionEnabled = YES;
             _handleOpinionView.statuslabel.hidden = YES;
+            _handleOpinionView.isCheck = NO;
         }
     }
     

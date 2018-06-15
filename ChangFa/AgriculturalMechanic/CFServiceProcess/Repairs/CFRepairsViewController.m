@@ -701,6 +701,10 @@
         return;
     }
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[_model.salesDate doubleValue]];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    NSString *dateString = [formatter stringFromDate: date];
     NSDictionary *params = @{
                              @"token":[userDefaults objectForKey:@"UserToken"],
                              @"userLat":[NSNumber numberWithDouble:self.latitude],
@@ -716,7 +720,13 @@
                              @"serviceLocation":self.stationModel.location,
                              @"contactName":self.nameTextField.textField.text,
                              @"contactMobile":self.phoneTextField.textField.text,
+                             @"machineName":_model.productName,
+                             @"machineType":[NSString stringWithFormat:@"%@", _model.carType],
+                             @"note":_model.note,
+                             @"machineModel":_model.productModel,
+                             @"saleDate":[NSString stringWithFormat:@"%@", dateString]
                              };
+    NSLog(@"%@", params);
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"reportRepair/saveReport" Loading:1 Params:params Method:@"post" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
         NSLog(@"submit%@, %@", responseObject, [[responseObject objectForKey:@"head"] objectForKey:@"message"]);
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {

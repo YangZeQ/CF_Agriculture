@@ -64,7 +64,7 @@
         self.navigationItem.title = @"报修成功";
         self.navigationItem.hidesBackButton = YES;
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(rightButtonClick)];
-        [self.navigationItem.rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
+        [self.navigationItem.rightBarButtonItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:ChangfaColor, NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
     } else {
         switch ([_recordModel.status integerValue]) {
             case 1:
@@ -344,7 +344,7 @@
                              @"reportId":self.recordModel.reportId,
                              };
     [CFAFNetWorkingMethod requestDataWithJavaUrl:@"reportRepair/getReportInfoById" Loading:1 Params:params Method:@"get" Image:nil Success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSLog(@"%@", responseObject);
+        NSLog(@"--------%@", responseObject);
         if ([[[responseObject objectForKey:@"head"] objectForKey:@"code"] integerValue] == 200) {
             self.recordModel = [CFRepairsRecordModel recordModelWithDictionary:[[responseObject objectForKey:@"body"] objectForKey:@"result"]];
             [self reloadRepairsRecordInfoView];

@@ -120,6 +120,7 @@
 }
 - (void)viewDidLoad
 {
+    [self startRecordLocation];
     [super viewDidLoad];
     self.view.backgroundColor = BackgroundColor;
     self.navigationItem.title = @"派工单详情";
@@ -816,8 +817,10 @@
         refill.repairId = self.orderInfoModel.repairId;
         refill.disId = self.orderInfoModel.disId;
         refill.disNum =  self.orderInfoModel.disNum;
+        refill.isCheck = YES;
         [self.navigationController pushViewController:refill animated:YES];
     } else {
+        [self endRecordLocation];
 //        CFFillInOrderViewController *fill = [[CFFillInOrderViewController alloc]init];
 //        fill.dispatchId = self.dispatchId;
 //        fill.repairId = self.orderInfoModel.repairId;
@@ -848,13 +851,7 @@
 }
 - (void)startRecordLocation
 {
-    NSArray *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *cachePaths = [cachePath objectAtIndex:0];
-    NSArray *path = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *paths = [path objectAtIndex:0];
-    _filepath = [paths stringByAppendingPathComponent:@"textFile.text"];
-    
-    
+ 
     self.locationManager = [[AMapLocationManager alloc] init];
     self.locationManager.delegate = self;
     [self.locationManager setPausesLocationUpdatesAutomatically:NO];
@@ -866,14 +863,16 @@
     [self stopSerialLocation];
     NSDictionary *dict = @{
                            @"dispatchId":self.dispatchId,
-                           @"driveLocation":self.locationArray
+                           @"driveLocation":self.locationArray,
+                           @"endLocation":self.orderInfoModel.taskLocation,
+                           @"startLocation":self.locationArray[0]
                            };
     NSError *error = nil;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     NSLog(@"%@", jsonString);
     [CFAFNetWorkingMethod postBossDemoWithUrl:@"http://192.168.0.100:8080/changfa_system/locationRecord/saveLocationRecord.do" param:jsonString success:^(NSDictionary *dict) {
-        NSLog(@"dict%@", dict);
+        NSLog(@"dict%@   %@", dict, [[dict objectForKey:@"head"] objectForKey:@"message"]);
     } fail:^(NSError *error) {
         
     }];

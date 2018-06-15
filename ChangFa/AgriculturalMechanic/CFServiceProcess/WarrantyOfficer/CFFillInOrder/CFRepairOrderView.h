@@ -25,11 +25,13 @@ typedef void(^reloadCollectionViewBlock)(void);
 typedef void(^deleteImageBlock)(NSInteger index);
 typedef void(^scanBlock)(void);
 typedef void(^getScanInfoBlock)(NSString *str);
+typedef void(^isCompleteBlock)(BOOL isComplete);
 
 @interface CFRepairOrderView : UIView
 @property (nonatomic, assign)BOOL isSelected;
 @property (nonatomic, assign)BOOL isRefill;
 @property (nonatomic, assign)BOOL isCheck;
+@property (nonatomic, assign)BOOL isComplete;
 @property (nonatomic, strong)NSMutableArray *partInfoArray;
 @property (nonatomic, strong)NSMutableArray *photoArray;
 
@@ -53,8 +55,10 @@ typedef void(^getScanInfoBlock)(NSString *str);
 @property (nonatomic, copy)deleteImageBlock deleteImageBlock;
 @property (nonatomic, copy)scanBlock scanBlock;
 @property (nonatomic, copy)getScanInfoBlock getScanInfoBlock;
+@property (nonatomic, copy)isCompleteBlock isCompleteBlock;
 
-- (instancetype)initWithViewStyle:(FillViewStyle)viewStyle;
+- (instancetype)initWithViewStyle:(FillViewStyle)viewStyle
+                          IsCheck:(BOOL)isCheck;
 - (void)addMachineFaultViewWithType:(FaultType)type
                      infoDictionary:(NSDictionary *)dcit;
 @end

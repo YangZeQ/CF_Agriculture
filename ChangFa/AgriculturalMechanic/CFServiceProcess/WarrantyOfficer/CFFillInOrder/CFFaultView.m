@@ -58,8 +58,10 @@ typedef void(^textNumberBlock)(NSInteger number);
     return _vagueView;
 }
 - (instancetype)initWithType:(NSInteger)type
+                     IsCheck:(BOOL)isCheck
 {
     if ([super init]) {
+        self.isCheck = isCheck;
         self.type = type;
         [self createView];
     }

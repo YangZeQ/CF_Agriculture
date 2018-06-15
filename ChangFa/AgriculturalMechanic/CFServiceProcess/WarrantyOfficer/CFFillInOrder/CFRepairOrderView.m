@@ -102,8 +102,10 @@ typedef void(^textNumberBlock)(NSInteger number);
     return _mileageTextField;
 }
 - (instancetype)initWithViewStyle:(FillViewStyle)viewStyle
+                          IsCheck:(BOOL)isCheck
 {
     if (self = [super init]) {
+        self.isCheck = isCheck;
         self.viewStyle = viewStyle;
         [self createBaseView];
         switch (viewStyle) {
@@ -192,7 +194,7 @@ typedef void(^textNumberBlock)(NSInteger number);
     _photoNumberLabel.textAlignment = NSTextAlignmentRight;
     _photoNumberLabel.textColor = [UIColor grayColor];
     _photoNumberLabel.font = CFFONT10;
-    _photoNumberLabel.text = [NSString stringWithFormat:@"0/%@", @"9"];
+    _photoNumberLabel.text = @"0/%@";
 
 }
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -201,7 +203,7 @@ typedef void(^textNumberBlock)(NSInteger number);
 }
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    _photoNumberLabel.text =  _photoNumberLabel.text = [NSString stringWithFormat:@"0/%ld", self.photoArray.count];
+    _photoNumberLabel.text =  _photoNumberLabel.text = [NSString stringWithFormat:@"%ld/9", self.photoArray.count];
     if (_isCheck) {
         return self.photoArray.count;
     }
@@ -211,10 +213,10 @@ typedef void(^textNumberBlock)(NSInteger number);
 {
     if (_isCheck) {
         _photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
-        _photoCell.deleteButton.hidden = NO;
-        _photoCell.deleteButton.tag = 1000 + indexPath.row;
-        if ([self.photoArray[indexPath.row - 1] isKindOfClass:[NSString class]]) {
-            [_photoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:self.photoArray[indexPath.row - 1]] placeholderImage:[UIImage imageNamed:@""]];
+        _photoCell.deleteButton.hidden = YES;
+        _photoCell.deleteButton.tag = 3000 + indexPath.row;
+        if ([self.photoArray[indexPath.row] isKindOfClass:[NSString class]]) {
+            [_photoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:self.photoArray[indexPath.row]] placeholderImage:[UIImage imageNamed:@""]];
         } else {
             _photoCell.repairsPhoto.image = self.photoArray[indexPath.row - 1];
         }
@@ -227,7 +229,7 @@ typedef void(^textNumberBlock)(NSInteger number);
         }
         _photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"repairsPhotoCellId" forIndexPath:indexPath];
         _photoCell.deleteButton.hidden = NO;
-        _photoCell.deleteButton.tag = 1000 + indexPath.row - 1;
+        _photoCell.deleteButton.tag = 3000 + indexPath.row - 1;
         if ([self.photoArray[indexPath.row - 1] isKindOfClass:[NSString class]]) {
             [_photoCell.repairsPhoto sd_setImageWithURL:[NSURL URLWithString:self.photoArray[indexPath.row - 1]] placeholderImage:[UIImage imageNamed:@""]];
         } else {
@@ -243,9 +245,9 @@ typedef void(^textNumberBlock)(NSInteger number);
 }
 - (void)deletebuttonClick:(UIButton *)sender
 {
-    [self.photoArray removeObjectAtIndex:sender.tag - 1000];
+    [self.photoArray removeObjectAtIndex:sender.tag - 3000];
     [self.photoCollectionView reloadData];
-    self.deleteImageBlock(sender.tag - 1000);
+    self.deleteImageBlock(sender.tag - 3000);
 }
 - (void)createMachineInfoView
 {
@@ -306,7 +308,7 @@ typedef void(^textNumberBlock)(NSInteger number);
 {
     __block CFRepairOrderView *weakSelf = self;
     self.viewTag++;
-    __block CFFaultView *faultView = [[CFFaultView alloc]initWithType:type];
+    __block CFFaultView *faultView = [[CFFaultView alloc]initWithType:type IsCheck:_isCheck];
     if (_isCheck) {
         faultView.isCheck = YES;
     }
@@ -351,13 +353,14 @@ typedef void(^textNumberBlock)(NSInteger number);
     };
     
     if (!(dcit == nil)) {
-        faultView.partNameText.text = [dcit objectForKey:@"partNo"];
-        faultView.reasonView.textString = [dcit objectForKey:@"faultDes"];
+        faultView.partNameText.text = [dcit objectForKey:@"partNo"] ;
+        faultView.reasonView.textString = [[dcit objectForKey:@"faultDes"] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         self.sd_layout.heightIs(60);
         _bodyView.hidden = YES;
     }
     self.titleLabel.textColor = ChangfaColor;
     self.statuslabel.hidden = NO;
+    
 }
 #pragma mark -选择故障类型
 - (void)typeBtnClick
@@ -396,10 +399,12 @@ typedef void(^textNumberBlock)(NSInteger number);
 {
     if (textView.text.length > 0) {
         self.titleLabel.textColor = ChangfaColor;
+        self.isCompleteBlock(YES);
         self.statuslabel.hidden = NO;
     } else {
         self.titleLabel.textColor = UIColorWithRGBA(107, 107, 107, 1);
         self.statuslabel.hidden = YES;
+        self.isCompleteBlock(NO);
     }
 }
 - (void)textFieldDidEndEditing:(UITextField *)textField
@@ -407,9 +412,11 @@ typedef void(^textNumberBlock)(NSInteger number);
     if (_hourTextField.textField.text.length > 0 && _mileageTextField.textField.text.length > 0) {
         self.titleLabel.textColor = ChangfaColor;
         self.statuslabel.hidden = NO;
+        self.isCompleteBlock(YES);
     } else {
         self.titleLabel.textColor = UIColorWithRGBA(107, 107, 107, 1);
         self.statuslabel.hidden = YES;
+        self.isCompleteBlock(NO);
     }
 }
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -531,6 +538,22 @@ typedef void(^textNumberBlock)(NSInteger number);
     //不让显示负数 口口日
     //    self.textNumberLabel.text = [NSString stringWithFormat:@"%ld/%d",MAX(0, existTextNum),MAX_LIMIT_NUMS];
     self.textNumberBlock(MAX(0, existTextNum));
+}
+- (void)setIsCheck:(BOOL)isCheck
+{
+    _isCheck = isCheck;
+    
+}
+- (void)setIsComplete:(BOOL)isComplete
+{
+    _isComplete = isComplete;
+    if (isComplete) {
+        self.titleLabel.textColor = ChangfaColor;
+        self.statuslabel.hidden = NO;
+    } else {
+        self.titleLabel.textColor = UIColorWithRGBA(107, 107, 107, 1);
+        self.statuslabel.hidden = YES;
+    }
 }
 - (void)awakeFromNib {
     [super awakeFromNib];

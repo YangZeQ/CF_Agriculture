@@ -151,6 +151,9 @@
             model.imei = obj.stringValue;
             [self.delegate scanGetInformation:model];
             [self.session stopRunning];
+            [self dismissViewControllerAnimated:YES completion:^{
+                
+            }];
             return;
         }
         if ([self.getInfoType isEqualToString:@"retreat"]) {
